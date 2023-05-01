@@ -1,0 +1,43 @@
+name: camino_nomad
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  #Json serilization
+  json_annotation: ^4.8.0
+  #other
+  url_launcher: ^6.1.10
+  google_maps_flutter: ^2.2.5
+  flutter_polyline_points: ^1.0.0
+  provider: ^6.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+  #Json serilization
+  build_runner: ^2.3.3
+  json_serializable: ^6.6.1
+  #Other
+  flutter_launcher_icons: ^0.12.0
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/route_data/
