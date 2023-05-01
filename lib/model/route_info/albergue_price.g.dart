@@ -9,8 +9,8 @@ part of 'albergue_price.dart';
 AlberguePrice _$AlberguePriceFromJson(Map<String, dynamic> json) =>
     AlberguePrice(
       $enumDecode(_$AlbergueTypeEnumMap, json['type']),
-      (json['toPrice'] as num).toDouble(),
-      (json['fromPrice'] as num).toDouble(),
+      (json['fromPrice'] as num?)?.toDouble(),
+      (json['toPrice'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$AlberguePriceToJson(AlberguePrice instance) =>
@@ -22,6 +22,10 @@ Map<String, dynamic> _$AlberguePriceToJson(AlberguePrice instance) =>
 
 const _$AlbergueTypeEnumMap = {
   AlbergueType.dormitory: 'dormitory',
-  AlbergueType.single: 'single',
-  AlbergueType.double: 'double',
+  AlbergueType.singleRoom: 'singleRoom',
+  AlbergueType.doubleRoom: 'doubleRoom',
+  AlbergueType.tripleRoom: 'tripleRoom',
+  AlbergueType.quadRoom: 'quadRoom',
+  AlbergueType.apartment: 'apartment',
+  AlbergueType.bedSharedRoom: 'bedSharedRoom',
 };

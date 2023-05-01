@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'albergue_price.dart';
@@ -15,13 +16,18 @@ class Albergue {
   String checkOutTime;
   String closeTime;
   String address;
+  String cityName;
+  String country;
   String postalCode;
   String bookingUrl;
   double bookingComScore;
   String website;
   String facebook;
+  int dormatoryAmount;
+  int dormatoryBedAmount;
+  List<String> imageUrls;
   List<AlberguePrice> prices;
-  List<AlbergueFacilities> albergueFacilities;
+  List<AlbergueFacility> albergueFacilities;
   List<String> phones;
   List<String> emails;
 
@@ -35,11 +41,16 @@ class Albergue {
     this.checkOutTime = '',
     this.closeTime = '',
     this.address = '',
+    this.cityName = '',
+    this.country = '',
     this.postalCode = '',
     this.bookingUrl = '',
     this.bookingComScore = 0.0,
     this.website = '',
     this.facebook = '',
+    this.dormatoryAmount = 0,
+    this.dormatoryBedAmount = 0,
+    this.imageUrls = const [],
     this.prices = const [],
     this.albergueFacilities = const [],
     this.phones = const [],
@@ -54,7 +65,7 @@ class Albergue {
   //region
   //province
   //postal Code
-  //web
+  //share_url
 
   factory Albergue.fromJson(Map<String, dynamic> json) => _$AlbergueFromJson(json);
   Map<String, dynamic> toJson() => _$AlbergueToJson(this);
@@ -69,11 +80,15 @@ enum AlbergueStatus {
 
 enum AlbergueType {
   dormitory,
-  single,
-  double,
+  singleRoom,
+  doubleRoom,
+  tripleRoom,
+  quadRoom,
+  apartment,
+  bedSharedRoom,
 }
 
-enum AlbergueFacilities {
+enum AlbergueFacility {
   wifi,
   dinner,
   breakfast,
@@ -86,3 +101,26 @@ enum AlbergueFacilities {
   platesUtensils,
   clothesLine,
 }
+
+Map<AlbergueFacility, IconData> albergueFacilityIconMap = {
+  AlbergueFacility.wifi: Icons.wifi,
+  AlbergueFacility.dinner: Icons.dining,
+  AlbergueFacility.breakfast: Icons.breakfast_dining,
+  AlbergueFacility.breakfastIncluded: Icons.breakfast_dining_outlined,
+  AlbergueFacility.kitchen: Icons.kitchen,
+  AlbergueFacility.microwave: Icons.microwave,
+  AlbergueFacility.waterBoiler: Icons.local_fire_department,
+  AlbergueFacility.cooktops: Icons.fireplace,
+  AlbergueFacility.cookingPots: Icons.soup_kitchen,
+  AlbergueFacility.platesUtensils: Icons.dining_outlined,
+  AlbergueFacility.clothesLine: Icons.dry_cleaning,
+};
+Map<AlbergueType, IconData> albergueTypeIconMap = {
+  AlbergueType.dormitory: Icons.bedroom_child_outlined,
+  AlbergueType.singleRoom: Icons.single_bed,
+  AlbergueType.doubleRoom: Icons.king_bed,
+  AlbergueType.tripleRoom: Icons.timer_3_select_sharp,
+  AlbergueType.quadRoom: Icons.four_g_mobiledata,
+  AlbergueType.apartment: Icons.apartment,
+  AlbergueType.bedSharedRoom: Icons.share,
+};

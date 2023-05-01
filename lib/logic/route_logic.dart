@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:camino_nomad/model/route_info/albergue_price.dart';
+
+import '../model/route_info/albergue.dart';
 import '../model/route_info/route_city.dart';
 import '../model/route_info/route_data.dart';
 
@@ -77,6 +80,119 @@ class RouteLogic {
 
     // print(data.cities.length);
     printMore(jsonEncode(data.cities));
+  }
+
+  generateAlbergues(int startID, List<dynamic> alberguesF) {
+    List<Albergue> newAlbergues = [];
+
+    // for (var i = startID; i < alberguesF.length; i++) {
+    for (var i = 0; i < alberguesF.length; i++) {
+      var newItem = Albergue(
+        id: i + startID,
+        name: alberguesF[i]['name'] ?? 'NULL',
+        lat: double.parse(alberguesF[i]['latitude'] ?? '0.0'),
+        lon: double.parse(alberguesF[i]['longitude'] ?? '0.0'),
+        address: '${alberguesF[i]['address'] ?? 'NULL'}',
+        cityName: '${alberguesF[i]['city_name'] ?? 'NULL'}',
+        country: '${alberguesF[i]['country'] ?? 'NULL'}',
+        postalCode: '${alberguesF[i]['postal_code'] ?? 'NULL'}',
+        // albergueFacilities: alberguesF[i]['longitude'],
+        bookingComScore: double.parse(alberguesF[i]['g_rating'] ?? '0.0'),
+        bookingUrl: alberguesF[i]['Booking_com_url'] ?? '',
+        website: alberguesF[i]['web'] ?? '',
+        facebook: alberguesF[i]['facebook_url'] ?? '',
+        dormatoryAmount: int.parse(alberguesF[i]['number_of_dormitories'] ?? '0'),
+        dormatoryBedAmount: int.parse(alberguesF[i]['places_in_dormitory'] ?? '0'),
+        checkInTime: alberguesF[i]['checkin_time'] ?? '',
+        checkOutTime: alberguesF[i]['checkout_time'] ?? '',
+        closeTime: alberguesF[i]['close_time'] ?? '',
+        status: convertStatus(int.parse(alberguesF[i]['status'] ?? '0')),
+        albergueFacilities: [],
+        emails: [],
+        imageUrls: [],
+        phones: [],
+        prices: [],
+      );
+
+      if (alberguesF[i]['price_from_dormitory'] != null || alberguesF[i]['price_to_dormitory'] != null) {
+        var price = AlberguePrice(AlbergueType.dormitory, double.tryParse(alberguesF[i]['price_from_dormitory'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_dormitory'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+      if (alberguesF[i]['price_from_singleroom'] != null || alberguesF[i]['price_to_singleroom'] != null) {
+        var price = AlberguePrice(AlbergueType.singleRoom, double.tryParse(alberguesF[i]['price_from_singleroom'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_singleroom'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+      if (alberguesF[i]['price_from_doubleroom'] != null || alberguesF[i]['price_to_doubleroom'] != null) {
+        var price = AlberguePrice(AlbergueType.doubleRoom, double.tryParse(alberguesF[i]['price_from_doubleroom'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_doubleroom'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+      if (alberguesF[i]['price_from_tripleroom'] != null || alberguesF[i]['price_to_tripleroom'] != null) {
+        var price = AlberguePrice(AlbergueType.tripleRoom, double.tryParse(alberguesF[i]['price_from_tripleroom'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_tripleroom'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+      if (alberguesF[i]['price_from_quatroroom'] != null || alberguesF[i]['price_to_quatroroom'] != null) {
+        var price = AlberguePrice(AlbergueType.quadRoom, double.tryParse(alberguesF[i]['price_from_quatroroom'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_quatroroom'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+      if (alberguesF[i]['price_from_apartment'] != null || alberguesF[i]['price_to_apartment'] != null) {
+        var price = AlberguePrice(AlbergueType.apartment, double.tryParse(alberguesF[i]['price_from_apartment'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_apartment'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+      if (alberguesF[i]['price_from_bed_shared_room'] != null || alberguesF[i]['price_to_bed_shared_room'] != null) {
+        var price = AlberguePrice(AlbergueType.bedSharedRoom, double.tryParse(alberguesF[i]['price_from_bed_shared_room'] ?? 'NULL'),
+            double.tryParse(alberguesF[i]['price_to_bed_shared_room'] ?? 'NULL'));
+        newItem.prices.add(price);
+      }
+
+      if (alberguesF[i]['emails'] != null) {
+        for (var j = 0; j < alberguesF[i]['emails'].length; j++) {
+          newItem.emails.add(alberguesF[i]['emails'][j]['email']);
+        }
+      }
+      if (alberguesF[i]['phones'] != null) {
+        for (var j = 0; j < alberguesF[i]['phones'].length; j++) {
+          newItem.emails.add(alberguesF[i]['phones'][j]['number']);
+        }
+      }
+
+      if (alberguesF[i]['has_kitchen'] == '1') newItem.albergueFacilities.add(AlbergueFacility.kitchen);
+      if (alberguesF[i]['has_cooktops'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cooktops);
+      if (alberguesF[i]['has_microwave'] == '1') newItem.albergueFacilities.add(AlbergueFacility.microwave);
+      if (alberguesF[i]['has_water_boiler'] == '1') newItem.albergueFacilities.add(AlbergueFacility.waterBoiler);
+      if (alberguesF[i]['has_plates_utensils'] == '1') newItem.albergueFacilities.add(AlbergueFacility.platesUtensils);
+      if (alberguesF[i]['has_cooking_pots'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cookingPots);
+      if (alberguesF[i]['has_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfast);
+      if (alberguesF[i]['is_breakfast_included'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfastIncluded);
+      if (alberguesF[i]['has_clothes_line'] == '1') newItem.albergueFacilities.add(AlbergueFacility.clothesLine);
+      if (alberguesF[i]['has_wifi'] == '1') newItem.albergueFacilities.add(AlbergueFacility.wifi);
+
+      newAlbergues.add(newItem);
+    }
+
+    printMore(jsonEncode(newAlbergues));
+  }
+
+  AlbergueStatus convertStatus(int status) {
+    switch (status) {
+      case 0:
+        return AlbergueStatus.unknown;
+      case 1:
+        return AlbergueStatus.open;
+      case 3:
+        return AlbergueStatus.temporarilyClosed;
+      case 5:
+        return AlbergueStatus.open;
+      case 6:
+        return AlbergueStatus.closed;
+      default:
+        return AlbergueStatus.unknown;
+    }
   }
 
   printMore(String text) {
