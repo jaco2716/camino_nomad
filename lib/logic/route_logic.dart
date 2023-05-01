@@ -80,7 +80,7 @@ class RouteLogic {
   }
 
   printMore(String text) {
-    final pattern = new RegExp('.{1,5000}'); // 5000 is the size of each chunk
+    final pattern = RegExp('.{1,5000}'); // 5000 is the size of each chunk
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
   }
 }

@@ -39,7 +39,7 @@ class RouteProvider with ChangeNotifier {
     RouteLogic rl = RouteLogic();
     List<double> tempCityDistances = [];
     double tempDistance = 0;
-    double temoTotalDistance = 0;
+    // double temoTotalDistance = 0;
     var cities = routeData!.cities;
     var routePoints = routeData!.routePoints;
     int startIndex = 0;
@@ -48,7 +48,7 @@ class RouteProvider with ChangeNotifier {
         tempDistance +=
             rl.calculateDistance(routePoints[routei].lat, routePoints[routei].lon, routePoints[routei + 1].lat, routePoints[routei + 1].lon);
         if (routePoints[routei + 1].id == cities[cityi].routePointId) {
-          temoTotalDistance += tempDistance;
+          // temoTotalDistance += tempDistance;
           startIndex = routei;
           tempCityDistances.add(tempDistance);
           // print('city: ${cities[cityi].name}, distance: $tempDistance');

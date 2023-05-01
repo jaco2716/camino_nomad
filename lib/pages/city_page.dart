@@ -37,7 +37,6 @@ class _CityPageState extends State<CityPage> {
   }
 
   //TODO finish
-
   generateAlbergues() {
     List<dynamic> alberguesF = cityfile['albergues'];
     int startID = widget.city.albergues.length;
@@ -113,7 +112,7 @@ class _CityPageState extends State<CityPage> {
                   child: Wrap(
                       children: (widget.city.facilities)
                           .map((e) => Icon(
-                                FacilityIconMap[e],
+                                facilityIconMap[e],
                                 size: 20,
                                 color: Colors.amber[800],
                               ))

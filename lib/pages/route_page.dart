@@ -59,9 +59,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                     //     ? value.routeData?.cities[endIndex].name ?? 'Choose your end city...'
                     //     : 'Choose your end city...';
 
-                    String startSub = (value.startIndex != null && value.routeData != null)
-                        ? value.routeData!.cities[value.startIndex].name
-                        : 'Choose your start city...';
+                    String startSub = (value.routeData != null) ? value.routeData!.cities[value.startIndex].name : 'Choose your start city...';
                     String endSub = (value.endIndex != null && value.routeData != null)
                         ? value.routeData!.cities[value.endIndex!].name
                         : 'Choose your end city...';
@@ -97,7 +95,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                           padding: const EdgeInsets.all(16.0),
                           child: Consumer<RouteProvider>(builder: (context, value, _) {
                             double? sum;
-                            if (value.startIndex != null && value.endIndex != null) {
+                            if (value.endIndex != null) {
                               var distanceList = value.allDistances?.getRange(value.startIndex + 1, value.endIndex! + 1);
                               sum = distanceList?.reduce((a, b) => a + b);
                             }
@@ -126,7 +124,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   ),
                   const SizedBox(height: 16),
                   Consumer<RouteProvider>(builder: (context, value, _) {
-                    if (value.endIndex == null || value.startIndex == null) return const SizedBox.shrink();
+                    if (value.endIndex == null) return const SizedBox.shrink();
                     return const LeftAlignedTitle('Cities on route');
                   }),
                 ],
@@ -134,7 +132,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
             ),
           ),
           Consumer<RouteProvider>(builder: (context, value, _) {
-            if (value.endIndex == null || value.startIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (value.endIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
 
             return SliverList(
               delegate: SliverChildBuilderDelegate(

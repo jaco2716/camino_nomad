@@ -56,7 +56,7 @@ enum Facility {
   tobaccoStore,
 }
 
-Map<Facility, IconData> FacilityIconMap = {
+Map<Facility, IconData> facilityIconMap = {
   Facility.atm: Icons.attach_money,
   Facility.barCafe: Icons.local_cafe,
   Facility.restaurant: Icons.dining,

@@ -98,7 +98,7 @@ class ChooseRoutePage extends StatelessWidget {
                 },
               ),
             ),
-            Expanded(child: Text('More routes coming soon...'))
+            const Expanded(child: Text('More routes coming soon...'))
           ],
         ),
       )),

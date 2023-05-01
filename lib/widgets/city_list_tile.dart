@@ -46,7 +46,7 @@ class CityListTile extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(children: (city.facilities).map((e) => Icon(FacilityIconMap[e], size: 20)).toList()),
+                  Wrap(children: (city.facilities).map((e) => Icon(facilityIconMap[e], size: 20)).toList()),
                   Row(
                     children: [
                       const Icon(Icons.house, size: 20, color: Colors.blue),

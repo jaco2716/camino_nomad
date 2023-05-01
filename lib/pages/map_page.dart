@@ -1,14 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
-
-import '../constants/env.dart';
 import '../logic/route_logic.dart';
 import '../model/providers/route_provider.dart';
 
