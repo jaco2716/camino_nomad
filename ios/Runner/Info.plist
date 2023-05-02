@@ -48,8 +48,15 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
+
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs your location to use the features of the map.</string>
-	
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	    <string>googlechromes</string>
+	    <string>comgooglemaps</string>
+	</array>
+
 </dict>
 </plist>

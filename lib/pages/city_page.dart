@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:camino_nomad/logic/route_logic.dart';
+import 'package:camino_nomad/pages/albergue_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,7 +38,6 @@ class _CityPageState extends State<CityPage> {
     // print(cityfile);
   }
 
-  //TODO finish
   generateAlbergues() {
     final rl = RouteLogic();
     List<dynamic> alberguesF = cityfile['albergues'];
@@ -106,7 +106,7 @@ class _CityPageState extends State<CityPage> {
       ),
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10),
         child: Column(children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -143,6 +143,8 @@ class _CityPageState extends State<CityPage> {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ListTile(
+                    onTap: () =>
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
                     dense: true,
                     isThreeLine: true,
                     iconColor: Colors.amber[800],
@@ -209,14 +211,14 @@ class _CityPageState extends State<CityPage> {
               },
             ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
-                // int id = city.albergues.length;
-                // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
-                generateAlbergues();
-              },
-              child: const Text('Add'))
+          // ElevatedButton(
+          //     onPressed: () {
+          //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
+          //       // int id = city.albergues.length;
+          //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
+          //       generateAlbergues();
+          //     },
+          //     child: const Text('Add'))
         ]),
       )),
     );

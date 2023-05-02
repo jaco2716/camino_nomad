@@ -41,3 +41,5 @@ flutter:
   assets:
     - assets/images/
     - assets/route_data/
+    - assets/images/albergue/
+    
