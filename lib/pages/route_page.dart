@@ -40,11 +40,11 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                 children: [
                   const SizedBox(height: 16),
                   Container(
-                      width: 80,
-                      height: 80,
-                      decoration: const BoxDecoration(shape: BoxShape.circle),
-                      clipBehavior: Clip.hardEdge,
-                      child: Image.asset('assets/images/camino_wanderer.jpg')),
+                      // width: 80,
+                      height: 90,
+                      // decoration: const BoxDecoration(shape: BoxShape.circle),
+                      // clipBehavior: Clip.hardEdge,
+                      child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey'),
                   Consumer<RouteProvider>(builder: (context, value, _) {

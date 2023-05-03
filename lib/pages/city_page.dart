@@ -105,122 +105,125 @@ class _CityPageState extends State<CityPage> {
         title: Text(widget.city.name),
       ),
       body: SafeArea(
+          bottom: false,
           child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Wrap(
-                      children: (widget.city.facilities)
-                          .map((e) => Icon(
-                                facilityIconMap[e],
-                                size: 20,
-                                color: Colors.amber[800],
-                              ))
-                          .toList()),
-                ),
-                const Icon(Icons.location_on, size: 18, color: Colors.blue),
-                Text('${widget.totalDistance.toStringAsFixed(1)} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              ],
-            ),
-          ),
-          const SizedBox(height: 40),
-          // ListTile(
-          //   dense: true,
-          //   iconColor: Colors.amber[800],
-          //   title: Row(children: (data['icons'] as List<IconData>).map((e) => Icon(e, size: 20)).toList()),
-          //   trailing: Text('${data['distance']} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-          // ),
-          const LeftAlignedTitle('Accomodations'),
-          Expanded(
-            child: ListView.builder(
-              // shrinkWrap: true,
-              // physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.city.albergues.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: ListTile(
-                    onTap: () =>
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
-                    dense: true,
-                    isThreeLine: true,
-                    iconColor: Colors.amber[800],
-                    title: Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
-                            children: widget.city.albergues[index].prices.map((e) {
-                          String priceString = '';
-                          if (e.fromPrice != null && e.toPrice != null) {
-                            priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                          } else if (e.fromPrice != null) {
-                            priceString = '${e.fromPrice!.round()}€ +';
-                          } else {
-                            priceString = '${e.toPrice!.round()}€';
-                          }
-                          return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                albergueTypeIconMap[e.type],
-                                // size: 10,
-                                // color: Colors.red,
-                              ),
-                              Text(priceString)
-                            ],
-                          );
-                        }).toList()
-                            //  [
-                            //   const Icon(Icons.bedroom_child),
-                            //   Text('${city.albergues[index].prices.length}€+', style: TextStyle(color: Colors.amber[800])),
-                            //   const SizedBox(width: 16),
-                            //   const Icon(Icons.bedroom_parent),
-                            // ]
-                            ),
-                        Wrap(
-                            children: (widget.city.albergues[index].albergueFacilities)
-                                .map((e) => Icon(
-                                      albergueFacilityIconMap[e],
-                                      size: 20,
-                                      color: Colors.amber[800],
-                                    ))
-                                .toList()),
-                      ],
+            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Wrap(
+                          children: (widget.city.facilities)
+                              .map((e) => Icon(
+                                    facilityIconMap[e],
+                                    size: 20,
+                                    color: Colors.amber[800],
+                                  ))
+                              .toList()),
                     ),
-                    trailing: Material(
-                      borderRadius: BorderRadius.circular(6),
-                      clipBehavior: Clip.hardEdge,
-                      color: Colors.blue,
-                      child: InkWell(
-                        onTap: () => _launchUrl('https://www.booking.com/'),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                          child: Text(
-                            '${widget.city.albergues[index].bookingComScore} Booking',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                    const Icon(Icons.location_on, size: 18, color: Colors.blue),
+                    Text('${widget.totalDistance.toStringAsFixed(1)} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+              // ListTile(
+              //   dense: true,
+              //   iconColor: Colors.amber[800],
+              //   title: Row(children: (data['icons'] as List<IconData>).map((e) => Icon(e, size: 20)).toList()),
+              //   trailing: Text('${data['distance']} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              // ),
+              const LeftAlignedTitle('Accomodations'),
+              Expanded(
+                child: ListView.builder(
+                  // shrinkWrap: true,
+                  // physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.city.albergues.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: ListTile(
+                        onTap: () =>
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
+                        dense: true,
+                        isThreeLine: true,
+                        iconColor: Colors.amber[800],
+                        title: Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Wrap(
+                                children: widget.city.albergues[index].prices.map((e) {
+                              String priceString = '';
+                              if (e.fromPrice != null && e.toPrice != null) {
+                                priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                              } else if (e.fromPrice != null) {
+                                priceString = '${e.fromPrice!.round()}€ +';
+                              } else {
+                                priceString = '${e.toPrice!.round()}€';
+                              }
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    albergueTypeIconMap[e.type],
+                                    // size: 10,
+                                    // color: Colors.red,
+                                  ),
+                                  Text(priceString)
+                                ],
+                              );
+                            }).toList()
+                                //  [
+                                //   const Icon(Icons.bedroom_child),
+                                //   Text('${city.albergues[index].prices.length}€+', style: TextStyle(color: Colors.amber[800])),
+                                //   const SizedBox(width: 16),
+                                //   const Icon(Icons.bedroom_parent),
+                                // ]
+                                ),
+                            Wrap(
+                                children: (widget.city.albergues[index].albergueFacilities)
+                                    .map((e) => Icon(
+                                          albergueFacilityIconMap[e],
+                                          size: 20,
+                                          color: Colors.amber[800],
+                                        ))
+                                    .toList()),
+                          ],
+                        ),
+                        trailing: Material(
+                          borderRadius: BorderRadius.circular(6),
+                          clipBehavior: Clip.hardEdge,
+                          color: Colors.blue,
+                          child: InkWell(
+                            onTap: () => _launchUrl('https://www.booking.com/'),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                              child: Text(
+                                widget.city.albergues[index].bookingComScore != 0.0
+                                    ? '${widget.city.albergues[index].bookingComScore} Booking'
+                                    : ' --  Booking',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
-          //       // int id = city.albergues.length;
-          //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
-          //       generateAlbergues();
-          //     },
-          //     child: const Text('Add'))
-        ]),
-      )),
+                    );
+                  },
+                ),
+              ),
+              // ElevatedButton(
+              //     onPressed: () {
+              //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
+              //       // int id = city.albergues.length;
+              //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
+              //       generateAlbergues();
+              //     },
+              //     child: const Text('Add'))
+            ]),
+          )),
     );
   }
 

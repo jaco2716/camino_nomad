@@ -69,7 +69,8 @@ class RouteProvider with ChangeNotifier {
   // }
 
   Future<void> getRouteData() async {
-    String response = await rootBundle.loadString('assets/route_data/camino_francis_data.json');
+    // String response = await rootBundle.loadString('assets/route_data/camino_francis_data.json');
+    String response = await rootBundle.loadString('assets/route_data/francis_initial_data.json');
     // print(response);
     Map<String, dynamic> jsonData = json.decode(response);
 

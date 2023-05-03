@@ -26,8 +26,19 @@ Map<String, dynamic> toJson() => _$NAMEToJson(this);
 ```
 * flutter pub run build_runner build
 * flutter pub run build_runner watch
+---
+### Launcher Icons
+```yaml
+dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
 
-
+# Add Launcher icon run: flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+```
+* flutter pub run flutter_launcher_icons
 ### Build iOS/Android Archive: 
 Remember to change version! (version: 1.0.0+1 -> 1.0.1+2)
 * flutter build ipa

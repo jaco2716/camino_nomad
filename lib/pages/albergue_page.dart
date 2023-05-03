@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/model/route_info/albergue.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -92,18 +93,28 @@ class AlberguePage extends StatelessWidget {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      const Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                       const SizedBox(height: 6),
+                      Column(
+                        children: albergue.albergueFacilities
+                            .map((e) => Row(children: [
+                                  Icon(
+                                    albergueFacilityIconMap[e],
+                                    size: 25,
+                                    color: Colors.amber[800],
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(e.name.camelToSentence())
+                                ]))
+                            .toList(),
+                      ),
                       Text(albergue.bookingUrl),
                       Text(albergue.checkInTime),
                       Text(albergue.checkOutTime),
-                      Text(albergue.cityName),
                       Text(albergue.closeTime),
-                      Text(albergue.country),
                       Text(albergue.facebook),
                       Text(albergue.website),
-                      Text(albergue.postalCode),
-                      Text('${albergue.albergueFacilities}'),
-                      Text('${albergue.albergueFacilities}'),
                       Text(albergue.bookingComScore.toString()),
                       Text(albergue.dormatoryAmount.toString()),
                       Text(albergue.dormatoryBedAmount.toString()),
