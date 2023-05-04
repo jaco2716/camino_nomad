@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
-
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/url_logic.dart';
 import 'package:camino_nomad/model/route_info/albergue.dart';
@@ -15,12 +13,12 @@ class AlberguePage extends StatelessWidget {
   final Albergue albergue;
   final ul = UrlLogic();
 
-  static Future<void> openMap(double latitude, double longitude) async {
+  static Future<void> openMapApp(double latitude, double longitude) async {
     // String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude&travelmode=walking';
     var url = '';
     var urlAppleMaps = '';
     if (Platform.isAndroid) {
-      url = "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
+      url = "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude&travelmode=walking";
     } else {
       urlAppleMaps = 'https://maps.apple.com/?q=$latitude,$longitude';
       url = "comgooglemaps://?saddr=&daddr=$latitude,$longitude&directionsmode=walking";
@@ -32,7 +30,7 @@ class AlberguePage extends StatelessWidget {
       Uri uriapple = Uri.parse(urlAppleMaps);
       result = await launchUrl(uriapple, mode: LaunchMode.externalApplication);
       if (!result) {
-        Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude");
+        Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude&travelmode=walking");
         await launchUrl(uri);
       }
     }
@@ -41,14 +39,13 @@ class AlberguePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color statusColor = Colors.green;
-    String statusText = '${albergue.status.name[0].toUpperCase()}${albergue.status.name.substring(1)}';
+    String statusText = albergue.status.name.camelToSentence();
     if (albergue.status == AlbergueStatus.unknown) {
       statusColor = Colors.yellow[600]!;
     } else if (albergue.status == AlbergueStatus.closed) {
       statusColor = Colors.red;
     } else if (albergue.status == AlbergueStatus.temporarilyClosed) {
       statusColor = Colors.orange;
-      statusText = 'Temporarily Closed';
     }
 
     return Scaffold(
@@ -90,7 +87,7 @@ class AlberguePage extends StatelessWidget {
                                 style: const TextStyle(fontSize: 12.5, color: Colors.black54)),
                           ),
                           IconButton(
-                            onPressed: () => openMap(albergue.lat, albergue.lon),
+                            onPressed: () => openMapApp(albergue.lat, albergue.lon),
                             icon: const Icon(Icons.directions),
                             color: Colors.amber[800],
                             iconSize: 40,
@@ -155,14 +152,11 @@ class AlberguePage extends StatelessWidget {
                                     ],
                                   );
                                 }).toList()),
-                                AlbergueInfoListTile(title: 'Check-in:', trailing: albergue.checkInTime, shouldShow: albergue.checkInTime.isNotEmpty),
-                                AlbergueInfoListTile(
-                                    title: 'Check-out:', trailing: albergue.checkInTime, shouldShow: albergue.checkOutTime.isNotEmpty),
-                                AlbergueInfoListTile(title: 'Close:', trailing: albergue.closeTime, shouldShow: albergue.closeTime.isNotEmpty),
-                                AlbergueInfoListTile(
-                                    title: 'Beds:', trailing: '${albergue.dormatoryBedAmount}', shouldShow: albergue.dormatoryBedAmount > 0),
-                                AlbergueInfoListTile(
-                                    title: 'Dormitories:', trailing: '${albergue.dormatoryAmount}', shouldShow: albergue.dormatoryAmount > 0),
+                                AlbergueInfoListTile('Check-in:', trailing: albergue.checkInTime, show: albergue.checkInTime.isNotEmpty),
+                                AlbergueInfoListTile('Check-out:', trailing: albergue.checkInTime, show: albergue.checkOutTime.isNotEmpty),
+                                AlbergueInfoListTile('Close:', trailing: albergue.closeTime, show: albergue.closeTime.isNotEmpty),
+                                AlbergueInfoListTile('Beds:', trailing: '${albergue.dormatoryBedAmount}', show: albergue.dormatoryBedAmount > 0),
+                                AlbergueInfoListTile('Dormitories:', trailing: '${albergue.dormatoryAmount}', show: albergue.dormatoryAmount > 0),
                               ],
                             ),
                           ),
@@ -325,13 +319,18 @@ class ContactTextButton extends StatelessWidget {
 }
 
 class AlbergueInfoListTile extends StatelessWidget {
-  const AlbergueInfoListTile({super.key, required this.title, required this.trailing, required this.shouldShow});
+  const AlbergueInfoListTile(
+    this.title, {
+    super.key,
+    required this.trailing,
+    required this.show,
+  });
   final String title;
   final String trailing;
-  final bool shouldShow;
+  final bool show;
 
   @override
   Widget build(BuildContext context) {
-    return shouldShow ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(title), Text(trailing)]) : const SizedBox.shrink();
+    return show ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(title), Text(trailing)]) : const SizedBox.shrink();
   }
 }
