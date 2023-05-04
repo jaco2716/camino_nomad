@@ -157,7 +157,7 @@ class RouteLogic {
       }
       if (alberguesF[i]['phones'] != null) {
         for (var j = 0; j < alberguesF[i]['phones'].length; j++) {
-          newItem.emails.add(alberguesF[i]['phones'][j]['number']);
+          newItem.phones.add(alberguesF[i]['phones'][j]['number']);
         }
       }
 

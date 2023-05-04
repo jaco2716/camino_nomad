@@ -100,6 +100,7 @@ class _CityPageState extends State<CityPage> {
     // city.facilities.add(Facility.airport);
     // city.facilities.add(Facility.airport);
     // city.facilities.add(Facility.airport);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.city.name),
@@ -142,6 +143,15 @@ class _CityPageState extends State<CityPage> {
                   // physics: const NeverScrollableScrollPhysics(),
                   itemCount: widget.city.albergues.length,
                   itemBuilder: (BuildContext context, int index) {
+                    Color statusColor = Colors.green;
+
+                    if (widget.city.albergues[index].status == AlbergueStatus.unknown) {
+                      statusColor = Colors.yellow[600]!;
+                    } else if (widget.city.albergues[index].status == AlbergueStatus.closed) {
+                      statusColor = Colors.red;
+                    } else if (widget.city.albergues[index].status == AlbergueStatus.temporarilyClosed) {
+                      statusColor = Colors.orange;
+                    }
                     return Card(
                       child: ListTile(
                         onTap: () =>
@@ -149,7 +159,14 @@ class _CityPageState extends State<CityPage> {
                         dense: true,
                         isThreeLine: true,
                         iconColor: Colors.amber[800],
-                        title: Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                        title: Row(
+                          children: [
+                            CircleAvatar(radius: 5, backgroundColor: statusColor),
+                            const SizedBox(width: 5),
+                            Expanded(
+                                child: Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+                          ],
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -214,14 +231,14 @@ class _CityPageState extends State<CityPage> {
                   },
                 ),
               ),
-              // ElevatedButton(
-              //     onPressed: () {
-              //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
-              //       // int id = city.albergues.length;
-              //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
-              //       generateAlbergues();
-              //     },
-              //     child: const Text('Add'))
+              ElevatedButton(
+                  onPressed: () {
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
+                    // int id = city.albergues.length;
+                    // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
+                    generateAlbergues();
+                  },
+                  child: const Text('Add'))
             ]),
           )),
     );
