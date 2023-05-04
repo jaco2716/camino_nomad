@@ -99,15 +99,18 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                               var distanceList = value.allDistances?.getRange(value.startIndex + 1, value.endIndex! + 1);
                               sum = distanceList?.reduce((a, b) => a + b);
                             }
+                            double? totalDistance = value.allDistances?.reduce((a, b) => a + b);
 
                             return Column(children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [const Text('Distance:'), Text('${sum?.toStringAsFixed(2) ?? '?'} km')],
+                                children: [const Text('Todays Distance:'), Text('${sum?.toStringAsFixed(2) ?? '?'} km')],
                               ),
-                              const Divider(
-                                color: Colors.white,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [const Text('Total Distance:'), Text('${totalDistance?.toStringAsFixed(2) ?? '?'} km')],
                               ),
+                              const Divider(color: Colors.white),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: const [Text('Elevation min/max:'), Text('? m / ? m')],

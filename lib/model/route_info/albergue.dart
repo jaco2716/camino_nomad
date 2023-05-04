@@ -19,7 +19,7 @@ class Albergue {
   String cityName;
   String country;
   String postalCode;
-  String bookingUrl;
+  String bookingComUrl;
   double bookingComScore;
   String website;
   String facebook;
@@ -44,7 +44,7 @@ class Albergue {
     this.cityName = '',
     this.country = '',
     this.postalCode = '',
-    this.bookingUrl = '',
+    this.bookingComUrl = '',
     this.bookingComScore = 0.0,
     this.website = '',
     this.facebook = '',

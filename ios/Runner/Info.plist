@@ -49,7 +49,9 @@
 	<true/>
 
 
-
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs your location to use the features of the map.</string>
 	<key>LSApplicationQueriesSchemes</key>

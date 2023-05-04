@@ -98,7 +98,7 @@ class RouteLogic {
         postalCode: '${alberguesF[i]['postal_code'] ?? 'NULL'}',
         // albergueFacilities: alberguesF[i]['longitude'],
         bookingComScore: double.parse(alberguesF[i]['g_rating'] ?? '0.0'),
-        bookingUrl: alberguesF[i]['Booking_com_url'] ?? '',
+        bookingComUrl: alberguesF[i]['Booking_com_url'] ?? '',
         website: alberguesF[i]['web'] ?? '',
         facebook: alberguesF[i]['facebook_url'] ?? '',
         dormatoryAmount: int.parse(alberguesF[i]['number_of_dormitories'] ?? '0'),

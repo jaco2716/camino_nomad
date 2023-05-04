@@ -94,30 +94,115 @@ class AlberguePage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                      const SizedBox(height: 6),
-                      Column(
-                        children: albergue.albergueFacilities
-                            .map((e) => Row(children: [
-                                  Icon(
-                                    albergueFacilityIconMap[e],
-                                    size: 25,
-                                    color: Colors.amber[800],
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(e.name.camelToSentence())
-                                ]))
-                            .toList(),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                const SizedBox(height: 6),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: albergue.albergueFacilities
+                                      .map((e) => Row(children: [
+                                            Icon(
+                                              albergueFacilityIconMap[e],
+                                              size: 25,
+                                              color: Colors.amber[800],
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(e.name.camelToSentence())
+                                          ]))
+                                      .toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                            width: 135,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Info:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                const SizedBox(height: 6),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Check-in:'),
+                                        const Text('Check-out:'),
+                                        const Text('Doors Close:'),
+                                        albergue.dormatoryBedAmount > 0 ? const Text('Beds:') : const SizedBox.shrink(),
+                                        albergue.dormatoryAmount > 0 ? const Text('Dormitories:') : const SizedBox.shrink(),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(albergue.checkInTime),
+                                        Text(albergue.checkOutTime),
+                                        Text(albergue.closeTime),
+                                        albergue.dormatoryBedAmount > 0 ? Text('${albergue.dormatoryBedAmount}') : const SizedBox.shrink(),
+                                        albergue.dormatoryAmount > 0 ? Text('${albergue.dormatoryAmount}') : const SizedBox.shrink(),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(albergue.bookingUrl),
-                      Text(albergue.checkInTime),
-                      Text(albergue.checkOutTime),
-                      Text(albergue.closeTime),
+                      Row(
+                        children: [
+                          const Text(
+                            'Booking.com',
+                            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19, color: Colors.blue, letterSpacing: -1),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6), bottomRight: Radius.circular(6)),
+                              color: Colors.blue[800],
+                            ),
+                            child: Text(
+                              albergue.bookingComScore != 0.0 ? '${albergue.bookingComScore}' : '',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Material(
+                      //   borderRadius: BorderRadius.circular(6),
+                      //   clipBehavior: Clip.hardEdge,
+                      //   color: Colors.blue,
+                      //   child: InkWell(
+                      //     onTap: () => _launchUrl('https://www.booking.com/'),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      //       child: Text(
+                      //         albergue.bookingComScore != 0.0 ? '${albergue.bookingComScore} Booking.com' : ' --  Booking.com',
+                      //         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      Text(albergue.bookingComUrl),
                       Text(albergue.facebook),
                       Text(albergue.website),
                       Text(albergue.bookingComScore.toString()),
-                      Text(albergue.dormatoryAmount.toString()),
-                      Text(albergue.dormatoryBedAmount.toString()),
                       Text(albergue.emails.toString()),
                       Text(albergue.phones.toString()),
                       Text(albergue.prices.toString()),
@@ -130,5 +215,14 @@ class AlberguePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _launchUrl(url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

@@ -46,6 +46,12 @@ Remember to change version! (version: 1.0.0+1 -> 1.0.1+2)
 ---
 ## Useful config setup
 
+### IOS  - NonExemptEncryption:false
+```plist 
+<key>ITSAppUsesNonExemptEncryption</key>
+<false/>
+``` 
+
 <details>
 <summary>Screen Orientaion (Portrait olnly)</summary>
 
