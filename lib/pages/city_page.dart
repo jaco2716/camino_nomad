@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:camino_nomad/logic/route_logic.dart';
-import 'package:camino_nomad/pages/albergue_page.dart';
+import 'package:camino_nomad/pages/albergue_page/albergue_page.dart';
+import 'package:camino_nomad/widgets/bookingComWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -156,8 +157,7 @@ class _CityPageState extends State<CityPage> {
                       child: ListTile(
                         onTap: () =>
                             Navigator.push(context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
-                        dense: true,
-                        isThreeLine: true,
+                        // dense: true,
                         iconColor: Colors.amber[800],
                         title: Row(
                           children: [
@@ -170,62 +170,56 @@ class _CityPageState extends State<CityPage> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
+                              child: Wrap(
+                                  children: widget.city.albergues[index].prices.map((e) {
+                                String priceString = '';
+                                if (e.fromPrice != null && e.toPrice != null) {
+                                  priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                                } else if (e.fromPrice != null) {
+                                  priceString = '${e.fromPrice!.round()}€ +';
+                                } else {
+                                  priceString = '${e.toPrice!.round()}€';
+                                }
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [Icon(albergueTypeIconMap[e.type]), Text(priceString)],
+                                );
+                              }).toList()),
+                            ),
                             Wrap(
-                                children: widget.city.albergues[index].prices.map((e) {
-                              String priceString = '';
-                              if (e.fromPrice != null && e.toPrice != null) {
-                                priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                              } else if (e.fromPrice != null) {
-                                priceString = '${e.fromPrice!.round()}€ +';
-                              } else {
-                                priceString = '${e.toPrice!.round()}€';
-                              }
-                              return Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    albergueTypeIconMap[e.type],
-                                    // size: 10,
-                                    // color: Colors.red,
-                                  ),
-                                  Text(priceString)
-                                ],
-                              );
-                            }).toList()
-                                //  [
-                                //   const Icon(Icons.bedroom_child),
-                                //   Text('${city.albergues[index].prices.length}€+', style: TextStyle(color: Colors.amber[800])),
-                                //   const SizedBox(width: 16),
-                                //   const Icon(Icons.bedroom_parent),
-                                // ]
-                                ),
-                            Wrap(
-                                children: (widget.city.albergues[index].albergueFacilities)
-                                    .map((e) => Icon(
-                                          albergueFacilityIconMap[e],
-                                          size: 20,
-                                          color: Colors.amber[800],
-                                        ))
-                                    .toList()),
+                              children: [
+                                widget.city.albergues[index].bookingComUrl.isNotEmpty
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(right: 4.0),
+                                        child: SizedBox(height: 20, child: Image.asset('assets/images/bookinglogo.png')),
+                                      )
+                                    : const SizedBox.shrink(),
+                                widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(right: 4.0),
+                                        child: Icon(Icons.kitchen, size: 20),
+                                      )
+                                    : const SizedBox.shrink(),
+                                widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.breakfast)
+                                    ? const Icon(Icons.breakfast_dining, size: 20)
+                                    : const SizedBox.shrink(),
+                              ],
+                            ),
                           ],
                         ),
-                        trailing: Material(
-                          borderRadius: BorderRadius.circular(6),
-                          clipBehavior: Clip.hardEdge,
-                          color: Colors.blue,
-                          child: InkWell(
-                            onTap: () => _launchUrl('https://www.booking.com/'),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                              child: Text(
-                                widget.city.albergues[index].bookingComScore != 0.0
-                                    ? '${widget.city.albergues[index].bookingComScore} Booking'
-                                    : ' --  Booking',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Wrap(
+                        //     children: (widget.city.albergues[index].albergueFacilities)
+                        //         .map((e) => Icon(
+                        //               albergueFacilityIconMap[e],
+                        //               size: 20,
+                        //               color: Colors.amber[800],
+                        //             ))
+                        //         .toList()),
+                        // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),
+                        // trailing: BookingComScore(bookingComScore: widget.city.albergues[index].bookingComScore, size: 30),
+                        trailing: BookingComScore(bookingComScore: widget.city.albergues[index].bookingComScore, size: 30),
                       ),
                     );
                   },
@@ -242,15 +236,5 @@ class _CityPageState extends State<CityPage> {
             ]),
           )),
     );
-  }
-
-  // Future<void> _launchUrl(url) async {
-  _launchUrl(url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

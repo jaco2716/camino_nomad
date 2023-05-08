@@ -39,25 +39,11 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  Container(
-                      // width: 80,
-                      height: 90,
-                      // decoration: const BoxDecoration(shape: BoxShape.circle),
-                      // clipBehavior: Clip.hardEdge,
-                      child: Image.asset('assets/images/nomad-transparent.png')),
+                  SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey'),
                   Consumer<RouteProvider>(builder: (context, value, _) {
                     String routeSub = value.routeData?.name ?? 'Choose your route...';
-                    // int startIndex = value.routeData?.cities.indexWhere((element) => element.id == value.startId) ?? -1;
-                    // String startSub = (startIndex >= 0 && value.startId != null)
-                    //     ? value.routeData?.cities[startIndex].name ?? 'Choose your start city...'
-                    //     : 'Choose your start city...';
-
-                    // int endIndex = value.routeData?.cities.indexWhere((element) => element.id == value.endId) ?? -1;
-                    // String endSub = (endIndex >= 0 && value.endId != null)
-                    //     ? value.routeData?.cities[endIndex].name ?? 'Choose your end city...'
-                    //     : 'Choose your end city...';
 
                     String startSub = (value.routeData != null) ? value.routeData!.cities[value.startIndex].name : 'Choose your start city...';
                     String endSub = (value.endIndex != null && value.routeData != null)
