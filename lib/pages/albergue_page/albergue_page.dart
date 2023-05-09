@@ -1,13 +1,10 @@
-import 'dart:io';
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/url_logic.dart';
 import 'package:camino_nomad/model/route_info/albergue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../../widgets/albergue_header_images.dart';
-import '../../widgets/bookingComWidgets.dart';
+import '../../widgets/booking_com_widgets.dart';
 import 'albergue_info_list_tile.dart';
 
 class AlberguePage extends StatelessWidget {

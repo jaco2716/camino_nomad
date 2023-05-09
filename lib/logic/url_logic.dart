@@ -1,12 +1,17 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UrlLogic {
   static launchUrlFunc(url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      try {
+        await launchUrl(uri);
+      } catch (e) {
+        debugPrint('Error: $e');
+      }
     } else {
       throw 'Could not launch $url';
     }

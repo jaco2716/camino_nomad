@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../model/providers/route_provider.dart';
 import 'map_page.dart';
-import 'more_page.dart';
+import 'more_pages/more_page.dart';
 import 'route_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -57,11 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
         showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.route),
+            icon: FaIcon(FontAwesomeIcons.route),
             label: 'Route',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
+            icon: FaIcon(FontAwesomeIcons.mapLocationDot),
             label: 'Map',
           ),
           BottomNavigationBarItem(

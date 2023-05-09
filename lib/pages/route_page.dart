@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:camino_nomad/pages/elevation_chart_page.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../model/providers/route_provider.dart';
 import '../widgets/city_list_tile.dart';
@@ -9,7 +10,6 @@ import '../widgets/left_aligned_title.dart';
 import '../widgets/route_list_tile.dart';
 import 'choose_route_page.dart';
 import 'choose_start_end_page.dart';
-import 'coming_soon_page.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({super.key});
@@ -55,17 +55,23 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
 
                     return Column(
                       children: [
-                        RouteListTile(title: 'Route', subtitle: routeSub, icon: Icons.route, route: const ChooseRoutePage()),
-                        RouteListTile(
+                        ListTileWithIconSub(
+                            title: 'Route',
+                            subtitle: routeSub,
+                            icon: const FaIcon(FontAwesomeIcons.route),
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChooseRoutePage()))),
+                        ListTileWithIconSub(
                             title: 'Start here today!',
                             subtitle: startSub,
-                            icon: Icons.pin_drop_outlined,
-                            route: const ChooseStartEndPage(isStart: true, startIndex: 0)),
-                        RouteListTile(
+                            icon: const FaIcon(FontAwesomeIcons.mapPin),
+                            onTap: () => Navigator.push(
+                                context, MaterialPageRoute(builder: (context) => const ChooseStartEndPage(isStart: true, startIndex: 0)))),
+                        ListTileWithIconSub(
                             title: 'End here today!',
                             subtitle: endSub,
-                            icon: Icons.pin_drop_outlined,
-                            route: ChooseStartEndPage(isStart: false, startIndex: value.startIndex + 1)),
+                            icon: const FaIcon(FontAwesomeIcons.locationCrosshairs),
+                            onTap: () => Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => ChooseStartEndPage(isStart: false, startIndex: value.startIndex + 1)))),
                       ],
                     );
                   }),
