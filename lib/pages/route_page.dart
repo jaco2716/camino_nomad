@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:camino_nomad/pages/elevation_chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/providers/route_provider.dart';
@@ -75,22 +78,37 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                       color: Colors.blue,
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage()));
+                          if (routeProvider.endIndex != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
+                          }
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Consumer<RouteProvider>(builder: (context, value, _) {
-                            double? sum;
+                            double? distSum;
+                            double? eleGainSum;
+                            double? eleLossSum;
+                            double? eleMin;
+                            double? eleMax;
                             if (value.endIndex != null) {
                               var distanceList = value.allDistances?.getRange(value.startIndex + 1, value.endIndex! + 1);
-                              sum = distanceList?.reduce((a, b) => a + b);
+                              var eleGainList = value.allEleGain?.getRange(value.startIndex + 1, value.endIndex! + 1);
+                              var eleLossList = value.allEleLoss?.getRange(value.startIndex + 1, value.endIndex! + 1);
+                              var eleMinList = value.allMinEle?.getRange(value.startIndex + 1, value.endIndex! + 1);
+                              var eleMaxList = value.allMaxEle?.getRange(value.startIndex + 1, value.endIndex! + 1);
+
+                              distSum = distanceList?.reduce((a, b) => a + b);
+                              eleGainSum = eleGainList?.reduce((a, b) => a + b);
+                              eleLossSum = eleLossList?.reduce((a, b) => a + b);
+                              eleMin = eleMinList?.reduce(min);
+                              eleMax = eleMaxList?.reduce(max);
                             }
                             double? totalDistance = value.allDistances?.reduce((a, b) => a + b);
 
                             return Column(children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [const Text('Todays Distance:'), Text('${sum?.toStringAsFixed(2) ?? '?'} km')],
+                                children: [const Text('Todays Distance:'), Text('${distSum?.toStringAsFixed(2) ?? '?'} km')],
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,11 +117,17 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                               const Divider(color: Colors.white),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [Text('Elevation min/max:'), Text('? m / ? m')],
+                                children: [
+                                  const Text('Elevation min/max:'),
+                                  Text('${eleMin?.toStringAsFixed(0) ?? '?'} m / ${eleMax?.toStringAsFixed(0) ?? '?'} m')
+                                ],
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [Text('Elevation gain/loss:'), Text('? m / ? m')],
+                                children: [
+                                  const Text('Elevation gain/loss:'),
+                                  Text('${eleGainSum?.toStringAsFixed(0) ?? '?'} m / -${eleLossSum?.toStringAsFixed(0) ?? '?'} m')
+                                ],
                               ),
                             ]);
                           }),

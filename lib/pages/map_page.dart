@@ -13,9 +13,6 @@ class MapPage extends StatefulWidget {
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(43.16, -4.8),
-    // target: LatLng(42.739976, -7.355047),
-
-    // zoom: 15,
     zoom: 6,
   );
 
@@ -38,89 +35,10 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   void initState() {
     routeProvider = context.read<RouteProvider>();
     getRouteData();
-    readJson();
+    // readJson();
     super.initState();
   }
 
-  // void getPolyPoints() async {
-  //   PolylinePoints polylinePoints = PolylinePoints();
-  //   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-  //     googleApiKey,
-  //     PointLatLng(_origin.latitude, _origin.longitude),
-  //     PointLatLng(_destination.latitude, _destination.longitude),
-  //     wayPoints: [
-  //       PolylineWayPoint(location: "Roncesvalles"),
-  //       // PolylineWayPoint(location: "Espinal"),
-  //       PolylineWayPoint(location: "Zubiri"),
-  //       PolylineWayPoint(location: "Burlada"),
-  //       // PolylineWayPoint(location: "Uterga"),
-  //       // PolylineWayPoint(location: "Lorca"),
-  //       // PolylineWayPoint(location: "Viana"),
-  //       // PolylineWayPoint(location: "Viana"),
-  //     ],
-  //     travelMode: TravelMode.walking,
-  //   );
-
-  //   if (result.points.isNotEmpty) {
-  //     result.points.forEach((point) {
-  //       polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-  //     });
-  //   }
-  //   setState(() {});
-  //   // print(result.status);
-  //   // print(polylineCoordinates);
-  // }
-
-  Future<void> readJson() async {
-    //   // var myIcon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(20, 20)), 'assets/images/city_pin.png.png');
-
-    //   // late BitmapDescriptor myIcon;
-    //   // BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/my_icon.png').then((onValue) {
-    //   //   myIcon = onValue;
-    //   // });
-    //   // final String response = await rootBundle.loadString('assets/route_data/camino_francis_route_points.json');
-    final String response = await rootBundle.loadString('assets/route_data/test.json');
-    final Map<String, dynamic> routeData = await json.decode(response);
-
-    // List<dynamic> routePoints = routeData['route_points'];
-    cities = routeData['cities'];
-    //   // print(cities.toString());
-    //   // markers.add(Marker(markerId: const MarkerId('2'), position: const LatLng(42.2, -1.2), infoWindow: const InfoWindow(title: 'het'), icon: myIcon));
-    //   // markers.add(const Marker(markerId: MarkerId('3'), position: LatLng(42.2, -1.6), infoWindow: InfoWindow(title: 'het')));
-
-    //   markers = cities
-    //       .map<Marker>((e) => Marker(
-    //           markerId: MarkerId(e['key']),
-    //           position: LatLng(double.parse(e['lat']), double.parse(e['lon'])),
-    //           infoWindow: InfoWindow(title: e['name']),
-    //           icon: myIcon,
-    //           zIndex: 99))
-    //       .toSet();
-    //   // setMarkers();
-
-    //   // polylineCoordinates = (routePoints).map<LatLng>((e) => LatLng(double.parse(e['lat']), double.parse(e['lon']))).toList();
-    //   totalDistance = getTotalDistance();
-
-    //   setState(() {});
-  }
-
-  // setMarkers() {
-  //   // var data = context.read<RouteProvider>().routeData!;
-  //   // for (var i = 0; i < data.cities.length; i++) {
-  //   //   markers.add(Marker(
-  //   //       markerId: MarkerId('${data.cities[i].id}'),
-  //   //       position: LatLng(data.cities[i].lat, data.cities[i].lon),
-  //   //       infoWindow: InfoWindow(title: data.cities[i].name, snippet: '${data.cities[i].lat} - ${data.cities[i].lon}')));
-  //   // }
-  //   var data = routeProvider.routeData!;
-  //   for (var i = 0; i < data.cities.length; i++) {
-  //     markers.add(Marker(
-  //         markerId: MarkerId('point${i}'),
-  //         position: LatLng(data.routePoints[data.cities[i].routePointId].lat, data.routePoints[data.cities[i].routePointId].lon),
-  //         infoWindow: InfoWindow(title: data.cities[i].name, snippet: '${data.cities[i].lat} - ${data.cities[i].lon}'),
-  //         zIndex: 1));
-  //   }
-  // }
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
@@ -156,13 +74,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // Set<Marker> markers = {
-    //   const Marker(markerId: MarkerId('0'), position: _origin, infoWindow: InfoWindow(title: 'Start', snippet: 'Your starting point')),
-    //   const Marker(markerId: MarkerId('1'), position: _destination, infoWindow: InfoWindow(title: 'End', snippet: 'Your end point')),
-    //   const Marker(
-    //       markerId: MarkerId('2'), position: LatLng(43.12435300, -1.24474800), infoWindow: InfoWindow(title: 'End', snippet: 'Your end point')),
-    // };
-
     return SafeArea(
       child: Stack(
         children: [
@@ -189,18 +100,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
-              // onCameraMove: (position) {
-              //   print('cam move ${position.zoom}');
-              //   if (position.zoom < 10) {
-              //     setState(() {
-              //       _showMarkers = false;
-              //     });
-              //   } else {
-              //     setState(() {
-              //       _showMarkers = true;
-              //     });
-              //   }
-              // },
 
               onCameraIdle: () async {
                 var c = await _controller.future;
@@ -221,135 +120,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                 RouteLogic rl = RouteLogic();
                 rl.addFacitiliesToCities(routeProvider.routeData!, cities);
               },
-              // onTap: (argument) async {
-              //   print('tapped');
-              //   for (var i = 0; i < routeProvider.routeData!.routePoints.length; i++) {
-              //     var latdistance = argument.latitude - routeProvider.routeData!.routePoints[i].lat;
-              //     if (latdistance < 0) latdistance = latdistance * -1;
-              //     var londistance = argument.longitude - routeProvider.routeData!.routePoints[i].lon;
-              //     if (londistance < 0) londistance = londistance * -1;
-              //     // if (latdistance + londistance < 0.0003) print('## $i:  ${latdistance + londistance}');
-              //     if (latdistance + londistance < 0.0003) {
-              //       print('$i:  ${latdistance + londistance}');
-              //       List<double> cityDistances = [];
-              //       for (var j = 0; j < cities.length; j++) {
-              //         var clatdistance = argument.latitude - double.parse(cities[j]['lat']);
-              //         if (clatdistance < 0) clatdistance = clatdistance * -1;
-              //         var clondistance = argument.longitude - double.parse(cities[j]['lon']);
-              //         if (clondistance < 0) clondistance = clondistance * -1;
-              //         cityDistances.add(clatdistance + clondistance);
-              //         // // print('${cities[j]['name']} : ${cities[j]['lat']} : ${cities[j]['lon']}');
-              //         // // if (clatdistance + clondistance < 0.003) print('City $i:  ${clatdistance + clondistance}');
-              //         // if (clatdistance + clondistance < 0.003) {
-              //         //   var city = RouteCity(
-              //         //       id: j,
-              //         //       albergues: [],
-              //         //       facilities: [],
-              //         //       name: cities[j]['name'],
-              //         //       lat: double.parse(cities[j]['lat']),
-              //         //       lon: double.parse(cities[j]['lon']),
-              //         //       routePoint: RoutePoint(routeProvider.routeData!.routePoints[i].lat, routeProvider.routeData!.routePoints[i].lon,
-              //         //           routeProvider.routeData!.routePoints[i].ele));
 
-              //         //   // print('#### $j:  ${latdistance + londistance} : ${cities[j]['name']} ####');
-              //         //   print(city.toString());
-              //         //   print(city.toJson());
-              //         //   break;
-              //         // }
-              //       }
-              //       int lowestIndex = -1;
-              //       double minValue = 99;
-              //       print('length: ${cityDistances.length}');
-              //       for (var ik = 0; ik < cityDistances.length; ik++) {
-              //         if (cityDistances[ik] < minValue) {
-              //           minValue = cityDistances[ik];
-              //           lowestIndex = ik;
-              //         }
-              //       }
-              //       if (lowestIndex != -1) {
-              //         // var city = RouteCity(
-              //         //     id: lowestIndex,
-              //         //     albergues: [],
-              //         //     facilities: [],
-              //         //     name: cities[lowestIndex]['name'],
-              //         //     lat: double.parse(cities[lowestIndex]['lat']),
-              //         //     lon: double.parse(cities[lowestIndex]['lon']),
-              //         //     routePoint: RoutePoint(routeProvider.routeData!.routePoints[lowestIndex].lat,
-              //         //         routeProvider.routeData!.routePoints[lowestIndex].lon, routeProvider.routeData!.routePoints[lowestIndex].ele));
-              //         // // print(cityDistances);
-              //         // newCities.add(city);
-
-              //         print('Closest city = ${cities[lowestIndex]['name']}');
-              //       } else {
-              //         print('no city found');
-              //       }
-
-              //       break;
-              //     }
-              //   }
-//lat: 42.78871, lon: -7.56799
-//lat: 42.78711, lon: -7.56382
-
-//lat: 42.46358, lon: -5.88238
-//lat: 42.46442, lon: -5.87722
-              // var latsdistance = 42.46358 - 42.46442;
-              // if (latsdistance < 0) latsdistance = latsdistance * -1;
-              // var lonsdistance = -5.88238 - (-5.87722);
-              // if (lonsdistance < 0) lonsdistance = lonsdistance * -1;
-              // print(' city dist: ${latsdistance + lonsdistance}');
-
-              // for (var i = 0; i < cities.length; i++) {
-              //   var latdistance = argument.latitude - double.parse(cities[i]['lat']);
-              //   var londistance = argument.longitude - double.parse(cities[i]['lon']);
-              //   print('${cities[i]['name']} : ${cities[i]['lat']} : ${cities[i]['lon']}');
-              //   if (latdistance + londistance < 0.001 && latdistance + londistance > -0.001) {
-              //     var city = RouteCity(id: i,
-              //     albergues: [],
-              //     facilities: [],
-              //     name: cities[i]['name'],
-              //     lat: cities[i]['lat'],
-              //     lon: cities[i]['lon'],
-              //     routePoint: RoutePoint()
-
-              //     );
-              //     '''
-              //     {
-              //         "id": 1,
-              //         "name": "Honto (Napoleon Rute)",
-              //         "facilities": [],
-              //         "albergues": [],
-              //         "lat": 43.12435300,
-              //         "lon": -1.24474800,
-              //         "routePoint": {
-              //             "lat": 43.16366531,
-              //             "lon": -1.23436922,
-              //             "ele": 192.3
-              //         }
-              //     },
-              //     ''';
-              //     print('#### $i:  ${latdistance + londistance} : ${cities[i]['name']} ####');
-              //     break;
-              //   }
-              // }
-              // for (var i = 0; i < routeProvider.routeData!.routePoints.length; i++) {
-              //   var latdistance = argument.latitude - routeProvider.routeData!.routePoints[i].lat;
-              //   var londistance = argument.longitude - routeProvider.routeData!.routePoints[i].lon;
-              //   if (latdistance + londistance < 0.00004 && latdistance + londistance > -0.00004) {
-              //     print('$i:  ${latdistance + londistance}');
-              //     break;
-              //   }
-              // }
-
-              // print(argument);
-              // var c = await _controller.future;
-              // c.animateCamera(CameraUpdate.newLatLng(argument));
-
-              // },
               markers: _showMarkers ? markers : const <Marker>{},
             ),
           ),
           Card(
-            // color: Colors.white70,
             color: const Color(0xCCFFFFFF),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
@@ -375,3 +150,183 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 }
+
+
+
+  // Future<void> readJson() async {
+  //   //   // var myIcon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(20, 20)), 'assets/images/city_pin.png.png');
+
+  //   //   // late BitmapDescriptor myIcon;
+  //   //   // BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/my_icon.png').then((onValue) {
+  //   //   //   myIcon = onValue;
+  //   //   // });
+  //   //   // final String response = await rootBundle.loadString('assets/route_data/camino_francis_route_points.json');
+  //   final String response = await rootBundle.loadString('assets/route_data/test.json');
+  //   final Map<String, dynamic> routeData = await json.decode(response);
+
+  //   // List<dynamic> routePoints = routeData['route_points'];
+  //   cities = routeData['cities'];
+  //   //   // print(cities.toString());
+  //   //   // markers.add(Marker(markerId: const MarkerId('2'), position: const LatLng(42.2, -1.2), infoWindow: const InfoWindow(title: 'het'), icon: myIcon));
+  //   //   // markers.add(const Marker(markerId: MarkerId('3'), position: LatLng(42.2, -1.6), infoWindow: InfoWindow(title: 'het')));
+
+  //   //   markers = cities
+  //   //       .map<Marker>((e) => Marker(
+  //   //           markerId: MarkerId(e['key']),
+  //   //           position: LatLng(double.parse(e['lat']), double.parse(e['lon'])),
+  //   //           infoWindow: InfoWindow(title: e['name']),
+  //   //           icon: myIcon,
+  //   //           zIndex: 99))
+  //   //       .toSet();
+  //   //   // setMarkers();
+
+  //   //   // polylineCoordinates = (routePoints).map<LatLng>((e) => LatLng(double.parse(e['lat']), double.parse(e['lon']))).toList();
+  //   //   totalDistance = getTotalDistance();
+
+  //   //   setState(() {});
+  // }
+
+  // setMarkers() {
+  //   // var data = context.read<RouteProvider>().routeData!;
+  //   // for (var i = 0; i < data.cities.length; i++) {
+  //   //   markers.add(Marker(
+  //   //       markerId: MarkerId('${data.cities[i].id}'),
+  //   //       position: LatLng(data.cities[i].lat, data.cities[i].lon),
+  //   //       infoWindow: InfoWindow(title: data.cities[i].name, snippet: '${data.cities[i].lat} - ${data.cities[i].lon}')));
+  //   // }
+  //   var data = routeProvider.routeData!;
+  //   for (var i = 0; i < data.cities.length; i++) {
+  //     markers.add(Marker(
+  //         markerId: MarkerId('point${i}'),
+  //         position: LatLng(data.routePoints[data.cities[i].routePointId].lat, data.routePoints[data.cities[i].routePointId].lon),
+  //         infoWindow: InfoWindow(title: data.cities[i].name, snippet: '${data.cities[i].lat} - ${data.cities[i].lon}'),
+  //         zIndex: 1));
+  //   }
+  // }
+
+
+
+// findRPByTap(LatLng argument) async {
+//                 print('tapped');
+//                 for (var i = 0; i < routeProvider.routeData!.routePoints.length; i++) {
+//                   var latdistance = argument.latitude - routeProvider.routeData!.routePoints[i].lat;
+//                   if (latdistance < 0) latdistance = latdistance * -1;
+//                   var londistance = argument.longitude - routeProvider.routeData!.routePoints[i].lon;
+//                   if (londistance < 0) londistance = londistance * -1;
+//                   // if (latdistance + londistance < 0.0003) print('## $i:  ${latdistance + londistance}');
+//                   if (latdistance + londistance < 0.0003) {
+//                     print('$i:  ${latdistance + londistance}');
+//                     List<double> cityDistances = [];
+//                     for (var j = 0; j < cities.length; j++) {
+//                       var clatdistance = argument.latitude - double.parse(cities[j]['lat']);
+//                       if (clatdistance < 0) clatdistance = clatdistance * -1;
+//                       var clondistance = argument.longitude - double.parse(cities[j]['lon']);
+//                       if (clondistance < 0) clondistance = clondistance * -1;
+//                       cityDistances.add(clatdistance + clondistance);
+//                       // // print('${cities[j]['name']} : ${cities[j]['lat']} : ${cities[j]['lon']}');
+//                       // // if (clatdistance + clondistance < 0.003) print('City $i:  ${clatdistance + clondistance}');
+//                       // if (clatdistance + clondistance < 0.003) {
+//                       //   var city = RouteCity(
+//                       //       id: j,
+//                       //       albergues: [],
+//                       //       facilities: [],
+//                       //       name: cities[j]['name'],
+//                       //       lat: double.parse(cities[j]['lat']),
+//                       //       lon: double.parse(cities[j]['lon']),
+//                       //       routePoint: RoutePoint(routeProvider.routeData!.routePoints[i].lat, routeProvider.routeData!.routePoints[i].lon,
+//                       //           routeProvider.routeData!.routePoints[i].ele));
+
+//                       //   // print('#### $j:  ${latdistance + londistance} : ${cities[j]['name']} ####');
+//                       //   print(city.toString());
+//                       //   print(city.toJson());
+//                       //   break;
+//                       // }
+//                     }
+//                     int lowestIndex = -1;
+//                     double minValue = 99;
+//                     print('length: ${cityDistances.length}');
+//                     for (var ik = 0; ik < cityDistances.length; ik++) {
+//                       if (cityDistances[ik] < minValue) {
+//                         minValue = cityDistances[ik];
+//                         lowestIndex = ik;
+//                       }
+//                     }
+//                     if (lowestIndex != -1) {
+//                       // var city = RouteCity(
+//                       //     id: lowestIndex,
+//                       //     albergues: [],
+//                       //     facilities: [],
+//                       //     name: cities[lowestIndex]['name'],
+//                       //     lat: double.parse(cities[lowestIndex]['lat']),
+//                       //     lon: double.parse(cities[lowestIndex]['lon']),
+//                       //     routePoint: RoutePoint(routeProvider.routeData!.routePoints[lowestIndex].lat,
+//                       //         routeProvider.routeData!.routePoints[lowestIndex].lon, routeProvider.routeData!.routePoints[lowestIndex].ele));
+//                       // // print(cityDistances);
+//                       // newCities.add(city);
+
+//                       print('Closest city = ${cities[lowestIndex]['name']}');
+//                     } else {
+//                       print('no city found');
+//                     }
+
+//                     break;
+//                   }
+//                 }
+// lat: 42.78871, lon: -7.56799
+// lat: 42.78711, lon: -7.56382
+
+// lat: 42.46358, lon: -5.88238
+// lat: 42.46442, lon: -5.87722
+//               var latsdistance = 42.46358 - 42.46442;
+//               if (latsdistance < 0) latsdistance = latsdistance * -1;
+//               var lonsdistance = -5.88238 - (-5.87722);
+//               if (lonsdistance < 0) lonsdistance = lonsdistance * -1;
+//               print(' city dist: ${latsdistance + lonsdistance}');
+
+//               for (var i = 0; i < cities.length; i++) {
+//                 var latdistance = argument.latitude - double.parse(cities[i]['lat']);
+//                 var londistance = argument.longitude - double.parse(cities[i]['lon']);
+//                 print('${cities[i]['name']} : ${cities[i]['lat']} : ${cities[i]['lon']}');
+//                 if (latdistance + londistance < 0.001 && latdistance + londistance > -0.001) {
+//                   var city = RouteCity(id: i,
+//                   albergues: [],
+//                   facilities: [],
+//                   name: cities[i]['name'],
+//                   lat: cities[i]['lat'],
+//                   lon: cities[i]['lon'],
+//                   routePoint: RoutePoint()
+
+//                   );
+//                   '''
+//                   {
+//                       "id": 1,
+//                       "name": "Honto (Napoleon Rute)",
+//                       "facilities": [],
+//                       "albergues": [],
+//                       "lat": 43.12435300,
+//                       "lon": -1.24474800,
+//                       "routePoint": {
+//                           "lat": 43.16366531,
+//                           "lon": -1.23436922,
+//                           "ele": 192.3
+//                       }
+//                   },
+//                   ''';
+//                   print('#### $i:  ${latdistance + londistance} : ${cities[i]['name']} ####');
+//                   break;
+//                 }
+//               }
+//               for (var i = 0; i < routeProvider.routeData!.routePoints.length; i++) {
+//                 var latdistance = argument.latitude - routeProvider.routeData!.routePoints[i].lat;
+//                 var londistance = argument.longitude - routeProvider.routeData!.routePoints[i].lon;
+//                 if (latdistance + londistance < 0.00004 && latdistance + londistance > -0.00004) {
+//                   print('$i:  ${latdistance + londistance}');
+//                   break;
+//                 }
+//               }
+
+//               print(argument);
+//               var c = await _controller.future;
+//               c.animateCamera(CameraUpdate.newLatLng(argument));
+
+//               },
