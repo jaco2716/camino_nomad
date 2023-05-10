@@ -3,6 +3,7 @@ import 'package:camino_nomad/logic/url_logic.dart';
 import 'package:camino_nomad/model/route_info/albergue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../widgets/albergue_header_images.dart';
 import '../../widgets/booking_com_widgets.dart';
 import 'albergue_info_list_tile.dart';
@@ -70,6 +71,55 @@ class AlberguePage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Info:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            const SizedBox(height: 6),
+                            Column(
+                                children: albergue.prices.map((e) {
+                              String priceString = '';
+                              if (e.fromPrice != null && e.toPrice != null) {
+                                priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                              } else if (e.fromPrice != null) {
+                                priceString = '${e.fromPrice!.round()}€ +';
+                              } else {
+                                priceString = '${e.toPrice!.round()}€';
+                              }
+                              return Container(
+                                height: 24,
+                                decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5))),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                      child: Image.asset(
+                                        albergueTypeIconMap[e.type]!,
+                                        color: Colors.amber[800],
+                                        // size: 18,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(e.type.name.camelToSentence()),
+                                    const Spacer(),
+                                    Text(priceString),
+                                    const SizedBox(width: 12),
+                                  ],
+                                ),
+                              );
+                            }).toList()),
+                            // const SizedBox(height: 10),
+                            AlbergueInfoListTile('Check-in:', trailing: albergue.checkInTime, show: albergue.checkInTime.isNotEmpty),
+                            AlbergueInfoListTile('Check-out:', trailing: albergue.checkInTime, show: albergue.checkOutTime.isNotEmpty),
+                            AlbergueInfoListTile('Close:', trailing: albergue.closeTime, show: albergue.closeTime.isNotEmpty),
+                            AlbergueInfoListTile('Beds:', trailing: '${albergue.dormatoryBedAmount}', show: albergue.dormatoryBedAmount > 0),
+                            AlbergueInfoListTile('Dormitories:', trailing: '${albergue.dormatoryAmount}', show: albergue.dormatoryAmount > 0),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -77,68 +127,39 @@ class AlberguePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 24.0),
+                                  child: Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                ),
                                 const SizedBox(height: 6),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                GridView.count(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 8,
                                   children: albergue.albergueFacilities
-                                      .map((e) => Row(children: [
-                                            Icon(
-                                              Icons.check,
-                                              // albergueFacilityIconMap[e],
-                                              size: 22,
-                                              color: Colors.amber[800],
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(e.name.camelToSentence())
-                                          ]))
+                                      .map((e) => Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
+                                            child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                              Icon(
+                                                Icons.check,
+                                                // albergueFacilityIconMap[e],
+                                                size: 15,
+                                                color: Colors.amber[800],
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(e.name.camelToSentence())
+                                            ]),
+                                          ))
                                       .toList(),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(width: 10),
-                          SizedBox(
-                            width: 170,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Info:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                                const SizedBox(height: 6),
-                                Column(
-                                    children: albergue.prices.map((e) {
-                                  String priceString = '';
-                                  if (e.fromPrice != null && e.toPrice != null) {
-                                    priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                                  } else if (e.fromPrice != null) {
-                                    priceString = '${e.fromPrice!.round()}€ +';
-                                  } else {
-                                    priceString = '${e.toPrice!.round()}€';
-                                  }
-                                  return Row(
-                                    children: [
-                                      Icon(
-                                        albergueTypeIconMap[e.type],
-                                        color: Colors.amber[800],
-                                        size: 18,
-                                      ),
-                                      Text(e.type.name.camelToSentence()),
-                                      const Spacer(),
-                                      Text(priceString)
-                                    ],
-                                  );
-                                }).toList()),
-                                AlbergueInfoListTile('Check-in:', trailing: albergue.checkInTime, show: albergue.checkInTime.isNotEmpty),
-                                AlbergueInfoListTile('Check-out:', trailing: albergue.checkInTime, show: albergue.checkOutTime.isNotEmpty),
-                                AlbergueInfoListTile('Close:', trailing: albergue.closeTime, show: albergue.closeTime.isNotEmpty),
-                                AlbergueInfoListTile('Beds:', trailing: '${albergue.dormatoryBedAmount}', show: albergue.dormatoryBedAmount > 0),
-                                AlbergueInfoListTile('Dormitories:', trailing: '${albergue.dormatoryAmount}', show: albergue.dormatoryAmount > 0),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
                       BookingAndFacebookRow(albergue: albergue),
                       const SizedBox(height: 12),
                       albergue.website.isNotEmpty

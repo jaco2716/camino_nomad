@@ -135,12 +135,21 @@ Map<AlbergueFacility, IconData> albergueFacilityIconMap = {
   AlbergueFacility.platesUtensils: Icons.dining_outlined,
   AlbergueFacility.clothesLine: Icons.dry_cleaning,
 };
-Map<AlbergueType, IconData> albergueTypeIconMap = {
-  AlbergueType.dormitory: Icons.bedroom_child_outlined,
-  AlbergueType.singleRoom: Icons.single_bed,
-  AlbergueType.doubleRoom: Icons.king_bed,
-  AlbergueType.tripleRoom: Icons.timer_3_select_sharp,
-  AlbergueType.quadRoom: Icons.four_g_mobiledata,
-  AlbergueType.apartment: Icons.apartment,
-  AlbergueType.bedSharedRoom: Icons.share,
+Map<AlbergueType, String> albergueTypeIconMap = {
+  AlbergueType.dormitory: 'assets/images/custom_icons/bunkbed.png',
+  AlbergueType.singleRoom: 'assets/images/custom_icons/people1.png',
+  AlbergueType.doubleRoom: 'assets/images/custom_icons/people2.png',
+  AlbergueType.tripleRoom: 'assets/images/custom_icons/people3.png',
+  AlbergueType.quadRoom: 'assets/images/custom_icons/people4.png',
+  AlbergueType.apartment: 'assets/images/custom_icons/apartment.png',
+  AlbergueType.bedSharedRoom: 'assets/images/custom_icons/sharedBed.png',
 };
+// Map<AlbergueType, IconData> albergueTypeIconMap = {
+//   AlbergueType.dormitory: Icons.bedroom_child_outlined,
+//   AlbergueType.singleRoom: Icons.single_bed,
+//   AlbergueType.doubleRoom: Icons.king_bed,
+//   AlbergueType.tripleRoom: Icons.timer_3_select_sharp,
+//   AlbergueType.quadRoom: Icons.four_g_mobiledata,
+//   AlbergueType.apartment: Icons.apartment,
+//   AlbergueType.bedSharedRoom: Icons.share,
+// };

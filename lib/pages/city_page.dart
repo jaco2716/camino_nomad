@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'package:camino_nomad/extensions/string_extensions.dart';
+import 'package:camino_nomad/widgets/my_alert_dialog.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../logic/route_logic.dart';
 import '../pages/albergue_page/albergue_page.dart';
 import '../widgets/booking_com_widgets.dart';
@@ -6,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/route_info/albergue.dart';
 import '../model/route_info/route_city.dart';
+import '../widgets/expandable_card.dart';
 import '../widgets/left_aligned_title.dart';
 
 class CityPage extends StatefulWidget {
@@ -20,11 +25,27 @@ class CityPage extends StatefulWidget {
 class _CityPageState extends State<CityPage> {
   List<Albergue> newAlbergues = [];
   dynamic cityfile;
+  List<Widget> facilityRow = [];
 
   @override
   void initState() {
     super.initState();
-    loadFile();
+    // loadFile();
+    generateFacilityIcons();
+  }
+
+  generateFacilityIcons() {
+    if (widget.city.facilities.isNotEmpty) {
+      facilityRow = (widget.city.facilities)
+          .map((e) => Icon(
+                facilityIconMap[e],
+                size: 20,
+                color: Colors.amber[800],
+              ))
+          .toList();
+
+      facilityRow.add(const Icon(FontAwesomeIcons.solidCircleQuestion, size: 10, color: Colors.grey));
+    }
   }
 
   loadFile() async {
@@ -56,30 +77,72 @@ class _CityPageState extends State<CityPage> {
             padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
             child: Column(children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Wrap(
-                          children: (widget.city.facilities)
-                              .map((e) => Icon(
-                                    facilityIconMap[e],
-                                    size: 20,
-                                    color: Colors.amber[800],
-                                  ))
-                              .toList()),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return MyInfoDialog(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: (widget.city.facilities)
+                                      .map((e) => Row(
+                                            children: [
+                                              Icon(facilityIconMap[e], size: 20, color: Colors.amber[800]),
+                                              const SizedBox(width: 10),
+                                              Text(e.name.camelToSentence()),
+                                            ],
+                                          ))
+                                      .toList(),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Wrap(children: facilityRow),
+                        ),
+                      ),
                     ),
                     const Icon(Icons.location_on, size: 18, color: Colors.blue),
                     Text('${widget.totalDistance.toStringAsFixed(1)} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                   ],
                 ),
               ),
-              const SizedBox(height: 40),
+
+              const SizedBox(height: 20),
+
               const LeftAlignedTitle('Accomodations'),
               Expanded(
                 child: ListView.builder(
                   itemCount: widget.city.albergues.length,
                   itemBuilder: (BuildContext context, int index) {
+                    List<Widget> albergueFacilityIcons = [];
+
+                    if (widget.city.albergues[index].bookingComUrl.isNotEmpty) {
+                      albergueFacilityIcons.add(Padding(
+                          padding: const EdgeInsets.only(right: 4.0),
+                          child: SizedBox(height: 20, child: Image.asset('assets/images/bookinglogo.png'))));
+                    }
+                    if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)) {
+                      albergueFacilityIcons
+                          .add(const Padding(padding: EdgeInsets.only(right: 4.0), child: Icon(FontAwesomeIcons.kitchenSet, size: 20)));
+                    }
+                    if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegan) ||
+                        widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegetarian)) {
+                      albergueFacilityIcons
+                          .add(const Padding(padding: EdgeInsets.only(right: 4.0), child: Icon(FontAwesomeIcons.seedling, size: 20)));
+                    }
+                    if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.communityDinner)) {
+                      albergueFacilityIcons
+                          .add(const Padding(padding: EdgeInsets.only(right: 4.0), child: Icon(Icons.local_dining_rounded, size: 20)));
+                    }
                     Color statusColor = Colors.green;
 
                     if (widget.city.albergues[index].status == AlbergueStatus.unknown) {
@@ -119,29 +182,20 @@ class _CityPageState extends State<CityPage> {
                                 }
                                 return Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: [Icon(albergueTypeIconMap[e.type]), Text(priceString)],
+                                  children: [
+                                    SizedBox(
+                                        height: 20,
+                                        child: Image.asset(
+                                          albergueTypeIconMap[e.type]!,
+                                          color: Colors.amber[800],
+                                        )),
+                                    Text(priceString),
+                                    const SizedBox(width: 6),
+                                  ],
                                 );
                               }).toList()),
                             ),
-                            Wrap(
-                              children: [
-                                widget.city.albergues[index].bookingComUrl.isNotEmpty
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(right: 4.0),
-                                        child: SizedBox(height: 20, child: Image.asset('assets/images/bookinglogo.png')),
-                                      )
-                                    : const SizedBox.shrink(),
-                                widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)
-                                    ? const Padding(
-                                        padding: EdgeInsets.only(right: 4.0),
-                                        child: Icon(Icons.kitchen, size: 20),
-                                      )
-                                    : const SizedBox.shrink(),
-                                widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.breakfast)
-                                    ? const Icon(Icons.breakfast_dining, size: 20)
-                                    : const SizedBox.shrink(),
-                              ],
-                            ),
+                            Wrap(children: albergueFacilityIcons),
                           ],
                         ),
                         // Wrap(

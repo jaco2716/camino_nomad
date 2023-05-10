@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AlbergueInfoListTile extends StatelessWidget {
   const AlbergueInfoListTile(
@@ -13,6 +14,19 @@ class AlbergueInfoListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return show ? Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(title), Text(trailing)]) : const SizedBox.shrink();
+    return show
+        ? Container(
+            height: 24,
+            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5))),
+            child: Row(children: [
+              SizedBox(width: 20, child: Icon(Icons.horizontal_rule_rounded, color: Colors.amber[800], size: 12)),
+              const SizedBox(width: 10),
+              Text(title),
+              const Spacer(),
+              Text(trailing),
+              const SizedBox(width: 12),
+            ]),
+          )
+        : const SizedBox.shrink();
   }
 }

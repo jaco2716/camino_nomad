@@ -67,7 +67,7 @@ class ChooseStartEndPage extends StatelessWidget {
                   } else {
                     int cityIndex = index + startIndex;
                     double totalDistance = 0;
-                    for (var i = 1; i <= index; i++) {
+                    for (var i = 1; i <= index + 1; i++) {
                       totalDistance += routeProvider.allDistances?[i + (routeProvider.startIndex)] ?? 0;
                     }
                     return CityListTile(

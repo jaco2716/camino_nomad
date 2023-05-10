@@ -1,4 +1,4 @@
-import 'package:camino_nomad/widgets/route_list_tile.dart';
+import 'package:camino_nomad/widgets/list_tile_with_icon_sub.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

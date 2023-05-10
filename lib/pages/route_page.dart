@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../model/providers/route_provider.dart';
 import '../widgets/city_list_tile.dart';
 import '../widgets/left_aligned_title.dart';
-import '../widgets/route_list_tile.dart';
+import '../widgets/list_tile_with_icon_sub.dart';
 import 'choose_route_page.dart';
 import 'choose_start_end_page.dart';
 
