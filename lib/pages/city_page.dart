@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/route_info/albergue.dart';
 import '../model/route_info/route_city.dart';
-import '../widgets/expandable_card.dart';
 import '../widgets/left_aligned_title.dart';
 
 class CityPage extends StatefulWidget {
@@ -24,13 +23,12 @@ class CityPage extends StatefulWidget {
 
 class _CityPageState extends State<CityPage> {
   List<Albergue> newAlbergues = [];
-  dynamic cityfile;
+
   List<Widget> facilityRow = [];
 
   @override
   void initState() {
     super.initState();
-    // loadFile();
     generateFacilityIcons();
   }
 
@@ -48,17 +46,20 @@ class _CityPageState extends State<CityPage> {
     }
   }
 
-  loadFile() async {
+  Future<dynamic> loadFile() async {
     final String response = await rootBundle.loadString('assets/route_data/test.json');
     final Map<String, dynamic> routeData = await json.decode(response);
 
     // List<dynamic> routePoints = routeData['route_points'];
     int cityindex = (routeData['cities'] as List<dynamic>).indexWhere((element) => element['name'] == widget.city.name);
-    cityfile = routeData['cities'][cityindex];
+    // dynamic cityfile = routeData['cities'][cityindex];
+    return routeData['cities'][cityindex];
     // print(cityfile);
   }
 
-  generateAlbergues() {
+  generateAlbergues() async {
+    dynamic cityfile = await loadFile();
+
     final rl = RouteLogic();
     List<dynamic> alberguesF = cityfile['albergues'];
     int startID = widget.city.albergues.length;
@@ -115,9 +116,7 @@ class _CityPageState extends State<CityPage> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 20),
-
               const LeftAlignedTitle('Accomodations'),
               Expanded(
                 child: ListView.builder(
@@ -213,14 +212,14 @@ class _CityPageState extends State<CityPage> {
                   },
                 ),
               ),
-              // ElevatedButton(
-              //     onPressed: () {
-              //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
-              //       // int id = city.albergues.length;
-              //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
-              //       generateAlbergues();
-              //     },
-              //     child: const Text('Add'))
+              ElevatedButton(
+                  onPressed: () {
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
+                    // int id = city.albergues.length;
+                    // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
+                    generateAlbergues();
+                  },
+                  child: const Text('Add'))
             ]),
           )),
     );

@@ -204,6 +204,7 @@ class RouteLogic {
     }
 
     printMore(jsonEncode(newAlbergues));
+    // printMore(newAlbergues.toString());
   }
 
   AlbergueStatus convertStatus(int status) {

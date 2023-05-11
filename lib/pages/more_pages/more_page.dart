@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/button_list_tile.dart';
 import '../coming_soon_page.dart';
 import 'useful_links_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({super.key});
@@ -20,13 +21,31 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
-          children: const [
-            SizedBox(height: 50),
-            ButtonListTile(title: 'Offline Settings', route: ComingSoonPage()),
-            ButtonListTile(title: 'Share app', route: ComingSoonPage()),
-            ButtonListTile(title: 'Useful links', route: UsefulLinksPage()),
-            ButtonListTile(title: 'Updates', route: ComingSoonPage()),
-            ButtonListTile(title: 'Contact', route: ContactPage()),
+          children: [
+            const SizedBox(height: 50),
+            ButtonListTile(
+              title: 'Offline Settings',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
+            ),
+            ButtonListTile(
+              title: 'Share app',
+              onTap: () {
+                // Share.share('check out my website https://example.com', subject: 'Look what I made!');
+                Share.share('Download Camino Nomad for iOS and Android: https://caminonomad.com');
+              },
+            ),
+            ButtonListTile(
+              title: 'Useful links',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const UsefulLinksPage())),
+            ),
+            ButtonListTile(
+              title: 'Updates',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
+            ),
+            ButtonListTile(
+              title: 'Contact',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactPage())),
+            ),
           ],
         ),
       ),
