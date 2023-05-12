@@ -2,29 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/providers/route_provider.dart';
 import '../widgets/city_list_tile.dart';
+import 'package:diacritic/diacritic.dart';
 
-class ChooseStartEndPage extends StatelessWidget {
+class ChooseStartEndPage extends StatefulWidget {
   const ChooseStartEndPage({super.key, required this.isStart, required this.startIndex});
 
   final bool isStart;
   final int startIndex;
 
-  // static const List<String> dataList = [
-  //   'Saint Jean Piet de Port',
-  //   'Honto (Napoleon Route)',
-  //   'Orisson (Napoleon Route)',
-  //   'Roncesvalles',
-  //   'Burguete',
-  //   'Espinal',
-  // ];
+  @override
+  State<ChooseStartEndPage> createState() => _ChooseStartEndPageState();
+}
+
+class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
+  final _searchController = TextEditingController();
+
+  late RouteProvider routeProvider;
+  late List<bool> showCities;
+
+  @override
+  void initState() {
+    super.initState();
+    routeProvider = Provider.of<RouteProvider>(context, listen: false);
+    showCities = List.generate(routeProvider.routeData?.cities.length ?? 0, (index) => true);
+  }
 
   @override
   Widget build(BuildContext context) {
-    var routeProvider = Provider.of<RouteProvider>(context, listen: false);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(isStart ? 'Start Position' : 'End Position'),
+        title: Text(widget.isStart ? 'Start Position' : 'End Position'),
       ),
       body: SafeArea(
           child: Padding(
@@ -32,6 +39,8 @@ class ChooseStartEndPage extends StatelessWidget {
         child: Column(
           children: [
             TextFormField(
+              controller: _searchController,
+              onChanged: searchCities,
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
@@ -43,29 +52,30 @@ class ChooseStartEndPage extends StatelessWidget {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 20),
-                itemCount: (routeProvider.routeData?.cities.length ?? 0) - startIndex,
+                itemCount: (routeProvider.routeData?.cities.length ?? 0) - widget.startIndex,
                 itemBuilder: (context, index) {
-                  if (isStart) {
+                  if (!showCities[index + widget.startIndex]) return const SizedBox.shrink();
+                  if (widget.isStart) {
                     return Card(
                         child: InkWell(
                       onTap: () {
-                        if (isStart) {
-                          routeProvider.setStartIndex(index + startIndex);
+                        if (widget.isStart) {
+                          routeProvider.setStartIndex(index + widget.startIndex);
                           routeProvider.setEndIndex(null);
                         } else {
-                          routeProvider.setEndIndex(index + startIndex);
+                          routeProvider.setEndIndex(index + widget.startIndex);
                         }
                         Navigator.pop(context);
                       },
                       child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
-                            routeProvider.routeData?.cities[index + startIndex].name ?? '',
+                            routeProvider.routeData?.cities[index + widget.startIndex].name ?? '',
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                           )),
                     ));
                   } else {
-                    int cityIndex = index + startIndex;
+                    int cityIndex = index + widget.startIndex;
                     double totalDistance = 0;
                     for (var i = 1; i <= index + 1; i++) {
                       totalDistance += routeProvider.allDistances?[i + (routeProvider.startIndex)] ?? 0;
@@ -76,7 +86,7 @@ class ChooseStartEndPage extends StatelessWidget {
                       totalDistance: totalDistance,
                       distanceBetween: index == 0 ? 0 : routeProvider.allDistances![cityIndex],
                       onPressed: () {
-                        routeProvider.setEndIndex(index + startIndex);
+                        routeProvider.setEndIndex(index + widget.startIndex);
                         Navigator.pop(context);
                       },
                     );
@@ -88,5 +98,15 @@ class ChooseStartEndPage extends StatelessWidget {
         ),
       )),
     );
+  }
+
+  searchCities(String value) {
+    if (routeProvider.routeData != null) {
+      final input = removeDiacritics(value).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase();
+      final tempShowCities = routeProvider.routeData!.cities
+          .map((e) => removeDiacritics(e.name).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase().contains(input))
+          .toList();
+      setState(() => showCities = tempShowCities);
+    }
   }
 }

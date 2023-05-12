@@ -157,7 +157,6 @@ class RouteLogic {
             double.tryParse(alberguesF[i]['price_to_bed_shared_room'] ?? 'NULL'));
         newItem.prices.add(price);
       }
-
       if (alberguesF[i]['emails'] != null) {
         for (var j = 0; j < alberguesF[i]['emails'].length; j++) {
           newItem.emails.add(alberguesF[i]['emails'][j]['email']);
@@ -169,25 +168,27 @@ class RouteLogic {
         }
       }
 
+      if (alberguesF[i]['has_wifi'] == '1') newItem.albergueFacilities.add(AlbergueFacility.wifi);
+      if (alberguesF[i]['has_tv'] == '1') newItem.albergueFacilities.add(AlbergueFacility.tv);
+      if (alberguesF[i]['has_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfast);
+      if (alberguesF[i]['is_breakfast_included'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfastIncluded);
+      if (alberguesF[i]['has_lunch'] == '1') newItem.albergueFacilities.add(AlbergueFacility.lunch);
+      if (alberguesF[i]['has_dinner'] == '1') newItem.albergueFacilities.add(AlbergueFacility.dinner);
+      if (alberguesF[i]['has_community_dinner'] == '1') newItem.albergueFacilities.add(AlbergueFacility.communityDinner);
       if (alberguesF[i]['has_kitchen'] == '1') newItem.albergueFacilities.add(AlbergueFacility.kitchen);
-      if (alberguesF[i]['has_cooktops'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cooktops);
       if (alberguesF[i]['has_microwave'] == '1') newItem.albergueFacilities.add(AlbergueFacility.microwave);
       if (alberguesF[i]['has_fridge'] == '1') newItem.albergueFacilities.add(AlbergueFacility.fridge);
       if (alberguesF[i]['has_water_boiler'] == '1') newItem.albergueFacilities.add(AlbergueFacility.waterBoiler);
-      if (alberguesF[i]['has_plates_utensils'] == '1') newItem.albergueFacilities.add(AlbergueFacility.platesUtensils);
+      if (alberguesF[i]['has_cooktops'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cooktops);
       if (alberguesF[i]['has_cooking_pots'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cookingPots);
       if (alberguesF[i]['has_oven'] == '1') newItem.albergueFacilities.add(AlbergueFacility.oven);
-      if (alberguesF[i]['has_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfast);
-      if (alberguesF[i]['is_breakfast_included'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfastIncluded);
+      if (alberguesF[i]['has_plates_utensils'] == '1') newItem.albergueFacilities.add(AlbergueFacility.platesUtensils);
       if (alberguesF[i]['has_clothes_line'] == '1') newItem.albergueFacilities.add(AlbergueFacility.clothesLine);
-      if (alberguesF[i]['has_wifi'] == '1') newItem.albergueFacilities.add(AlbergueFacility.wifi);
-      if (alberguesF[i]['has_tv'] == '1') newItem.albergueFacilities.add(AlbergueFacility.tv);
       if (alberguesF[i]['is_vegetarian'] == '1') newItem.albergueFacilities.add(AlbergueFacility.vegetarian);
       if (alberguesF[i]['has_vegan_option'] == '1') newItem.albergueFacilities.add(AlbergueFacility.vegan);
       if (alberguesF[i]['has_hand_washing_sink'] == '1') newItem.albergueFacilities.add(AlbergueFacility.handWashingSink);
       if (alberguesF[i]['has_washing_machine'] == '1') newItem.albergueFacilities.add(AlbergueFacility.washingMachine);
       if (alberguesF[i]['has_tumble_dryer'] == '1') newItem.albergueFacilities.add(AlbergueFacility.tumbleDryer);
-      if (alberguesF[i]['has_community_dinner'] == '1') newItem.albergueFacilities.add(AlbergueFacility.communityDinner);
       if (alberguesF[i]['has_vending_machine'] == '1') newItem.albergueFacilities.add(AlbergueFacility.vendingMachine);
       if (alberguesF[i]['has_swimingpool'] == '1') newItem.albergueFacilities.add(AlbergueFacility.swimingPool);
       if (alberguesF[i]['has_cube_beds'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cubeBeds);
@@ -197,7 +198,6 @@ class RouteLogic {
       if (alberguesF[i]['has_cotton_sheets'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cottonSheets);
       if (alberguesF[i]['has_donativo_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.donativoBreakfast);
       if (alberguesF[i]['has_full_laundry_service'] == '1') newItem.albergueFacilities.add(AlbergueFacility.fullLaundryService);
-      if (alberguesF[i]['has_lunch'] == '1') newItem.albergueFacilities.add(AlbergueFacility.lunch);
       if (alberguesF[i]['pets_allowed'] == '1') newItem.albergueFacilities.add(AlbergueFacility.petsAllowed);
 
       newAlbergues.add(newItem);
