@@ -88,7 +88,7 @@ class AlberguePage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      // const SizedBox(height: 10),
                       InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
@@ -122,7 +122,7 @@ class AlberguePage extends StatelessWidget {
                           );
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
                           child: Wrap(
                               children: highlightedFacilityImagePaths
                                   .map((e) => e['title'] == 'info'
@@ -140,7 +140,7 @@ class AlberguePage extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -187,49 +187,41 @@ class AlberguePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Row(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 24.0),
+                          albergue.albergueFacilities.isNotEmpty
+                              ? const Padding(
+                                  padding: EdgeInsets.only(left: 24.0, bottom: 6, top: 12),
                                   child: Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                                ),
-                                const SizedBox(height: 6),
-                                GridView.count(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 8,
-                                  children: albergue.albergueFacilities
-                                      .map((e) => Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
-                                            child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                              Icon(
-                                                Icons.check,
-                                                // albergueFacilityIconMap[e],
-                                                size: 15,
-                                                color: Colors.amber[800],
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(e.name.camelToSentence())
-                                            ]),
-                                          ))
-                                      .toList(),
-                                ),
-                              ],
-                            ),
+                                )
+                              : const SizedBox.shrink(),
+                          GridView.count(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisCount: 2,
+                            childAspectRatio: 8,
+                            children: albergue.albergueFacilities
+                                .map((e) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
+                                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                        Icon(
+                                          Icons.check,
+                                          // albergueFacilityIconMap[e],
+                                          size: 15,
+                                          color: Colors.amber[800],
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(e.name.camelToSentence())
+                                      ]),
+                                    ))
+                                .toList(),
                           ),
-                          const SizedBox(width: 10),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      // const SizedBox(height: 16),
                       BookingAndFacebookRow(albergue: albergue),
-                      const SizedBox(height: 12),
+                      // const SizedBox(height: 16),
                       albergue.website.isNotEmpty
                           ? Center(
                               child: TextButton(
@@ -301,8 +293,12 @@ class BookingAndFacebookRow extends StatelessWidget {
         ),
       ));
     }
+    if (tileWidgets.isEmpty) return const SizedBox.shrink();
 
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: tileWidgets);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: tileWidgets),
+    );
   }
 }
 
