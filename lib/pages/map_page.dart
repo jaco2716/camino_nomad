@@ -46,7 +46,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   getRouteData() async {
-    final Uint8List markerIcon = await getBytesFromAsset('assets/images/city_pin.png.png', 70);
+    final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/city_pin.png', 70);
     var myIcon = BitmapDescriptor.fromBytes(markerIcon);
     var routePoints = routeProvider.routeData!.routePoints;
     var routeCities = routeProvider.routeData!.cities;

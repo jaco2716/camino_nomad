@@ -136,13 +136,13 @@ Map<AlbergueFacility, IconData> albergueFacilityIconMap = {
   AlbergueFacility.clothesLine: Icons.dry_cleaning,
 };
 Map<AlbergueType, String> albergueTypeIconMap = {
-  AlbergueType.dormitory: 'assets/images/custom_icons/bunkbed.png',
-  AlbergueType.singleRoom: 'assets/images/custom_icons/people1.png',
-  AlbergueType.doubleRoom: 'assets/images/custom_icons/people2.png',
-  AlbergueType.tripleRoom: 'assets/images/custom_icons/people3.png',
-  AlbergueType.quadRoom: 'assets/images/custom_icons/people4.png',
-  AlbergueType.apartment: 'assets/images/custom_icons/apartment.png',
-  AlbergueType.bedSharedRoom: 'assets/images/custom_icons/sharedBed.png',
+  AlbergueType.dormitory: 'assets/images/custom_icons/albergue_type/bunkbed.png',
+  AlbergueType.singleRoom: 'assets/images/custom_icons/albergue_type/people1.png',
+  AlbergueType.doubleRoom: 'assets/images/custom_icons/albergue_type/people2.png',
+  AlbergueType.tripleRoom: 'assets/images/custom_icons/albergue_type/people3.png',
+  AlbergueType.quadRoom: 'assets/images/custom_icons/albergue_type/people4.png',
+  AlbergueType.apartment: 'assets/images/custom_icons/albergue_type/apartment.png',
+  AlbergueType.bedSharedRoom: 'assets/images/custom_icons/albergue_type/sharedBed.png',
 };
 // Map<AlbergueType, IconData> albergueTypeIconMap = {
 //   AlbergueType.dormitory: Icons.bedroom_child_outlined,

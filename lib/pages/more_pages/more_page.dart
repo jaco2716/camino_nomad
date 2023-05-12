@@ -28,19 +28,16 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
             ),
             ButtonListTile(
+              title: 'Updates',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
+            ),
+            ButtonListTile(
               title: 'Share app',
-              onTap: () {
-                // Share.share('check out my website https://example.com', subject: 'Look what I made!');
-                Share.share('Download Camino Nomad for iOS and Android: https://caminonomad.com');
-              },
+              onTap: () => Share.share('Download Camino Nomad for iOS and Android: https://caminonomad.com'),
             ),
             ButtonListTile(
               title: 'Useful links',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const UsefulLinksPage())),
-            ),
-            ButtonListTile(
-              title: 'Updates',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
             ),
             ButtonListTile(
               title: 'Contact',

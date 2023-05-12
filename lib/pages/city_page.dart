@@ -122,25 +122,19 @@ class _CityPageState extends State<CityPage> {
                 child: ListView.builder(
                   itemCount: widget.city.albergues.length,
                   itemBuilder: (BuildContext context, int index) {
-                    List<Widget> albergueFacilityIcons = [];
-
+                    List<String> highlightedFacilityImagePaths = [];
                     if (widget.city.albergues[index].bookingComUrl.isNotEmpty) {
-                      albergueFacilityIcons.add(Padding(
-                          padding: const EdgeInsets.only(right: 4.0),
-                          child: SizedBox(height: 20, child: Image.asset('assets/images/bookinglogo.png'))));
+                      highlightedFacilityImagePaths.add('assets/images/custom_icons/bookinglogo.png');
                     }
                     if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)) {
-                      albergueFacilityIcons
-                          .add(const Padding(padding: EdgeInsets.only(right: 4.0), child: Icon(FontAwesomeIcons.kitchenSet, size: 20)));
+                      highlightedFacilityImagePaths.add('assets/images/custom_icons/kitchen.png');
                     }
                     if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegan) ||
                         widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegetarian)) {
-                      albergueFacilityIcons
-                          .add(const Padding(padding: EdgeInsets.only(right: 4.0), child: Icon(FontAwesomeIcons.seedling, size: 20)));
+                      highlightedFacilityImagePaths.add('assets/images/custom_icons/vegan.png');
                     }
                     if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.communityDinner)) {
-                      albergueFacilityIcons
-                          .add(const Padding(padding: EdgeInsets.only(right: 4.0), child: Icon(Icons.local_dining_rounded, size: 20)));
+                      highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
                     }
                     Color statusColor = Colors.green;
 
@@ -194,7 +188,18 @@ class _CityPageState extends State<CityPage> {
                                 );
                               }).toList()),
                             ),
-                            Wrap(children: albergueFacilityIcons),
+                            Wrap(
+                                children: highlightedFacilityImagePaths
+                                    .map((e) => SizedBox(
+                                        height: 20,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Image.asset(
+                                            e,
+                                            color: e.contains('bookinglogo') ? null : Colors.blue,
+                                          ),
+                                        )))
+                                    .toList()),
                           ],
                         ),
                         // Wrap(

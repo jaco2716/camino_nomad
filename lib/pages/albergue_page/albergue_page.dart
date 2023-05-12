@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../widgets/albergue_header_images.dart';
 import '../../widgets/booking_com_widgets.dart';
+import '../../widgets/my_alert_dialog.dart';
 import 'albergue_info_list_tile.dart';
 
 class AlberguePage extends StatelessWidget {
@@ -14,6 +15,23 @@ class AlberguePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<dynamic> highlightedFacilityImagePaths = [];
+    if (albergue.bookingComUrl.isNotEmpty) {
+      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/bookinglogo.png', 'title': 'Book with Booking.com'});
+    }
+    if (albergue.albergueFacilities.contains(AlbergueFacility.kitchen)) {
+      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/kitchen.png', 'title': 'Kitchen availabe'});
+    }
+    if (albergue.albergueFacilities.contains(AlbergueFacility.vegan) || albergue.albergueFacilities.contains(AlbergueFacility.vegetarian)) {
+      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/vegan.png', 'title': 'Vegetarian options'});
+    }
+    if (albergue.albergueFacilities.contains(AlbergueFacility.communityDinner)) {
+      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/dinner.png', 'title': 'Community dinner'});
+    }
+    if (highlightedFacilityImagePaths.isNotEmpty) {
+      highlightedFacilityImagePaths.add({'image': const Icon(FontAwesomeIcons.solidCircleQuestion, size: 10, color: Colors.grey), 'title': 'info'});
+    }
+
     Color statusColor = Colors.green;
     String statusText = albergue.status.name.camelToSentence();
     if (albergue.status == AlbergueStatus.unknown) {
@@ -71,6 +89,56 @@ class AlberguePage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return MyInfoDialog(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: highlightedFacilityImagePaths
+                                      .map((e) => e['title'] == 'info'
+                                          ? const SizedBox.shrink()
+                                          : SizedBox(
+                                              height: 35,
+                                              child: Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(6.0),
+                                                    child: Image.asset(
+                                                      e['image'],
+                                                      color: e['image'].contains('bookinglogo') ? null : Colors.blue,
+                                                    ),
+                                                  ),
+                                                  Text(e['title']),
+                                                ],
+                                              )))
+                                      .toList(),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: Wrap(
+                              children: highlightedFacilityImagePaths
+                                  .map((e) => e['title'] == 'info'
+                                      ? (e['image'] as Widget)
+                                      : SizedBox(
+                                          height: 30,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(right: 8.0),
+                                            child: Image.asset(
+                                              e['image'],
+                                              color: e['image'].contains('bookinglogo') ? null : Colors.blue,
+                                            ),
+                                          )))
+                                  .toList()),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 18),
                         child: Column(
