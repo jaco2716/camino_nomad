@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:camino_nomad/model/route_info/albergue_price.dart';
-
 import '../model/route_info/albergue.dart';
-import '../model/route_info/route_city.dart';
-import '../model/route_info/route_data.dart';
 
 class RouteLogic {
   double calculateDistance(lat1, lon1, lat2, lon2) {
@@ -12,14 +9,6 @@ class RouteLogic {
     var c = cos;
     var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
-  }
-
-  double calculateEleGain(RouteData data) {
-    var rp = data.routePoints;
-
-    for (var i = 0; i < rp.length; i++) {}
-
-    return 0;
   }
 
   // createAllCities(RouteData data, List<dynamic> cities) {
@@ -70,25 +59,25 @@ class RouteLogic {
   // printMore(jsonEncode(points));
   // }
 
-  addFacitiliesToCities(RouteData data, List<dynamic> cities) {
-    for (var i = 0; i < data.cities.length; i++) {
-      if (cities[i]['has_atm'] == '1') data.cities[i].facilities.add(Facility.atm);
-      if (cities[i]['has_bar_cafe'] == '1') data.cities[i].facilities.add(Facility.barCafe);
-      if (cities[i]['has_restaurant'] == '1') data.cities[i].facilities.add(Facility.restaurant);
-      if (cities[i]['has_shop'] == '1') data.cities[i].facilities.add(Facility.shop);
-      if (cities[i]['has_med_clinic'] == '1') data.cities[i].facilities.add(Facility.medClinic);
-      if (cities[i]['has_pharmacy'] == '1') data.cities[i].facilities.add(Facility.pharmacy);
-      if (cities[i]['has_fountain'] == '1') data.cities[i].facilities.add(Facility.fountain);
-      if (cities[i]['has_post_office'] == '1') data.cities[i].facilities.add(Facility.postOffice);
-      if (cities[i]['has_busstation'] == '1') data.cities[i].facilities.add(Facility.busStation);
-      if (cities[i]['has_trainstation'] == '1') data.cities[i].facilities.add(Facility.trainStation);
-      if (cities[i]['has_airport'] == '1') data.cities[i].facilities.add(Facility.airport);
-      if (cities[i]['has_tobaccostore'] == '1') data.cities[i].facilities.add(Facility.tobaccoStore);
-    }
+  // addFacitiliesToCities(RouteData data, List<dynamic> cities) {
+  //   for (var i = 0; i < data.cities.length; i++) {
+  //     if (cities[i]['has_atm'] == '1') data.cities[i].facilities.add(Facility.atm);
+  //     if (cities[i]['has_bar_cafe'] == '1') data.cities[i].facilities.add(Facility.barCafe);
+  //     if (cities[i]['has_restaurant'] == '1') data.cities[i].facilities.add(Facility.restaurant);
+  //     if (cities[i]['has_shop'] == '1') data.cities[i].facilities.add(Facility.shop);
+  //     if (cities[i]['has_med_clinic'] == '1') data.cities[i].facilities.add(Facility.medClinic);
+  //     if (cities[i]['has_pharmacy'] == '1') data.cities[i].facilities.add(Facility.pharmacy);
+  //     if (cities[i]['has_fountain'] == '1') data.cities[i].facilities.add(Facility.fountain);
+  //     if (cities[i]['has_post_office'] == '1') data.cities[i].facilities.add(Facility.postOffice);
+  //     if (cities[i]['has_busstation'] == '1') data.cities[i].facilities.add(Facility.busStation);
+  //     if (cities[i]['has_trainstation'] == '1') data.cities[i].facilities.add(Facility.trainStation);
+  //     if (cities[i]['has_airport'] == '1') data.cities[i].facilities.add(Facility.airport);
+  //     if (cities[i]['has_tobaccostore'] == '1') data.cities[i].facilities.add(Facility.tobaccoStore);
+  //   }
 
-    // print(data.cities.length);
-    printMore(jsonEncode(data.cities));
-  }
+  //   // print(data.cities.length);
+  //   printMore(jsonEncode(data.cities));
+  // }
 
   generateAlbergues(int startID, List<dynamic> alberguesF) {
     List<Albergue> newAlbergues = [];
@@ -172,6 +161,7 @@ class RouteLogic {
       if (alberguesF[i]['has_tv'] == '1') newItem.albergueFacilities.add(AlbergueFacility.tv);
       if (alberguesF[i]['has_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfast);
       if (alberguesF[i]['is_breakfast_included'] == '1') newItem.albergueFacilities.add(AlbergueFacility.breakfastIncluded);
+      if (alberguesF[i]['has_donativo_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.donativoBreakfast);
       if (alberguesF[i]['has_lunch'] == '1') newItem.albergueFacilities.add(AlbergueFacility.lunch);
       if (alberguesF[i]['has_dinner'] == '1') newItem.albergueFacilities.add(AlbergueFacility.dinner);
       if (alberguesF[i]['has_community_dinner'] == '1') newItem.albergueFacilities.add(AlbergueFacility.communityDinner);
@@ -196,7 +186,6 @@ class RouteLogic {
       if (alberguesF[i]['has_private_lockers'] == '1') newItem.albergueFacilities.add(AlbergueFacility.privateLockers);
       if (alberguesF[i]['has_individual_powerplug'] == '1') newItem.albergueFacilities.add(AlbergueFacility.individualPowerplug);
       if (alberguesF[i]['has_cotton_sheets'] == '1') newItem.albergueFacilities.add(AlbergueFacility.cottonSheets);
-      if (alberguesF[i]['has_donativo_breakfast'] == '1') newItem.albergueFacilities.add(AlbergueFacility.donativoBreakfast);
       if (alberguesF[i]['has_full_laundry_service'] == '1') newItem.albergueFacilities.add(AlbergueFacility.fullLaundryService);
       if (alberguesF[i]['pets_allowed'] == '1') newItem.albergueFacilities.add(AlbergueFacility.petsAllowed);
 

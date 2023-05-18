@@ -93,6 +93,7 @@ enum AlbergueFacility {
   tv,
   breakfast,
   breakfastIncluded,
+  donativoBreakfast,
   lunch,
   dinner,
   communityDinner,
@@ -117,7 +118,6 @@ enum AlbergueFacility {
   privateLockers,
   individualPowerplug,
   cottonSheets,
-  donativoBreakfast,
   fullLaundryService,
   petsAllowed,
 }

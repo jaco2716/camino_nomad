@@ -118,113 +118,121 @@ class _CityPageState extends State<CityPage> {
               ),
               const SizedBox(height: 20),
               const LeftAlignedTitle('Accomodations'),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: widget.city.albergues.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    List<String> highlightedFacilityImagePaths = [];
-                    if (widget.city.albergues[index].bookingComUrl.isNotEmpty) {
-                      highlightedFacilityImagePaths.add('assets/images/custom_icons/bookinglogo.png');
-                    }
-                    if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)) {
-                      highlightedFacilityImagePaths.add('assets/images/custom_icons/kitchen.png');
-                    }
-                    if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegan) ||
-                        widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegetarian)) {
-                      highlightedFacilityImagePaths.add('assets/images/custom_icons/vegan.png');
-                    }
-                    if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.communityDinner)) {
-                      highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
-                    }
-                    Color statusColor = Colors.green;
+              widget.city.albergues.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30.0),
+                      child: Text('No Accomodations'),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: widget.city.albergues.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          List<String> highlightedFacilityImagePaths = [];
+                          if (widget.city.albergues[index].bookingComUrl.isNotEmpty) {
+                            highlightedFacilityImagePaths.add('assets/images/custom_icons/bookinglogo.png');
+                          }
+                          if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)) {
+                            highlightedFacilityImagePaths.add('assets/images/custom_icons/kitchen.png');
+                          }
+                          if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegan) ||
+                              widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegetarian)) {
+                            highlightedFacilityImagePaths.add('assets/images/custom_icons/vegan.png');
+                          }
+                          if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.communityDinner)) {
+                            highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
+                          }
+                          Color statusColor = Colors.green;
 
-                    if (widget.city.albergues[index].status == AlbergueStatus.unknown) {
-                      statusColor = Colors.yellow[600]!;
-                    } else if (widget.city.albergues[index].status == AlbergueStatus.closed) {
-                      statusColor = Colors.red;
-                    } else if (widget.city.albergues[index].status == AlbergueStatus.temporarilyClosed) {
-                      statusColor = Colors.orange;
-                    }
-                    return Card(
-                      child: ListTile(
-                        onTap: () =>
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
-                        iconColor: Colors.amber[800],
-                        title: Row(
-                          children: [
-                            CircleAvatar(radius: 5, backgroundColor: statusColor),
-                            const SizedBox(width: 5),
-                            Expanded(
-                                child: Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
-                          ],
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
-                              child: Wrap(
-                                  children: widget.city.albergues[index].prices.map((e) {
-                                String priceString = '';
-                                if (e.fromPrice != null && e.toPrice != null) {
-                                  priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                                } else if (e.fromPrice != null) {
-                                  priceString = '${e.fromPrice!.round()}€ +';
-                                } else {
-                                  priceString = '${e.toPrice!.round()}€';
-                                }
-                                return Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                        height: 20,
-                                        child: Image.asset(
-                                          albergueTypeIconMap[e.type]!,
-                                          color: Colors.amber[800],
-                                        )),
-                                    Text(priceString),
-                                    const SizedBox(width: 6),
-                                  ],
-                                );
-                              }).toList()),
+                          if (widget.city.albergues[index].status == AlbergueStatus.unknown) {
+                            statusColor = Colors.yellow[600]!;
+                          } else if (widget.city.albergues[index].status == AlbergueStatus.closed) {
+                            statusColor = Colors.red;
+                          } else if (widget.city.albergues[index].status == AlbergueStatus.temporarilyClosed) {
+                            statusColor = Colors.orange;
+                          }
+                          return Card(
+                            child: ListTile(
+                              onTap: () => Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
+                              iconColor: Colors.amber[800],
+                              title: Row(
+                                children: [
+                                  CircleAvatar(radius: 5, backgroundColor: statusColor),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                      child:
+                                          Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+                                ],
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
+                                    child: Wrap(
+                                        children: widget.city.albergues[index].prices.map((e) {
+                                      String priceString = '';
+                                      if (e.fromPrice != null && e.toPrice != null) {
+                                        priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                                      } else if (e.fromPrice != null) {
+                                        priceString = '${e.fromPrice!.round()}€ +';
+                                      } else {
+                                        priceString = '${e.toPrice!.round()}€';
+                                      }
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                              height: 20,
+                                              child: Image.asset(
+                                                albergueTypeIconMap[e.type]!,
+                                                color: Colors.amber[800],
+                                              )),
+                                          Text(priceString),
+                                          const SizedBox(width: 6),
+                                        ],
+                                      );
+                                    }).toList()),
+                                  ),
+                                  Wrap(
+                                      children: highlightedFacilityImagePaths
+                                          .map((e) => SizedBox(
+                                              height: 20,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(right: 8.0),
+                                                child: Image.asset(
+                                                  e,
+                                                  color: e.contains('bookinglogo') ? null : Colors.blue,
+                                                ),
+                                              )))
+                                          .toList()),
+                                ],
+                              ),
+                              // Wrap(
+                              //     children: (widget.city.albergues[index].albergueFacilities)
+                              //         .map((e) => Icon(
+                              //               albergueFacilityIconMap[e],
+                              //               size: 20,
+                              //               color: Colors.amber[800],
+                              //             ))
+                              //         .toList()),
+                              // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),
+                              trailing: widget.city.albergues[index].bookingComScore != 0.0
+                                  ? BookingComScore(bookingComScore: widget.city.albergues[index].bookingComScore, size: 30)
+                                  : const SizedBox.shrink(),
                             ),
-                            Wrap(
-                                children: highlightedFacilityImagePaths
-                                    .map((e) => SizedBox(
-                                        height: 20,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
-                                          child: Image.asset(
-                                            e,
-                                            color: e.contains('bookinglogo') ? null : Colors.blue,
-                                          ),
-                                        )))
-                                    .toList()),
-                          ],
-                        ),
-                        // Wrap(
-                        //     children: (widget.city.albergues[index].albergueFacilities)
-                        //         .map((e) => Icon(
-                        //               albergueFacilityIconMap[e],
-                        //               size: 20,
-                        //               color: Colors.amber[800],
-                        //             ))
-                        //         .toList()),
-                        // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),
-                        trailing: BookingComScore(bookingComScore: widget.city.albergues[index].bookingComScore, size: 30),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
-                    // int id = city.albergues.length;
-                    // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
-                    generateAlbergues();
-                  },
-                  child: const Text('Add'))
+                    ),
+              // ElevatedButton(
+              //     onPressed: () {
+              //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
+              //       // int id = city.albergues.length;
+              //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
+              //       generateAlbergues();
+              //     },
+              //     child: const Text('Add'))
             ]),
           )),
     );

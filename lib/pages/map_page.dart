@@ -23,7 +23,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   late RouteProvider routeProvider;
 
-  List<dynamic> cities = [];
+  // List<dynamic> cities = [];
 
   double totalDistance = 0;
   Set<Marker> markers = {};
@@ -117,7 +117,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               myLocationEnabled: true,
               onLongPress: (argument) {
                 RouteLogic rl = RouteLogic();
-                rl.addFacitiliesToCities(routeProvider.routeData!, cities);
+                // rl.addFacitiliesToCities(routeProvider.routeData!, cities);
               },
 
               markers: _showMarkers ? markers : const <Marker>{},
