@@ -63,7 +63,7 @@ class _CityPageState extends State<CityPage> {
     final rl = RouteLogic();
     List<dynamic> alberguesF = cityfile['albergues'];
     int startID = widget.city.albergues.length;
-    rl.generateAlbergues(startID, alberguesF);
+    rl.generateAlbergues(startID, alberguesF, widget.city.id);
   }
 
   @override

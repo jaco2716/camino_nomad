@@ -79,13 +79,14 @@ class RouteLogic {
   //   printMore(jsonEncode(data.cities));
   // }
 
-  generateAlbergues(int startID, List<dynamic> alberguesF) {
+  generateAlbergues(int startID, List<dynamic> alberguesF, int cityId) {
     List<Albergue> newAlbergues = [];
 
     // for (var i = startID; i < alberguesF.length; i++) {
     for (var i = 0; i < alberguesF.length; i++) {
       var newItem = Albergue(
         id: i + startID,
+        cityId: cityId,
         name: alberguesF[i]['name'] ?? 'NULL',
         lat: double.parse(alberguesF[i]['latitude'] ?? '0.0'),
         lon: double.parse(alberguesF[i]['longitude'] ?? '0.0'),

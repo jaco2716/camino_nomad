@@ -37,13 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState() {
-    //TODO change to better loading
-    context.read<RouteProvider>().getRouteData();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBars[_selectedIndex],

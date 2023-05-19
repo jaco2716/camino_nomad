@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../model/route_info/route_city.dart';
 import '../pages/city_page.dart';
 
@@ -22,12 +20,6 @@ class CityListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // city.facilities.add(Facility.airport);
-    // city.facilities.add(Facility.airport);
-    // city.facilities.add(Facility.airport);
-    // city.facilities.add(Facility.airport);
-    // city.facilities.add(Facility.airport);
-    // city.facilities.add(Facility.airport);
     return Stack(
       alignment: Alignment.topCenter,
       children: [

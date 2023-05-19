@@ -1,4 +1,5 @@
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
+import 'package:camino_nomad/pages/more_pages/offline_settings_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/button_list_tile.dart';
@@ -25,7 +26,7 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
             const SizedBox(height: 50),
             ButtonListTile(
               title: 'Offline Settings',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OfflineSettingsPage())),
             ),
             ButtonListTile(
               title: 'Updates',

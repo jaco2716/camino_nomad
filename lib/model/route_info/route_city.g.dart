@@ -8,6 +8,8 @@ part of 'route_city.dart';
 
 RouteCity _$RouteCityFromJson(Map<String, dynamic> json) => RouteCity(
       id: json['id'] as int,
+      routeIds:
+          (json['routeIds'] as List<dynamic>).map((e) => e as int).toList(),
       name: json['name'] as String,
       facilities: (json['facilities'] as List<dynamic>)
           .map((e) => $enumDecode(_$FacilityEnumMap, e))
@@ -22,6 +24,7 @@ RouteCity _$RouteCityFromJson(Map<String, dynamic> json) => RouteCity(
 
 Map<String, dynamic> _$RouteCityToJson(RouteCity instance) => <String, dynamic>{
       'id': instance.id,
+      'routeIds': instance.routeIds,
       'name': instance.name,
       'facilities':
           instance.facilities.map((e) => _$FacilityEnumMap[e]!).toList(),

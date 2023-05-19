@@ -8,6 +8,7 @@ part of 'albergue.dart';
 
 Albergue _$AlbergueFromJson(Map<String, dynamic> json) => Albergue(
       id: json['id'] as int,
+      cityId: json['cityId'] as int,
       name: json['name'] as String,
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
@@ -50,6 +51,7 @@ Albergue _$AlbergueFromJson(Map<String, dynamic> json) => Albergue(
 
 Map<String, dynamic> _$AlbergueToJson(Albergue instance) => <String, dynamic>{
       'id': instance.id,
+      'cityId': instance.cityId,
       'name': instance.name,
       'lat': instance.lat,
       'lon': instance.lon,
