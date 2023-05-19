@@ -5,3 +5,6 @@ const List<Map<String, dynamic>> allRutes = [
     'localFileName': 'camino_frances',
   },
 ];
+
+const String offlineMode = 'offlineMode';
+const String localFileName = 'localFileName';

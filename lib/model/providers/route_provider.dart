@@ -96,11 +96,11 @@ class RouteProvider with ChangeNotifier {
   Future<void> getRouteData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // await Future.delayed(Duration(seconds: 3));
-    bool offlineMode = prefs.getBool('offlineMode') ?? false;
+    bool offlineMode = prefs.getBool(config.offlineMode) ?? false;
     String response = '';
     if (offlineMode) {
       final fm = FileManagement();
-      response = await fm.readFile(config.allRutes[0]['localFileName']);
+      response = await fm.readFile(config.allRutes[0][config.localFileName]);
     } else {
       response = await rootBundle.loadString('assets/route_data/camino_francis_data.json');
       // response = await rootBundle.loadString('assets/route_data/francis_initial_data.json');

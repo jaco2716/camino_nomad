@@ -24,7 +24,7 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
 
   Future<bool> getOfflineMode() async {
     sp = await SharedPreferences.getInstance();
-    return sp.getBool('offlineMode') ?? false;
+    return sp.getBool(config.offlineMode) ?? false;
   }
 
   @override
@@ -51,7 +51,7 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
                           icon: const FaIcon(FontAwesomeIcons.powerOff),
                           onTap: () async {
                             setState(() {
-                              sp.setBool('offlineMode', false);
+                              sp.setBool(config.offlineMode, false);
                             });
                           });
                     }
@@ -61,7 +61,7 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
                         icon: const FaIcon(FontAwesomeIcons.powerOff, color: Colors.grey),
                         onTap: () async {
                           setState(() {
-                            sp.setBool('offlineMode', true);
+                            sp.setBool(config.offlineMode, true);
                           });
                         });
                   }),
@@ -73,7 +73,7 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
                     var rp = context.read<RouteProvider>();
                     String json = jsonEncode(rp.routeData);
                     final fm = FileManagement();
-                    await fm.writeFile(config.allRutes[0]['localFileName'], json);
+                    await fm.writeFile(config.allRutes[0][config.localFileName], json);
                   }),
               ListTileWithIconSub(
                   title: 'Print route data',
