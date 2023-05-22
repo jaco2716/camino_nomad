@@ -46,11 +46,12 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey'),
                   Consumer<RouteProvider>(builder: (context, value, _) {
-                    String routeSub = value.routeData?.name ?? 'Choose your route...';
+                    String routeSub = value.currentRouteData?.name ?? 'Choose your route...';
 
-                    String startSub = (value.routeData != null) ? value.routeData!.cities[value.startIndex].name : 'Choose your start city...';
-                    String endSub = (value.endIndex != null && value.routeData != null)
-                        ? value.routeData!.cities[value.endIndex!].name
+                    String startSub =
+                        (value.currentRouteData != null) ? value.currentRouteData!.cities[value.startCityIndex].name : 'Choose your start city...';
+                    String endSub = (value.endCityIndex != null && value.currentRouteData != null)
+                        ? value.currentRouteData!.cities[value.endCityIndex!].name
                         : 'Choose your end city...';
 
                     return Column(
@@ -71,7 +72,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                             subtitle: endSub,
                             icon: const FaIcon(FontAwesomeIcons.locationCrosshairs),
                             onTap: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => ChooseStartEndPage(isStart: false, startIndex: value.startIndex + 1)))),
+                                MaterialPageRoute(builder: (context) => ChooseStartEndPage(isStart: false, startIndex: value.startCityIndex + 1)))),
                       ],
                     );
                   }),
@@ -84,7 +85,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                       color: Colors.blue,
                       child: InkWell(
                         onTap: () {
-                          if (routeProvider.endIndex != null) {
+                          if (routeProvider.endCityIndex != null) {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
                           }
                         },
@@ -96,12 +97,12 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                             double? eleLossSum;
                             double? eleMin;
                             double? eleMax;
-                            if (value.endIndex != null) {
-                              var distanceList = value.allDistances?.getRange(value.startIndex + 1, value.endIndex! + 1);
-                              var eleGainList = value.allEleGain?.getRange(value.startIndex + 1, value.endIndex! + 1);
-                              var eleLossList = value.allEleLoss?.getRange(value.startIndex + 1, value.endIndex! + 1);
-                              var eleMinList = value.allMinEle?.getRange(value.startIndex + 1, value.endIndex! + 1);
-                              var eleMaxList = value.allMaxEle?.getRange(value.startIndex + 1, value.endIndex! + 1);
+                            if (value.endCityIndex != null) {
+                              var distanceList = value.allDistances?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
+                              var eleGainList = value.allEleGain?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
+                              var eleLossList = value.allEleLoss?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
+                              var eleMinList = value.allMinEle?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
+                              var eleMaxList = value.allMaxEle?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
 
                               distSum = distanceList?.reduce((a, b) => a + b);
                               eleGainSum = eleGainList?.reduce((a, b) => a + b);
@@ -143,7 +144,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   ),
                   const SizedBox(height: 16),
                   Consumer<RouteProvider>(builder: (context, value, _) {
-                    if (value.endIndex == null) return const SizedBox.shrink();
+                    if (value.endCityIndex == null) return const SizedBox.shrink();
                     return const LeftAlignedTitle('Cities on route');
                   }),
                 ],
@@ -151,23 +152,23 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
             ),
           ),
           Consumer<RouteProvider>(builder: (context, value, _) {
-            if (value.endIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (value.endCityIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
 
             return SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  int cityIndex = index + value.startIndex;
+                  int cityIndex = index + value.startCityIndex;
                   double totalDistance = 0;
                   for (var i = 1; i <= index; i++) {
-                    totalDistance += value.allDistances?[i + (value.startIndex)] ?? 0;
+                    totalDistance += value.allDistances?[i + (value.startCityIndex)] ?? 0;
                   }
                   return CityListTile(
                       showBetweenDistance: index != 0,
-                      city: value.routeData!.cities[cityIndex],
+                      city: value.currentRouteData!.cities[cityIndex],
                       totalDistance: totalDistance,
                       distanceBetween: value.allDistances![cityIndex]);
                 },
-                childCount: ((value.endIndex ?? -1) - (value.startIndex) + 1),
+                childCount: ((value.endCityIndex ?? -1) - (value.startCityIndex) + 1),
               ),
             );
           }),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChooseRoutePage extends StatelessWidget {
   const ChooseRoutePage({super.key});
 
   static const List<Map<String, dynamic>> dataList = [
     {
-      'title': 'Camino Francis',
-      'distance': 777,
+      'title': 'Camino Frances',
+      'distance': 780,
       'elevmin': 249,
       'elevmax': 1512,
       'elevgain': 13876,
@@ -73,21 +74,37 @@ class ChooseRoutePage extends StatelessWidget {
                                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                                 ),
                                 Text(
-                                  '${dataList[index]['distance']} km',
+                                  '~${dataList[index]['distance']} km',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber[800]),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 6),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [const Text('Elevation min/max:'), Text('${dataList[index]['elevmin']} m / ${dataList[index]['elevmax']} m')],
+                            // ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     const Text('Elevation gain/loss:'),
+                            //     Text('${dataList[index]['elevgain']} m / ${dataList[index]['elevloss']} m')
+                            //   ],
+                            // ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [const Text('Elevation min/max:'), Text('${dataList[index]['elevmin']} m / ${dataList[index]['elevmax']} m')],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Elevation gain/loss:'),
-                                Text('${dataList[index]['elevgain']} m / ${dataList[index]['elevloss']} m')
+                              children: const [
+                                // Spacer(),
+                                CircleAvatar(
+                                  radius: 8,
+                                  backgroundColor: Colors.blue,
+                                  child: Icon(
+                                    Icons.download,
+                                    color: Colors.white,
+                                    size: 11,
+                                  ),
+                                ),
+                                SizedBox(width: 6),
+                                Text('Downloaded'),
                               ],
                             ),
                           ],

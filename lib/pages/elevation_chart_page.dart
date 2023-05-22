@@ -10,11 +10,11 @@ class ElevationChartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var routeProvider = context.read<RouteProvider>();
-    var routeData = routeProvider.routeData!;
+    var routeData = routeProvider.currentRouteData!;
     var cityRPIds = routeData.cities.map((e) => e.routePointId).toList();
-    int startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[routeProvider.startIndex]);
-    int endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[routeProvider.endIndex!]);
-    var eleMaxList = routeProvider.allMaxEle?.getRange(routeProvider.startIndex + 1, routeProvider.endIndex! + 1);
+    int startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[routeProvider.startCityIndex]);
+    int endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[routeProvider.endCityIndex!]);
+    var eleMaxList = routeProvider.allMaxEle?.getRange(routeProvider.startCityIndex + 1, routeProvider.endCityIndex! + 1);
     double eleMax = eleMaxList?.reduce(max) ?? 0;
     if (eleMax < 1500) eleMax = 1500;
 
@@ -37,7 +37,7 @@ class ElevationChartPage extends StatelessWidget {
                 var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].id);
                 double totalDistance = 0;
                 for (var i = 1; i <= cityIndex; i++) {
-                  totalDistance += routeProvider.allDistances?[i + (routeProvider.startIndex)] ?? 0;
+                  totalDistance += routeProvider.allDistances?[i + (routeProvider.startCityIndex)] ?? 0;
                 }
                 return Align(
                   alignment: Alignment.bottomCenter,

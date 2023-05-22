@@ -24,7 +24,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   void initState() {
     super.initState();
     routeProvider = Provider.of<RouteProvider>(context, listen: false);
-    showCities = List.generate(routeProvider.routeData?.cities.length ?? 0, (index) => true);
+    showCities = List.generate(routeProvider.currentRouteData?.cities.length ?? 0, (index) => true);
   }
 
   @override
@@ -52,7 +52,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 20),
-                itemCount: (routeProvider.routeData?.cities.length ?? 0) - widget.startIndex,
+                itemCount: (routeProvider.currentRouteData?.cities.length ?? 0) - widget.startIndex,
                 itemBuilder: (context, index) {
                   if (!showCities[index + widget.startIndex]) return const SizedBox.shrink();
                   if (widget.isStart) {
@@ -70,7 +70,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                       child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
-                            routeProvider.routeData?.cities[index + widget.startIndex].name ?? '',
+                            routeProvider.currentRouteData?.cities[index + widget.startIndex].name ?? '',
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                           )),
                     ));
@@ -78,11 +78,11 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                     int cityIndex = index + widget.startIndex;
                     double totalDistance = 0;
                     for (var i = 1; i <= index + 1; i++) {
-                      totalDistance += routeProvider.allDistances?[i + (routeProvider.startIndex)] ?? 0;
+                      totalDistance += routeProvider.allDistances?[i + (routeProvider.startCityIndex)] ?? 0;
                     }
                     return CityListTile(
                       showBetweenDistance: false,
-                      city: routeProvider.routeData!.cities[cityIndex],
+                      city: routeProvider.currentRouteData!.cities[cityIndex],
                       totalDistance: totalDistance,
                       distanceBetween: index == 0 ? 0 : routeProvider.allDistances![cityIndex],
                       onPressed: () {
@@ -101,9 +101,9 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   }
 
   searchCities(String value) {
-    if (routeProvider.routeData != null) {
+    if (routeProvider.currentRouteData != null) {
       final input = removeDiacritics(value).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase();
-      final tempShowCities = routeProvider.routeData!.cities
+      final tempShowCities = routeProvider.currentRouteData!.cities
           .map((e) => removeDiacritics(e.name).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase().contains(input))
           .toList();
       setState(() => showCities = tempShowCities);

@@ -32,18 +32,12 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
       ),
       body: SafeArea(
         child: Consumer<RouteProvider>(builder: (context, value, _) {
-          bool offlineMode = value.offlineMode ?? false;
           bool lowDataMode = value.lowDataMode ?? false;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
                 const SizedBox(height: 50),
-                ListTileWithIconSub(
-                    title: 'Offline Mode',
-                    subtitle: offlineMode ? 'Offline Mode On' : 'Offline Mode Off',
-                    icon: FaIcon(FontAwesomeIcons.powerOff, color: offlineMode ? Colors.green : Colors.grey),
-                    onTap: () => value.setOfflineMode(!offlineMode)),
                 ListTileWithIconSub(
                     title: 'Low Data Mode',
                     subtitle: lowDataMode ? 'Low Data Mode On' : 'Low Data Mode Off',
@@ -65,13 +59,13 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
                     title: 'Download Camino Frances',
                     subtitle: '${value.kbSaved ?? 0} kb saved.',
                     icon: const FaIcon(FontAwesomeIcons.download),
-                    onTap: () => value.saveDataToFile(0)),
+                    onTap: () => value.saveRouteToFile(0)),
                 ListTileWithIconSub(
                     title: 'Print route data',
                     subtitle: 'json',
                     icon: const FaIcon(FontAwesomeIcons.print),
                     onTap: () async {
-                      rl.printMore(jsonEncode(value.routeData));
+                      rl.printMore(jsonEncode(value.currentRouteData));
                     }),
               ],
             ),

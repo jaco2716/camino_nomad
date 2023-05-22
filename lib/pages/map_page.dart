@@ -48,8 +48,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   getRouteData() async {
     final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/city_pin.png', 70);
     var myIcon = BitmapDescriptor.fromBytes(markerIcon);
-    var routePoints = routeProvider.routeData!.routePoints;
-    var routeCities = routeProvider.routeData!.cities;
+    var routePoints = routeProvider.currentRouteData!.routePoints;
+    var routeCities = routeProvider.currentRouteData!.cities;
     polylineCoordinates = (routePoints).map<LatLng>((e) => LatLng(e.lat, e.lon)).toList();
     markers = routeCities
         .map<Marker>((e) =>
@@ -159,7 +159,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   //   //   // BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/my_icon.png').then((onValue) {
   //   //   //   myIcon = onValue;
   //   //   // });
-  //   //   // final String response = await rootBundle.loadString('assets/route_data/camino_francis_route_points.json');
+  //   //   // final String response = await rootBundle.loadString('assets/route_data/camino_frances_route_points.json');
   //   final String response = await rootBundle.loadString('assets/route_data/test.json');
   //   final Map<String, dynamic> routeData = await json.decode(response);
 

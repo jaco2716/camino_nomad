@@ -8,25 +8,26 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../logic/route_logic.dart';
 import '../route_info/route_data.dart';
-import '../shared_pref_names.dart';
+import '../settings/shared_pref_names.dart';
 
 class RouteProvider with ChangeNotifier {
-  RouteData? routeData;
-  int startIndex;
-  int? endIndex;
+  RouteData? currentRouteData;
+  int routeId;
+  int startCityIndex;
+  int? endCityIndex;
 
   List<double>? allDistances;
   List<double>? allEleGain;
   List<double>? allEleLoss;
   List<double>? allMinEle;
   List<double>? allMaxEle;
-  bool? offlineMode;
   bool? lowDataMode;
   double? kbSaved;
 
   RouteProvider({
-    this.routeData,
-    this.startIndex = 0,
+    this.routeId = 0,
+    this.currentRouteData,
+    this.startCityIndex = 0,
   });
   late SharedPreferences prefs;
   late FileManagement fm;
@@ -34,16 +35,15 @@ class RouteProvider with ChangeNotifier {
   Future<void> initValues() async {
     prefs = await SharedPreferences.getInstance();
     fm = FileManagement();
-    offlineMode = prefs.getBool(SharedPrefNames.offlineMode.name);
     lowDataMode = prefs.getBool(SharedPrefNames.lowDataMode.name);
   }
 
   void setAllDistances() {
-    if (routeData == null) return;
+    if (currentRouteData == null) return;
     final RouteLogic rl = RouteLogic();
 
-    var cities = routeData!.cities;
-    var routePoints = routeData!.routePoints;
+    var cities = currentRouteData!.cities;
+    var routePoints = currentRouteData!.routePoints;
 
     //Distance
     List<double> tempCityDistances = [];
@@ -61,7 +61,7 @@ class RouteProvider with ChangeNotifier {
 
     int startIndex = 0;
     for (var cityi = 0; cityi <= cities.length - 1; cityi++) {
-      for (var routei = startIndex + 1; routei < routeData!.routePoints.length - 1; routei++) {
+      for (var routei = startIndex + 1; routei < currentRouteData!.routePoints.length - 1; routei++) {
         //Distance
         tempDistance +=
             rl.calculateDistance(routePoints[routei].lat, routePoints[routei].lon, routePoints[routei + 1].lat, routePoints[routei + 1].lon);
@@ -110,34 +110,28 @@ class RouteProvider with ChangeNotifier {
   Future<void> getRouteData() async {
     await initValues();
     String response = '';
-    if (offlineMode ?? false) {
-      //Change to route ID instead og 0
-      response = await fm.readFile(config.allRutes[0].localFileName);
-      kbSaved = response.toKb();
-    } else {
-      response = await rootBundle.loadString('assets/route_data/camino_francis_data.json');
-      // response = await rootBundle.loadString('assets/route_data/francis_initial_data.json');
+
+    //Change to route ID instead og 0
+    response = await fm.readFile('${config.routeFilePrefix}$routeId');
+    kbSaved = response.toKb();
+    if (response.isEmpty) {
+      response = await rootBundle.loadString('assets/route_data/route_file_$routeId.json');
+      // response = await rootBundle.loadString('assets/route_data/frances_initial_data.json');
     }
 
-    Map<String, dynamic> jsonData = json.decode(response);
+    Map<String, dynamic> jsonData = jsonDecode(response);
     RouteData data = RouteData.fromJson(jsonData);
-    routeData = data;
+    currentRouteData = data;
     return;
   }
 
   void setStartIndex(int value) {
-    startIndex = value;
+    startCityIndex = value;
     notifyListeners();
   }
 
   void setEndIndex(int? value) {
-    endIndex = value;
-    notifyListeners();
-  }
-
-  void setOfflineMode(bool value) {
-    offlineMode = value;
-    prefs.setBool(SharedPrefNames.offlineMode.name, value);
+    endCityIndex = value;
     notifyListeners();
   }
 
@@ -147,13 +141,14 @@ class RouteProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void saveDataToFile(int routeId) async {
-    int index = config.allRutes.indexWhere((element) => element.id == routeId);
+  void saveRouteToFile(int id) async {
+    int index = config.allRutes.indexWhere((element) => element.id == id);
     if (index != -1) {
-      String json = jsonEncode(routeData);
-      await fm.writeFile(config.allRutes[index].localFileName, json);
+      String json = jsonEncode(currentRouteData);
+      await fm.writeFile('${config.routeFilePrefix}$id', json);
       kbSaved = json.toKb();
     }
+
     notifyListeners();
   }
 }
