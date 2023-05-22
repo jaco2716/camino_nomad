@@ -142,7 +142,7 @@ class RouteProvider with ChangeNotifier {
   }
 
   void saveRouteToFile(int id) async {
-    int index = config.allRutes.indexWhere((element) => element.id == id);
+    int index = config.allRoutes.indexWhere((element) => element.id == id);
     if (index != -1) {
       String json = jsonEncode(currentRouteData);
       await fm.writeFile('${config.routeFilePrefix}$id', json);

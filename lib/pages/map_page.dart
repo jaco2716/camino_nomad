@@ -299,7 +299,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 //                   '''
 //                   {
 //                       "id": 1,
-//                       "name": "Honto (Napoleon Rute)",
+//                       "name": "Honto (Napoleon Route)",
 //                       "facilities": [],
 //                       "albergues": [],
 //                       "lat": 43.12435300,
