@@ -1,10 +1,5 @@
-const List<Map<String, dynamic>> allRutes = [
-  {
-    'id': '1',
-    'name': 'Camino Frances',
-    'localFileName': 'camino_frances',
-  },
-];
+import '../model/rute_config.dart';
 
-const String offlineMode = 'offlineMode';
-const String localFileName = 'localFileName';
+const List<RuteConfig> allRutes = [
+  RuteConfig(0, 'Camino Frances', 'camino_frances'),
+];

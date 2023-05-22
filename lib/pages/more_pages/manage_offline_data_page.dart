@@ -1,26 +1,20 @@
-import 'dart:convert';
-
 import 'package:camino_nomad/logic/route_logic.dart';
 import 'package:camino_nomad/model/providers/route_provider.dart';
 import 'package:camino_nomad/widgets/left_aligned_title.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../constants/env_config.dart' as config;
 import '../../logic/file_management.dart';
 import '../../widgets/list_tile_with_icon_sub.dart';
-import 'manage_offline_data_page.dart';
 
-class OfflineSettingsPage extends StatefulWidget {
-  const OfflineSettingsPage({super.key});
+class ManageOfflineDataPage extends StatefulWidget {
+  const ManageOfflineDataPage({super.key});
 
   @override
-  State<OfflineSettingsPage> createState() => _OfflineSettingsPageState();
+  State<ManageOfflineDataPage> createState() => _ManageOfflineDataPageState();
 }
 
-class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
+class _ManageOfflineDataPageState extends State<ManageOfflineDataPage> {
   final rl = RouteLogic();
   final fm = FileManagement();
 
@@ -44,35 +38,13 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
                     subtitle: offlineMode ? 'Offline Mode On' : 'Offline Mode Off',
                     icon: FaIcon(FontAwesomeIcons.powerOff, color: offlineMode ? Colors.green : Colors.grey),
                     onTap: () => value.setOfflineMode(!offlineMode)),
-                ListTileWithIconSub(
-                    title: 'Low Data Mode',
-                    subtitle: lowDataMode ? 'Low Data Mode On' : 'Low Data Mode Off',
-                    icon: FaIcon(FontAwesomeIcons.powerOff, color: lowDataMode ? Colors.green : Colors.grey),
-                    onTap: () => value.setLowDataMode(!lowDataMode)),
                 const LeftAlignedTitle('In Low Data Mode hotel images will not loaded.', color: Colors.grey, fontWeight: FontWeight.normal, size: 12),
-                // Text(
-                //   'In Low Data Mode images will not be loaded for hotels',
-                //   textAlign: TextAlign.left,
-                //   style: TextStyle(fontSize: 12, color: Colors.grey),
-                // ),
                 const SizedBox(height: 10),
-                ListTileWithIconSub(
-                    title: 'Offline Data',
-                    subtitle: '${value.kbSaved ?? 0} kb saved.',
-                    icon: const FaIcon(FontAwesomeIcons.download),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageOfflineDataPage()))),
                 ListTileWithIconSub(
                     title: 'Download Camino Frances',
                     subtitle: '${value.kbSaved ?? 0} kb saved.',
                     icon: const FaIcon(FontAwesomeIcons.download),
                     onTap: () => value.saveDataToFile(0)),
-                ListTileWithIconSub(
-                    title: 'Print route data',
-                    subtitle: 'json',
-                    icon: const FaIcon(FontAwesomeIcons.print),
-                    onTap: () async {
-                      rl.printMore(jsonEncode(value.routeData));
-                    }),
               ],
             ),
           );

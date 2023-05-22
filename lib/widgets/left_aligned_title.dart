@@ -4,8 +4,14 @@ class LeftAlignedTitle extends StatelessWidget {
   const LeftAlignedTitle(
     this.title, {
     super.key,
+    this.color = Colors.blue,
+    this.size = 14,
+    this.fontWeight = FontWeight.bold,
   });
   final String title;
+  final Color color;
+  final double size;
+  final FontWeight fontWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +20,7 @@ class LeftAlignedTitle extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20),
         child: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+          style: TextStyle(fontWeight: fontWeight, color: color, fontSize: size),
         ));
   }
 }

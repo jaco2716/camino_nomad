@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:camino_nomad/constants/env_config.dart' as config;
+import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/file_management.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../constants/env_config.dart' as config;
 import '../../logic/route_logic.dart';
 import '../route_info/route_data.dart';
+import '../shared_pref_names.dart';
 
 class RouteProvider with ChangeNotifier {
   RouteData? routeData;
@@ -18,11 +20,23 @@ class RouteProvider with ChangeNotifier {
   List<double>? allEleLoss;
   List<double>? allMinEle;
   List<double>? allMaxEle;
+  bool? offlineMode;
+  bool? lowDataMode;
+  double? kbSaved;
 
   RouteProvider({
     this.routeData,
     this.startIndex = 0,
   });
+  late SharedPreferences prefs;
+  late FileManagement fm;
+
+  Future<void> initValues() async {
+    prefs = await SharedPreferences.getInstance();
+    fm = FileManagement();
+    offlineMode = prefs.getBool(SharedPrefNames.offlineMode.name);
+    lowDataMode = prefs.getBool(SharedPrefNames.lowDataMode.name);
+  }
 
   void setAllDistances() {
     if (routeData == null) return;
@@ -94,13 +108,12 @@ class RouteProvider with ChangeNotifier {
   }
 
   Future<void> getRouteData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await Future.delayed(Duration(seconds: 3));
-    bool offlineMode = prefs.getBool(config.offlineMode) ?? false;
+    await initValues();
     String response = '';
-    if (offlineMode) {
-      final fm = FileManagement();
-      response = await fm.readFile(config.allRutes[0][config.localFileName]);
+    if (offlineMode ?? false) {
+      //Change to route ID instead og 0
+      response = await fm.readFile(config.allRutes[0].localFileName);
+      kbSaved = response.toKb();
     } else {
       response = await rootBundle.loadString('assets/route_data/camino_francis_data.json');
       // response = await rootBundle.loadString('assets/route_data/francis_initial_data.json');
@@ -114,13 +127,33 @@ class RouteProvider with ChangeNotifier {
 
   void setStartIndex(int value) {
     startIndex = value;
-
     notifyListeners();
   }
 
   void setEndIndex(int? value) {
     endIndex = value;
+    notifyListeners();
+  }
 
+  void setOfflineMode(bool value) {
+    offlineMode = value;
+    prefs.setBool(SharedPrefNames.offlineMode.name, value);
+    notifyListeners();
+  }
+
+  void setLowDataMode(bool value) {
+    lowDataMode = value;
+    prefs.setBool(SharedPrefNames.lowDataMode.name, value);
+    notifyListeners();
+  }
+
+  void saveDataToFile(int routeId) async {
+    int index = config.allRutes.indexWhere((element) => element.id == routeId);
+    if (index != -1) {
+      String json = jsonEncode(routeData);
+      await fm.writeFile(config.allRutes[index].localFileName, json);
+      kbSaved = json.toKb();
+    }
     notifyListeners();
   }
 }
