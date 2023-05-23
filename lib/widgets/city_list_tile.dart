@@ -43,7 +43,7 @@ class CityListTile extends StatelessWidget {
                   Row(
                     children: [
                       const Icon(Icons.house, size: 20, color: Colors.blue),
-                      Text(': ${city.albergues.length}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(': ${city.hotels.length}', style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ],

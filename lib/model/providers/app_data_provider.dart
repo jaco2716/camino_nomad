@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/file_management.dart';
+import 'package:camino_nomad/model/settings/app_data_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,8 +11,9 @@ import '../../logic/route_logic.dart';
 import '../route_info/route_data.dart';
 import '../settings/shared_pref_names.dart';
 
-class RouteProvider with ChangeNotifier {
+class AppDataProvider with ChangeNotifier {
   RouteData? currentRouteData;
+  AppDataSettings? appDataSettings;
   int routeId;
   int startCityIndex;
   int? endCityIndex;
@@ -21,10 +23,9 @@ class RouteProvider with ChangeNotifier {
   List<double>? allEleLoss;
   List<double>? allMinEle;
   List<double>? allMaxEle;
-  bool? lowDataMode;
   double? kbSaved;
 
-  RouteProvider({
+  AppDataProvider({
     this.routeId = 0,
     this.currentRouteData,
     this.startCityIndex = 0,
@@ -35,7 +36,10 @@ class RouteProvider with ChangeNotifier {
   Future<void> initValues() async {
     prefs = await SharedPreferences.getInstance();
     fm = FileManagement();
-    lowDataMode = prefs.getBool(SharedPrefNames.lowDataMode.name);
+    String appDataString = prefs.getString(SharedPrefNames.appDataSettings.name) ?? '';
+    if (appDataString.isEmpty) return;
+    Map<String, dynamic> appDataJson = jsonDecode(appDataString);
+    appDataSettings = AppDataSettings.fromJson(appDataJson);
   }
 
   void setAllDistances() {
@@ -109,19 +113,25 @@ class RouteProvider with ChangeNotifier {
 
   Future<void> getRouteData() async {
     await initValues();
-    String response = '';
 
+    String response = '';
     //Change to route ID instead og 0
     response = await fm.readFile('${config.routeFilePrefix}$routeId');
     kbSaved = response.toKb();
     if (response.isEmpty) {
-      response = await rootBundle.loadString('assets/route_data/route_file_$routeId.json');
-      // response = await rootBundle.loadString('assets/route_data/frances_initial_data.json');
+      try {
+        response = await rootBundle.loadString('assets/route_data/route_file_$routeId.json');
+      } catch (e) {
+        print('cant load file');
+      }
     }
+
+    if (response.isEmpty) return;
 
     Map<String, dynamic> jsonData = jsonDecode(response);
     RouteData data = RouteData.fromJson(jsonData);
     currentRouteData = data;
+    notifyListeners();
     return;
   }
 
@@ -136,8 +146,7 @@ class RouteProvider with ChangeNotifier {
   }
 
   void setLowDataMode(bool value) {
-    lowDataMode = value;
-    prefs.setBool(SharedPrefNames.lowDataMode.name, value);
+    appDataSettings?.lowDataMode = value;
     notifyListeners();
   }
 
@@ -148,7 +157,6 @@ class RouteProvider with ChangeNotifier {
       await fm.writeFile('${config.routeFilePrefix}$id', json);
       kbSaved = json.toKb();
     }
-
     notifyListeners();
   }
 }

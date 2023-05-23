@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:camino_nomad/logic/route_logic.dart';
-import 'package:camino_nomad/model/providers/route_provider.dart';
+import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/widgets/left_aligned_title.dart';
+import 'package:camino_nomad/widgets/my_switch_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,9 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
         title: const Text('Offline Settings'),
       ),
       body: SafeArea(
-        child: Consumer<RouteProvider>(builder: (context, value, _) {
-          bool lowDataMode = value.lowDataMode ?? false;
+        child: Consumer<AppDataProvider>(builder: (context, value, _) {
+          bool lowDataMode = value.appDataSettings?.lowDataMode ?? false;
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -43,6 +45,7 @@ class _OfflineSettingsPageState extends State<OfflineSettingsPage> {
                     subtitle: lowDataMode ? 'Low Data Mode On' : 'Low Data Mode Off',
                     icon: FaIcon(FontAwesomeIcons.powerOff, color: lowDataMode ? Colors.green : Colors.grey),
                     onTap: () => value.setLowDataMode(!lowDataMode)),
+                MySwitchListTile(title: 'Low Data Mode', onTap: () {}),
                 const LeftAlignedTitle('In Low Data Mode hotel images will not loaded.', color: Colors.grey, fontWeight: FontWeight.normal, size: 12),
                 // Text(
                 //   'In Low Data Mode images will not be loaded for hotels',

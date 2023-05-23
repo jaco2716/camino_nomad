@@ -1,5 +1,5 @@
 import 'package:camino_nomad/logic/route_logic.dart';
-import 'package:camino_nomad/model/providers/route_provider.dart';
+import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/widgets/left_aligned_title.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,8 +25,8 @@ class _ManageOfflineDataPageState extends State<ManageOfflineDataPage> {
         title: const Text('Offline Settings'),
       ),
       body: SafeArea(
-        child: Consumer<RouteProvider>(builder: (context, value, _) {
-          bool lowDataMode = value.lowDataMode ?? false;
+        child: Consumer<AppDataProvider>(builder: (context, value, _) {
+          bool lowDataMode = value.appDataSettings?.lowDataMode ?? false;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(

@@ -15,7 +15,7 @@ class PopupPicturePage extends StatelessWidget {
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6.0),
-            child: Image.asset('assets/images/albergue/${imageUrls[index]}'),
+            child: Image.asset('assets/images/hotel/${imageUrls[index]}'),
           );
         },
       ),

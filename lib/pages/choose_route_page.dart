@@ -1,40 +1,19 @@
-import 'package:camino_nomad/constants/env_config.dart';
+import 'package:camino_nomad/constants/env_config.dart' as config;
+import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
-class ChooseRoutePage extends StatelessWidget {
+class ChooseRoutePage extends StatefulWidget {
   const ChooseRoutePage({super.key});
 
-  static const List<Map<String, dynamic>> dataList = [
-    {
-      'title': 'Camino Frances',
-      'distance': 780,
-      'elevmin': 249,
-      'elevmax': 1512,
-      'elevgain': 13876,
-      'elevloss': -13800,
-    },
-    // {
-    //   'title': 'Camino Portugues Central',
-    //   'distance': 247,
-    //   'elevmin': 149,
-    //   'elevmax': 912,
-    //   'elevgain': 11876,
-    //   'elevloss': -9800,
-    // },
-    // {
-    //   'title': 'Camino Ingles',
-    //   'distance': 687,
-    //   'elevmin': 499,
-    //   'elevmax': 1102,
-    //   'elevgain': 9204,
-    //   'elevloss': -7205,
-    // },
-  ];
+  @override
+  State<ChooseRoutePage> createState() => _ChooseRoutePageState();
+}
 
+class _ChooseRoutePageState extends State<ChooseRoutePage> {
+  // static const List<Map<String, dynamic>> dataList = [
   @override
   Widget build(BuildContext context) {
-    var all = allRoutes;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Route'),
@@ -55,14 +34,17 @@ class ChooseRoutePage extends StatelessWidget {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: dataList.length,
+                itemCount: config.allRoutes.length,
                 itemBuilder: (context, index) {
                   return Theme(
                     data: Theme.of(context).copyWith(textTheme: const TextTheme(bodyMedium: TextStyle(fontSize: 13, color: Colors.grey))),
                     child: Card(
                         child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context, dataList[index]['title']);
+                      onTap: () async {
+                        var appDataP = context.read<AppDataProvider>();
+                        appDataP.routeId = config.allRoutes[index].id;
+                        await appDataP.getRouteData();
+                        if (mounted) Navigator.pop(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -72,11 +54,11 @@ class ChooseRoutePage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  dataList[index]['title'],
+                                  config.allRoutes[index].name,
                                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                                 ),
                                 Text(
-                                  '~${dataList[index]['distance']} km',
+                                  '${config.allRoutes[index].distance} km',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber[800]),
                                 ),
                               ],

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:camino_nomad/model/providers/route_provider.dart';
+import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,12 +9,12 @@ class ElevationChartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var routeProvider = context.read<RouteProvider>();
-    var routeData = routeProvider.currentRouteData!;
+    var appDataP = context.read<AppDataProvider>();
+    var routeData = appDataP.currentRouteData!;
     var cityRPIds = routeData.cities.map((e) => e.routePointId).toList();
-    int startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[routeProvider.startCityIndex]);
-    int endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[routeProvider.endCityIndex!]);
-    var eleMaxList = routeProvider.allMaxEle?.getRange(routeProvider.startCityIndex + 1, routeProvider.endCityIndex! + 1);
+    int startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.startCityIndex]);
+    int endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.endCityIndex!]);
+    var eleMaxList = appDataP.allMaxEle?.getRange(appDataP.startCityIndex + 1, appDataP.endCityIndex! + 1);
     double eleMax = eleMaxList?.reduce(max) ?? 0;
     if (eleMax < 1500) eleMax = 1500;
 
@@ -37,7 +37,7 @@ class ElevationChartPage extends StatelessWidget {
                 var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].id);
                 double totalDistance = 0;
                 for (var i = 1; i <= cityIndex; i++) {
-                  totalDistance += routeProvider.allDistances?[i + (routeProvider.startCityIndex)] ?? 0;
+                  totalDistance += appDataP.allDistances?[i + (appDataP.startCityIndex)] ?? 0;
                 }
                 return Align(
                   alignment: Alignment.bottomCenter,

@@ -24,17 +24,19 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
         child: Column(
           children: [
             const SizedBox(height: 50),
-            ButtonListTile(
-              title: 'Offline Settings',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OfflineSettingsPage())),
-            ),
-            ButtonListTile(
-              title: 'Updates',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
-            ),
+            // ButtonListTile(
+            //   title: 'Offline Settings',
+            //   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OfflineSettingsPage())),
+            // ),
+            // ButtonListTile(
+            //   title: 'Updates',
+            //   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ComingSoonPage())),
+            // ),
             ButtonListTile(
               title: 'Share app',
-              onTap: () => Share.share('Download Camino Nomad for iOS and Android: https://caminonomad.com'),
+              onTap: () {
+                Share.share('Download Camino Nomad for iOS and Android: https://caminonomad.com');
+              },
             ),
             ButtonListTile(
               title: 'Useful links',

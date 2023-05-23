@@ -4,7 +4,7 @@ import 'package:camino_nomad/pages/elevation_chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import '../model/providers/route_provider.dart';
+import '../model/providers/app_data_provider.dart';
 import '../widgets/city_list_tile.dart';
 import '../widgets/left_aligned_title.dart';
 import '../widgets/list_tile_with_icon_sub.dart';
@@ -19,14 +19,14 @@ class RoutePage extends StatefulWidget {
 }
 
 class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixin {
-  late RouteProvider routeProvider;
+  late AppDataProvider appDataP;
 
   @override
   void initState() {
     super.initState();
 
-    routeProvider = context.read<RouteProvider>();
-    routeProvider.setAllDistances();
+    appDataP = context.read<AppDataProvider>();
+    appDataP.setAllDistances();
   }
 
   @override
@@ -45,7 +45,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey'),
-                  Consumer<RouteProvider>(builder: (context, value, _) {
+                  Consumer<AppDataProvider>(builder: (context, value, _) {
                     String routeSub = value.currentRouteData?.name ?? 'Choose your route...';
 
                     String startSub =
@@ -85,13 +85,13 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                       color: Colors.blue,
                       child: InkWell(
                         onTap: () {
-                          if (routeProvider.endCityIndex != null) {
+                          if (appDataP.endCityIndex != null) {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
                           }
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Consumer<RouteProvider>(builder: (context, value, _) {
+                          child: Consumer<AppDataProvider>(builder: (context, value, _) {
                             double? distSum;
                             double? eleGainSum;
                             double? eleLossSum;
@@ -143,7 +143,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Consumer<RouteProvider>(builder: (context, value, _) {
+                  Consumer<AppDataProvider>(builder: (context, value, _) {
                     if (value.endCityIndex == null) return const SizedBox.shrink();
                     return const LeftAlignedTitle('Cities on route');
                   }),
@@ -151,7 +151,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               ),
             ),
           ),
-          Consumer<RouteProvider>(builder: (context, value, _) {
+          Consumer<AppDataProvider>(builder: (context, value, _) {
             if (value.endCityIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
 
             return SliverList(

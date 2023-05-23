@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class AlbergueInfoListTile extends StatelessWidget {
-  const AlbergueInfoListTile(
+class HotelInfoListTile extends StatelessWidget {
+  const HotelInfoListTile(
     this.title, {
     super.key,
     required this.trailing,

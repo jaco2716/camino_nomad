@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'model/providers/route_provider.dart';
+import 'model/providers/app_data_provider.dart';
 import 'pages/my_home_page.dart';
 
 void main() {
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<RouteProvider>(
-        create: (context) => RouteProvider(),
+      ChangeNotifierProvider<AppDataProvider>(
+        create: (context) => AppDataProvider(),
       ),
     ],
     builder: (context, _) {
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   late Future<void> getData;
   @override
   void initState() {
-    getData = context.read<RouteProvider>().getRouteData();
+    getData = context.read<AppDataProvider>().getRouteData();
     super.initState();
   }
 

@@ -1,5 +1,3 @@
 enum SharedPrefNames {
-  offlineMode,
-  lowDataMode,
-  configSettings,
+  appDataSettings,
 }

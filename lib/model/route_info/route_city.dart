@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'albergue.dart';
+import 'hotel.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'route_city.g.dart';
@@ -11,7 +11,7 @@ class RouteCity {
   List<int> routeIds;
   String name;
   List<Facility> facilities;
-  List<Albergue> albergues;
+  List<Hotel> hotels;
   double lat;
   double lon;
   int routePointId;
@@ -21,7 +21,7 @@ class RouteCity {
     required this.routeIds,
     required this.name,
     required this.facilities,
-    required this.albergues,
+    required this.hotels,
     required this.lat,
     required this.lon,
     required this.routePointId,

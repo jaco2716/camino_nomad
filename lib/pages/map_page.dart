@@ -5,7 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 import '../logic/route_logic.dart';
-import '../model/providers/route_provider.dart';
+import '../model/providers/app_data_provider.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -21,7 +21,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
-  late RouteProvider routeProvider;
+  late AppDataProvider appDataP;
 
   // List<dynamic> cities = [];
 
@@ -32,8 +32,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   List<LatLng> polylineCoordinates = [];
   @override
   void initState() {
-    routeProvider = context.read<RouteProvider>();
-    getRouteData();
+    appDataP = context.read<AppDataProvider>();
+    getMapRouteData();
     // readJson();
     super.initState();
   }
@@ -45,11 +45,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-  getRouteData() async {
+  getMapRouteData() async {
     final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/city_pin.png', 70);
     var myIcon = BitmapDescriptor.fromBytes(markerIcon);
-    var routePoints = routeProvider.currentRouteData!.routePoints;
-    var routeCities = routeProvider.currentRouteData!.cities;
+    var routePoints = appDataP.currentRouteData!.routePoints;
+    var routeCities = appDataP.currentRouteData!.cities;
     polylineCoordinates = (routePoints).map<LatLng>((e) => LatLng(e.lat, e.lon)).toList();
     markers = routeCities
         .map<Marker>((e) =>
@@ -117,7 +117,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
               myLocationEnabled: true,
               onLongPress: (argument) {
                 RouteLogic rl = RouteLogic();
-                // rl.addFacitiliesToCities(routeProvider.routeData!, cities);
+                // rl.addFacitiliesToCities(appDataP.routeData!, cities);
               },
 
               markers: _showMarkers ? markers : const <Marker>{},
@@ -193,7 +193,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   //   //       position: LatLng(data.cities[i].lat, data.cities[i].lon),
   //   //       infoWindow: InfoWindow(title: data.cities[i].name, snippet: '${data.cities[i].lat} - ${data.cities[i].lon}')));
   //   // }
-  //   var data = routeProvider.routeData!;
+  //   var data = appDataP.routeData!;
   //   for (var i = 0; i < data.cities.length; i++) {
   //     markers.add(Marker(
   //         markerId: MarkerId('point${i}'),
@@ -207,10 +207,10 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
 // findRPByTap(LatLng argument) async {
 //                 print('tapped');
-//                 for (var i = 0; i < routeProvider.routeData!.routePoints.length; i++) {
-//                   var latdistance = argument.latitude - routeProvider.routeData!.routePoints[i].lat;
+//                 for (var i = 0; i < appDataP.routeData!.routePoints.length; i++) {
+//                   var latdistance = argument.latitude - appDataP.routeData!.routePoints[i].lat;
 //                   if (latdistance < 0) latdistance = latdistance * -1;
-//                   var londistance = argument.longitude - routeProvider.routeData!.routePoints[i].lon;
+//                   var londistance = argument.longitude - appDataP.routeData!.routePoints[i].lon;
 //                   if (londistance < 0) londistance = londistance * -1;
 //                   // if (latdistance + londistance < 0.0003) print('## $i:  ${latdistance + londistance}');
 //                   if (latdistance + londistance < 0.0003) {
@@ -227,13 +227,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 //                       // if (clatdistance + clondistance < 0.003) {
 //                       //   var city = RouteCity(
 //                       //       id: j,
-//                       //       albergues: [],
+//                       //       hotels: [],
 //                       //       facilities: [],
 //                       //       name: cities[j]['name'],
 //                       //       lat: double.parse(cities[j]['lat']),
 //                       //       lon: double.parse(cities[j]['lon']),
-//                       //       routePoint: RoutePoint(routeProvider.routeData!.routePoints[i].lat, routeProvider.routeData!.routePoints[i].lon,
-//                       //           routeProvider.routeData!.routePoints[i].ele));
+//                       //       routePoint: RoutePoint(appDataP.routeData!.routePoints[i].lat, appDataP.routeData!.routePoints[i].lon,
+//                       //           appDataP.routeData!.routePoints[i].ele));
 
 //                       //   // print('#### $j:  ${latdistance + londistance} : ${cities[j]['name']} ####');
 //                       //   print(city.toString());
@@ -253,13 +253,13 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 //                     if (lowestIndex != -1) {
 //                       // var city = RouteCity(
 //                       //     id: lowestIndex,
-//                       //     albergues: [],
+//                       //     hotels: [],
 //                       //     facilities: [],
 //                       //     name: cities[lowestIndex]['name'],
 //                       //     lat: double.parse(cities[lowestIndex]['lat']),
 //                       //     lon: double.parse(cities[lowestIndex]['lon']),
-//                       //     routePoint: RoutePoint(routeProvider.routeData!.routePoints[lowestIndex].lat,
-//                       //         routeProvider.routeData!.routePoints[lowestIndex].lon, routeProvider.routeData!.routePoints[lowestIndex].ele));
+//                       //     routePoint: RoutePoint(appDataP.routeData!.routePoints[lowestIndex].lat,
+//                       //         appDataP.routeData!.routePoints[lowestIndex].lon, appDataP.routeData!.routePoints[lowestIndex].ele));
 //                       // // print(cityDistances);
 //                       // newCities.add(city);
 
@@ -288,7 +288,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 //                 print('${cities[i]['name']} : ${cities[i]['lat']} : ${cities[i]['lon']}');
 //                 if (latdistance + londistance < 0.001 && latdistance + londistance > -0.001) {
 //                   var city = RouteCity(id: i,
-//                   albergues: [],
+//                   hotels: [],
 //                   facilities: [],
 //                   name: cities[i]['name'],
 //                   lat: cities[i]['lat'],
@@ -301,7 +301,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 //                       "id": 1,
 //                       "name": "Honto (Napoleon Route)",
 //                       "facilities": [],
-//                       "albergues": [],
+//                       "hotels": [],
 //                       "lat": 43.12435300,
 //                       "lon": -1.24474800,
 //                       "routePoint": {
@@ -315,9 +315,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 //                   break;
 //                 }
 //               }
-//               for (var i = 0; i < routeProvider.routeData!.routePoints.length; i++) {
-//                 var latdistance = argument.latitude - routeProvider.routeData!.routePoints[i].lat;
-//                 var londistance = argument.longitude - routeProvider.routeData!.routePoints[i].lon;
+//               for (var i = 0; i < appDataP.routeData!.routePoints.length; i++) {
+//                 var latdistance = argument.latitude - appDataP.routeData!.routePoints[i].lat;
+//                 var londistance = argument.longitude - appDataP.routeData!.routePoints[i].lon;
 //                 if (latdistance + londistance < 0.00004 && latdistance + londistance > -0.00004) {
 //                   print('$i:  ${latdistance + londistance}');
 //                   break;

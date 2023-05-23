@@ -4,11 +4,11 @@ import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../logic/route_logic.dart';
-import '../pages/albergue_page/albergue_page.dart';
+import '../pages/hotel_page/hotel_page.dart';
 import '../widgets/booking_com_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../model/route_info/albergue.dart';
+import '../model/route_info/hotel.dart';
 import '../model/route_info/route_city.dart';
 import '../widgets/left_aligned_title.dart';
 
@@ -22,7 +22,7 @@ class CityPage extends StatefulWidget {
 }
 
 class _CityPageState extends State<CityPage> {
-  List<Albergue> newAlbergues = [];
+  List<Hotel> newHotels = [];
 
   List<Widget> facilityRow = [];
 
@@ -57,13 +57,13 @@ class _CityPageState extends State<CityPage> {
     // print(cityfile);
   }
 
-  generateAlbergues() async {
+  generateHotels() async {
     dynamic cityfile = await loadFile();
 
     final rl = RouteLogic();
-    List<dynamic> alberguesF = cityfile['albergues'];
-    int startID = widget.city.albergues.length;
-    rl.generateAlbergues(startID, alberguesF, widget.city.id);
+    List<dynamic> hotelsF = cityfile['hotels'];
+    int startID = widget.city.hotels.length;
+    rl.generateHotels(startID, hotelsF, widget.city.id);
   }
 
   @override
@@ -118,50 +118,49 @@ class _CityPageState extends State<CityPage> {
               ),
               const SizedBox(height: 20),
               const LeftAlignedTitle('Accomodations'),
-              widget.city.albergues.isEmpty
+              widget.city.hotels.isEmpty
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 30.0),
                       child: Text('No Accomodations'),
                     )
                   : Expanded(
                       child: ListView.builder(
-                        itemCount: widget.city.albergues.length,
+                        itemCount: widget.city.hotels.length,
                         itemBuilder: (BuildContext context, int index) {
                           List<String> highlightedFacilityImagePaths = [];
-                          if (widget.city.albergues[index].bookingComUrl.isNotEmpty) {
+                          if (widget.city.hotels[index].bookingComUrl.isNotEmpty) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/bookinglogo.png');
                           }
-                          if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.kitchen)) {
+                          if (widget.city.hotels[index].hotelFacilities.contains(HotelFacility.kitchen)) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/kitchen.png');
                           }
-                          if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegan) ||
-                              widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.vegetarian)) {
+                          if (widget.city.hotels[index].hotelFacilities.contains(HotelFacility.vegan) ||
+                              widget.city.hotels[index].hotelFacilities.contains(HotelFacility.vegetarian)) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/vegan.png');
                           }
-                          if (widget.city.albergues[index].albergueFacilities.contains(AlbergueFacility.communityDinner)) {
+                          if (widget.city.hotels[index].hotelFacilities.contains(HotelFacility.communityDinner)) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
                           }
                           Color statusColor = Colors.green;
 
-                          if (widget.city.albergues[index].status == AlbergueStatus.unknown) {
+                          if (widget.city.hotels[index].status == HotelStatus.unknown) {
                             statusColor = Colors.yellow[600]!;
-                          } else if (widget.city.albergues[index].status == AlbergueStatus.closed) {
+                          } else if (widget.city.hotels[index].status == HotelStatus.closed) {
                             statusColor = Colors.red;
-                          } else if (widget.city.albergues[index].status == AlbergueStatus.temporarilyClosed) {
+                          } else if (widget.city.hotels[index].status == HotelStatus.temporarilyClosed) {
                             statusColor = Colors.orange;
                           }
                           return Card(
                             child: ListTile(
-                              onTap: () => Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => AlberguePage(albergue: widget.city.albergues[index]))),
+                              onTap: () =>
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => HotelPage(hotel: widget.city.hotels[index]))),
                               iconColor: Colors.amber[800],
                               title: Row(
                                 children: [
                                   CircleAvatar(radius: 5, backgroundColor: statusColor),
                                   const SizedBox(width: 5),
                                   Expanded(
-                                      child:
-                                          Text(widget.city.albergues[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+                                      child: Text(widget.city.hotels[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
                                 ],
                               ),
                               subtitle: Column(
@@ -170,7 +169,7 @@ class _CityPageState extends State<CityPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
                                     child: Wrap(
-                                        children: widget.city.albergues[index].prices.map((e) {
+                                        children: widget.city.hotels[index].prices.map((e) {
                                       String priceString = '';
                                       if (e.fromPrice != null && e.toPrice != null) {
                                         priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
@@ -185,7 +184,7 @@ class _CityPageState extends State<CityPage> {
                                           SizedBox(
                                               height: 20,
                                               child: Image.asset(
-                                                albergueTypeIconMap[e.type]!,
+                                                hotelTypeIconMap[e.type]!,
                                                 color: Colors.amber[800],
                                               )),
                                           Text(priceString),
@@ -209,16 +208,16 @@ class _CityPageState extends State<CityPage> {
                                 ],
                               ),
                               // Wrap(
-                              //     children: (widget.city.albergues[index].albergueFacilities)
+                              //     children: (widget.city.hotels[index].hotelFacilities)
                               //         .map((e) => Icon(
-                              //               albergueFacilityIconMap[e],
+                              //               hotelFacilityIconMap[e],
                               //               size: 20,
                               //               color: Colors.amber[800],
                               //             ))
                               //         .toList()),
                               // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),
-                              trailing: widget.city.albergues[index].bookingComScore != 0.0
-                                  ? BookingComScore(bookingComScore: widget.city.albergues[index].bookingComScore, size: 30)
+                              trailing: widget.city.hotels[index].bookingComScore != 0.0
+                                  ? BookingComScore(bookingComScore: widget.city.hotels[index].bookingComScore, size: 30)
                                   : const SizedBox.shrink(),
                             ),
                           );
@@ -227,10 +226,10 @@ class _CityPageState extends State<CityPage> {
                     ),
               // ElevatedButton(
               //     onPressed: () {
-              //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAlberguePage()));
-              //       // int id = city.albergues.length;
-              //       // newAlbergues.add(Albergue(id: id, name: name, lat: lat, lon: lon))
-              //       generateAlbergues();
+              //       // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddHotelPage()));
+              //       // int id = city.hotels.length;
+              //       // newHotels.add(Hotel(id: id, name: name, lat: lat, lon: lon))
+              //       generateHotels();
               //     },
               //     child: const Text('Add'))
             ]),

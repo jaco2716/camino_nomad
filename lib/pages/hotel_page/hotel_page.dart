@@ -1,31 +1,32 @@
+
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/url_logic.dart';
-import 'package:camino_nomad/model/route_info/albergue.dart';
+import 'package:camino_nomad/model/route_info/hotel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/albergue_header_images.dart';
+import '../../widgets/hotel_header_images.dart';
 import '../../widgets/booking_com_widgets.dart';
 import '../../widgets/my_alert_dialog.dart';
-import 'albergue_info_list_tile.dart';
+import 'hotel_info_list_tile.dart';
 
-class AlberguePage extends StatelessWidget {
-  const AlberguePage({super.key, required this.albergue});
-  final Albergue albergue;
+class HotelPage extends StatelessWidget {
+  const HotelPage({super.key, required this.hotel});
+  final Hotel hotel;
 
   @override
   Widget build(BuildContext context) {
     List<dynamic> highlightedFacilityImagePaths = [];
-    if (albergue.bookingComUrl.isNotEmpty) {
+    if (hotel.bookingComUrl.isNotEmpty) {
       highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/bookinglogo.png', 'title': 'Book with Booking.com'});
     }
-    if (albergue.albergueFacilities.contains(AlbergueFacility.kitchen)) {
+    if (hotel.hotelFacilities.contains(HotelFacility.kitchen)) {
       highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/kitchen.png', 'title': 'Kitchen availabe'});
     }
-    if (albergue.albergueFacilities.contains(AlbergueFacility.vegan) || albergue.albergueFacilities.contains(AlbergueFacility.vegetarian)) {
+    if (hotel.hotelFacilities.contains(HotelFacility.vegan) || hotel.hotelFacilities.contains(HotelFacility.vegetarian)) {
       highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/vegan.png', 'title': 'Vegetarian options'});
     }
-    if (albergue.albergueFacilities.contains(AlbergueFacility.communityDinner)) {
+    if (hotel.hotelFacilities.contains(HotelFacility.communityDinner)) {
       highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/dinner.png', 'title': 'Community dinner'});
     }
     if (highlightedFacilityImagePaths.isNotEmpty) {
@@ -33,12 +34,12 @@ class AlberguePage extends StatelessWidget {
     }
 
     Color statusColor = Colors.green;
-    String statusText = albergue.status.name.camelToSentence();
-    if (albergue.status == AlbergueStatus.unknown) {
+    String statusText = hotel.status.name.camelToSentence();
+    if (hotel.status == HotelStatus.unknown) {
       statusColor = Colors.yellow[600]!;
-    } else if (albergue.status == AlbergueStatus.closed) {
+    } else if (hotel.status == HotelStatus.closed) {
       statusColor = Colors.red;
-    } else if (albergue.status == AlbergueStatus.temporarilyClosed) {
+    } else if (hotel.status == HotelStatus.temporarilyClosed) {
       statusColor = Colors.orange;
     }
 
@@ -58,7 +59,7 @@ class AlberguePage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              AlbergueHeaderImages(albergue: albergue),
+              HotelHeaderImages(hotel: hotel),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SizedBox(
@@ -66,7 +67,7 @@ class AlberguePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(albergue.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text(hotel.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                       const SizedBox(height: 6),
                       Row(
                         children: [
@@ -77,11 +78,11 @@ class AlberguePage extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Expanded(
-                            child: Text('${albergue.address},\n${albergue.postalCode} ${albergue.cityName}, ${albergue.country}',
+                            child: Text('${hotel.address},\n${hotel.postalCode} ${hotel.cityName}, ${hotel.country}',
                                 style: const TextStyle(fontSize: 12.5, color: Colors.black54)),
                           ),
                           IconButton(
-                            onPressed: () => UrlLogic.openMapApp(albergue.lat, albergue.lon),
+                            onPressed: () => UrlLogic.openMapApp(hotel.lat, hotel.lon),
                             icon: const Icon(Icons.directions),
                             color: Colors.amber[800],
                             iconSize: 40,
@@ -147,7 +148,7 @@ class AlberguePage extends StatelessWidget {
                             const Text('Info:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                             const SizedBox(height: 6),
                             Column(
-                                children: albergue.prices.map((e) {
+                                children: hotel.prices.map((e) {
                               String priceString = '';
                               if (e.fromPrice != null && e.toPrice != null) {
                                 priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
@@ -164,7 +165,7 @@ class AlberguePage extends StatelessWidget {
                                     SizedBox(
                                       height: 20,
                                       child: Image.asset(
-                                        albergueTypeIconMap[e.type]!,
+                                        hotelTypeIconMap[e.type]!,
                                         color: Colors.amber[800],
                                         // size: 18,
                                       ),
@@ -179,18 +180,18 @@ class AlberguePage extends StatelessWidget {
                               );
                             }).toList()),
                             // const SizedBox(height: 10),
-                            AlbergueInfoListTile('Check-in:', trailing: albergue.checkInTime, show: albergue.checkInTime.isNotEmpty),
-                            AlbergueInfoListTile('Check-out:', trailing: albergue.checkInTime, show: albergue.checkOutTime.isNotEmpty),
-                            AlbergueInfoListTile('Close:', trailing: albergue.closeTime, show: albergue.closeTime.isNotEmpty),
-                            AlbergueInfoListTile('Beds:', trailing: '${albergue.dormatoryBedAmount}', show: albergue.dormatoryBedAmount > 0),
-                            AlbergueInfoListTile('Dormitories:', trailing: '${albergue.dormatoryAmount}', show: albergue.dormatoryAmount > 0),
+                            HotelInfoListTile('Check-in:', trailing: hotel.checkInTime, show: hotel.checkInTime.isNotEmpty),
+                            HotelInfoListTile('Check-out:', trailing: hotel.checkInTime, show: hotel.checkOutTime.isNotEmpty),
+                            HotelInfoListTile('Close:', trailing: hotel.closeTime, show: hotel.closeTime.isNotEmpty),
+                            HotelInfoListTile('Beds:', trailing: '${hotel.dormatoryBedAmount}', show: hotel.dormatoryBedAmount > 0),
+                            HotelInfoListTile('Dormitories:', trailing: '${hotel.dormatoryAmount}', show: hotel.dormatoryAmount > 0),
                           ],
                         ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          albergue.albergueFacilities.isNotEmpty
+                          hotel.hotelFacilities.isNotEmpty
                               ? const Padding(
                                   padding: EdgeInsets.only(left: 24.0, bottom: 6, top: 12),
                                   child: Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
@@ -201,13 +202,13 @@ class AlberguePage extends StatelessWidget {
                             shrinkWrap: true,
                             crossAxisCount: 2,
                             childAspectRatio: 8,
-                            children: albergue.albergueFacilities
+                            children: hotel.hotelFacilities
                                 .map((e) => Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
                                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                                         Icon(
                                           Icons.check,
-                                          // albergueFacilityIconMap[e],
+                                          // hotelFacilityIconMap[e],
                                           size: 15,
                                           color: Colors.amber[800],
                                         ),
@@ -220,12 +221,12 @@ class AlberguePage extends StatelessWidget {
                         ],
                       ),
                       // const SizedBox(height: 16),
-                      BookingAndFacebookRow(albergue: albergue),
+                      BookingAndFacebookRow(hotel: hotel),
                       // const SizedBox(height: 16),
-                      albergue.website.isNotEmpty
+                      hotel.website.isNotEmpty
                           ? Center(
                               child: TextButton(
-                                  onPressed: () => UrlLogic.launchUrlFunc(albergue.website),
+                                  onPressed: () => UrlLogic.launchUrlFunc(hotel.website),
                                   child: Text('Visit Website →',
                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Colors.amber[800]
                                           // color: Colors.blue,
@@ -238,10 +239,10 @@ class AlberguePage extends StatelessWidget {
                           children: [
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: albergue.emails.map((e) => ContactTextButton(name: e, url: 'mailto:$e')).toList()),
+                                children: hotel.emails.map((e) => ContactTextButton(name: e, url: 'mailto:$e')).toList()),
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: albergue.phones.map((e) => ContactTextButton(name: e, url: 'tel:$e')).toList()),
+                                children: hotel.phones.map((e) => ContactTextButton(name: e, url: 'tel:$e')).toList()),
                           ],
                         ),
                       ),
@@ -261,31 +262,31 @@ class AlberguePage extends StatelessWidget {
 class BookingAndFacebookRow extends StatelessWidget {
   const BookingAndFacebookRow({
     super.key,
-    required this.albergue,
+    required this.hotel,
   });
 
-  final Albergue albergue;
+  final Hotel hotel;
 
   @override
   Widget build(BuildContext context) {
     List<Widget> tileWidgets = [];
-    if (albergue.bookingComUrl.isNotEmpty && albergue.bookingComScore != 0.0) {
+    if (hotel.bookingComUrl.isNotEmpty && hotel.bookingComScore != 0.0) {
       tileWidgets.add(Row(
         children: [
-          BookingComLink(url: albergue.bookingComUrl),
-          BookingComScore(bookingComScore: albergue.bookingComScore),
+          BookingComLink(url: hotel.bookingComUrl),
+          BookingComScore(bookingComScore: hotel.bookingComScore),
         ],
       ));
-    } else if (albergue.bookingComUrl.isNotEmpty) {
-      tileWidgets.add(BookingComLink(url: albergue.bookingComUrl));
-    } else if (albergue.bookingComScore != 0.0) {
-      tileWidgets.add(BookingComScore(bookingComScore: albergue.bookingComScore));
+    } else if (hotel.bookingComUrl.isNotEmpty) {
+      tileWidgets.add(BookingComLink(url: hotel.bookingComUrl));
+    } else if (hotel.bookingComScore != 0.0) {
+      tileWidgets.add(BookingComScore(bookingComScore: hotel.bookingComScore));
     }
 
-    if (albergue.facebook.isNotEmpty) {
+    if (hotel.facebook.isNotEmpty) {
       tileWidgets.add(IconButton(
         padding: EdgeInsets.zero,
-        onPressed: () => UrlLogic.launchUrlFunc(albergue.facebook),
+        onPressed: () => UrlLogic.launchUrlFunc(hotel.facebook),
         iconSize: 55,
         icon: Icon(
           Icons.facebook,

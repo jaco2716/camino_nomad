@@ -1,0 +1,102 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'hotel.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Hotel _$HotelFromJson(Map<String, dynamic> json) => Hotel(
+      id: json['id'] as int,
+      cityId: json['cityId'] as int,
+      name: json['name'] as String,
+      lat: (json['lat'] as num).toDouble(),
+      lon: (json['lon'] as num).toDouble(),
+      status: $enumDecodeNullable(_$HotelStatusEnumMap, json['status']) ?? HotelStatus.unknown,
+      checkInTime: json['checkInTime'] as String? ?? '',
+      checkOutTime: json['checkOutTime'] as String? ?? '',
+      closeTime: json['closeTime'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      cityName: json['cityName'] as String? ?? '',
+      country: json['country'] as String? ?? '',
+      postalCode: json['postalCode'] as String? ?? '',
+      bookingComUrl: json['bookingComUrl'] as String? ?? '',
+      bookingComScore: (json['bookingComScore'] as num?)?.toDouble() ?? 0.0,
+      website: json['website'] as String? ?? '',
+      facebook: json['facebook'] as String? ?? '',
+      dormatoryAmount: json['dormatoryAmount'] as int? ?? 0,
+      dormatoryBedAmount: json['dormatoryBedAmount'] as int? ?? 0,
+      imageUrls: (json['imageUrls'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      prices: (json['prices'] as List<dynamic>?)?.map((e) => HotelPrice.fromJson(e as Map<String, dynamic>)).toList() ?? const [],
+      hotelFacilities: (json['hotelFacilities'] as List<dynamic>?)?.map((e) => $enumDecode(_$HotelFacilityEnumMap, e)).toList() ?? const [],
+      phones: (json['phones'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      emails: (json['emails'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+    );
+
+Map<String, dynamic> _$HotelToJson(Hotel instance) => <String, dynamic>{
+      'id': instance.id,
+      'cityId': instance.cityId,
+      'name': instance.name,
+      'lat': instance.lat,
+      'lon': instance.lon,
+      'status': _$HotelStatusEnumMap[instance.status]!,
+      'checkInTime': instance.checkInTime,
+      'checkOutTime': instance.checkOutTime,
+      'closeTime': instance.closeTime,
+      'address': instance.address,
+      'cityName': instance.cityName,
+      'country': instance.country,
+      'postalCode': instance.postalCode,
+      'bookingComUrl': instance.bookingComUrl,
+      'bookingComScore': instance.bookingComScore,
+      'website': instance.website,
+      'facebook': instance.facebook,
+      'dormatoryAmount': instance.dormatoryAmount,
+      'dormatoryBedAmount': instance.dormatoryBedAmount,
+      'imageUrls': instance.imageUrls,
+      'prices': instance.prices,
+      'hotelFacilities': instance.hotelFacilities.map((e) => _$HotelFacilityEnumMap[e]!).toList(),
+      'phones': instance.phones,
+      'emails': instance.emails,
+    };
+
+const _$HotelStatusEnumMap = {
+  HotelStatus.open: 'open',
+  HotelStatus.temporarilyClosed: 'temporarilyClosed',
+  HotelStatus.closed: 'closed',
+  HotelStatus.unknown: 'unknown',
+};
+
+const _$HotelFacilityEnumMap = {
+  HotelFacility.wifi: 'wifi',
+  HotelFacility.tv: 'tv',
+  HotelFacility.breakfast: 'breakfast',
+  HotelFacility.breakfastIncluded: 'breakfastIncluded',
+  HotelFacility.donativoBreakfast: 'donativoBreakfast',
+  HotelFacility.lunch: 'lunch',
+  HotelFacility.dinner: 'dinner',
+  HotelFacility.communityDinner: 'communityDinner',
+  HotelFacility.kitchen: 'kitchen',
+  HotelFacility.microwave: 'microwave',
+  HotelFacility.fridge: 'fridge',
+  HotelFacility.waterBoiler: 'waterBoiler',
+  HotelFacility.cooktops: 'cooktops',
+  HotelFacility.cookingPots: 'cookingPots',
+  HotelFacility.oven: 'oven',
+  HotelFacility.platesUtensils: 'platesUtensils',
+  HotelFacility.clothesLine: 'clothesLine',
+  HotelFacility.vegetarian: 'vegetarian',
+  HotelFacility.vegan: 'vegan',
+  HotelFacility.handWashingSink: 'handWashingSink',
+  HotelFacility.washingMachine: 'washingMachine',
+  HotelFacility.tumbleDryer: 'tumbleDryer',
+  HotelFacility.vendingMachine: 'vendingMachine',
+  HotelFacility.swimingPool: 'swimingPool',
+  HotelFacility.cubeBeds: 'cubeBeds',
+  HotelFacility.privacyCurtains: 'privacyCurtains',
+  HotelFacility.privateLockers: 'privateLockers',
+  HotelFacility.individualPowerplug: 'individualPowerplug',
+  HotelFacility.cottonSheets: 'cottonSheets',
+  HotelFacility.fullLaundryService: 'fullLaundryService',
+  HotelFacility.petsAllowed: 'petsAllowed',
+};

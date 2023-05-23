@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/providers/route_provider.dart';
+import '../model/providers/app_data_provider.dart';
 import '../widgets/city_list_tile.dart';
 import 'package:diacritic/diacritic.dart';
 
@@ -17,14 +17,14 @@ class ChooseStartEndPage extends StatefulWidget {
 class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   final _searchController = TextEditingController();
 
-  late RouteProvider routeProvider;
+  late AppDataProvider appDataP;
   late List<bool> showCities;
 
   @override
   void initState() {
     super.initState();
-    routeProvider = Provider.of<RouteProvider>(context, listen: false);
-    showCities = List.generate(routeProvider.currentRouteData?.cities.length ?? 0, (index) => true);
+    appDataP = Provider.of<AppDataProvider>(context, listen: false);
+    showCities = List.generate(appDataP.currentRouteData?.cities.length ?? 0, (index) => true);
   }
 
   @override
@@ -52,7 +52,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 20),
-                itemCount: (routeProvider.currentRouteData?.cities.length ?? 0) - widget.startIndex,
+                itemCount: (appDataP.currentRouteData?.cities.length ?? 0) - widget.startIndex,
                 itemBuilder: (context, index) {
                   if (!showCities[index + widget.startIndex]) return const SizedBox.shrink();
                   if (widget.isStart) {
@@ -60,17 +60,17 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                         child: InkWell(
                       onTap: () {
                         if (widget.isStart) {
-                          routeProvider.setStartIndex(index + widget.startIndex);
-                          routeProvider.setEndIndex(null);
+                          appDataP.setStartIndex(index + widget.startIndex);
+                          appDataP.setEndIndex(null);
                         } else {
-                          routeProvider.setEndIndex(index + widget.startIndex);
+                          appDataP.setEndIndex(index + widget.startIndex);
                         }
                         Navigator.pop(context);
                       },
                       child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
-                            routeProvider.currentRouteData?.cities[index + widget.startIndex].name ?? '',
+                            appDataP.currentRouteData?.cities[index + widget.startIndex].name ?? '',
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                           )),
                     ));
@@ -78,15 +78,15 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                     int cityIndex = index + widget.startIndex;
                     double totalDistance = 0;
                     for (var i = 1; i <= index + 1; i++) {
-                      totalDistance += routeProvider.allDistances?[i + (routeProvider.startCityIndex)] ?? 0;
+                      totalDistance += appDataP.allDistances?[i + (appDataP.startCityIndex)] ?? 0;
                     }
                     return CityListTile(
                       showBetweenDistance: false,
-                      city: routeProvider.currentRouteData!.cities[cityIndex],
+                      city: appDataP.currentRouteData!.cities[cityIndex],
                       totalDistance: totalDistance,
-                      distanceBetween: index == 0 ? 0 : routeProvider.allDistances![cityIndex],
+                      distanceBetween: index == 0 ? 0 : appDataP.allDistances![cityIndex],
                       onPressed: () {
-                        routeProvider.setEndIndex(index + widget.startIndex);
+                        appDataP.setEndIndex(index + widget.startIndex);
                         Navigator.pop(context);
                       },
                     );
@@ -101,9 +101,9 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   }
 
   searchCities(String value) {
-    if (routeProvider.currentRouteData != null) {
+    if (appDataP.currentRouteData != null) {
       final input = removeDiacritics(value).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase();
-      final tempShowCities = routeProvider.currentRouteData!.cities
+      final tempShowCities = appDataP.currentRouteData!.cities
           .map((e) => removeDiacritics(e.name).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase().contains(input))
           .toList();
       setState(() => showCities = tempShowCities);
