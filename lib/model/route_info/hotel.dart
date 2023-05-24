@@ -8,7 +8,6 @@ part 'hotel.g.dart';
 @JsonSerializable()
 class Hotel {
   int id;
-  int cityId;
   String name;
   double lat;
   double lon;
@@ -34,7 +33,6 @@ class Hotel {
 
   Hotel({
     required this.id,
-    required this.cityId,
     required this.name,
     required this.lat,
     required this.lon,

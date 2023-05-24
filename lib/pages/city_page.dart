@@ -26,6 +26,8 @@ class _CityPageState extends State<CityPage> {
 
   List<Widget> facilityRow = [];
 
+  List<Hotel> hotels = [];
+
   @override
   void initState() {
     super.initState();
@@ -46,24 +48,11 @@ class _CityPageState extends State<CityPage> {
     }
   }
 
-  Future<dynamic> loadFile() async {
-    final String response = await rootBundle.loadString('assets/route_data/test.json');
-    final Map<String, dynamic> routeData = await json.decode(response);
-
-    // List<dynamic> routePoints = routeData['route_points'];
-    int cityindex = (routeData['cities'] as List<dynamic>).indexWhere((element) => element['name'] == widget.city.name);
-    // dynamic cityfile = routeData['cities'][cityindex];
-    return routeData['cities'][cityindex];
-    // print(cityfile);
-  }
-
   generateHotels() async {
-    dynamic cityfile = await loadFile();
-
     final rl = RouteLogic();
-    List<dynamic> hotelsF = cityfile['hotels'];
-    int startID = widget.city.hotels.length;
-    rl.generateHotels(startID, hotelsF, widget.city.id);
+    int startID = hotels.length;
+
+    rl.generateHotels(startID, widget.city);
   }
 
   @override
@@ -118,49 +107,47 @@ class _CityPageState extends State<CityPage> {
               ),
               const SizedBox(height: 20),
               const LeftAlignedTitle('Accomodations'),
-              widget.city.hotels.isEmpty
+              hotels.isEmpty
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 30.0),
                       child: Text('No Accomodations'),
                     )
                   : Expanded(
                       child: ListView.builder(
-                        itemCount: widget.city.hotels.length,
+                        itemCount: hotels.length,
                         itemBuilder: (BuildContext context, int index) {
                           List<String> highlightedFacilityImagePaths = [];
-                          if (widget.city.hotels[index].bookingComUrl.isNotEmpty) {
+                          if (hotels[index].bookingComUrl.isNotEmpty) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/bookinglogo.png');
                           }
-                          if (widget.city.hotels[index].hotelFacilities.contains(HotelFacility.kitchen)) {
+                          if (hotels[index].hotelFacilities.contains(HotelFacility.kitchen)) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/kitchen.png');
                           }
-                          if (widget.city.hotels[index].hotelFacilities.contains(HotelFacility.vegan) ||
-                              widget.city.hotels[index].hotelFacilities.contains(HotelFacility.vegetarian)) {
+                          if (hotels[index].hotelFacilities.contains(HotelFacility.vegan) ||
+                              hotels[index].hotelFacilities.contains(HotelFacility.vegetarian)) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/vegan.png');
                           }
-                          if (widget.city.hotels[index].hotelFacilities.contains(HotelFacility.communityDinner)) {
+                          if (hotels[index].hotelFacilities.contains(HotelFacility.communityDinner)) {
                             highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
                           }
                           Color statusColor = Colors.green;
 
-                          if (widget.city.hotels[index].status == HotelStatus.unknown) {
+                          if (hotels[index].status == HotelStatus.unknown) {
                             statusColor = Colors.yellow[600]!;
-                          } else if (widget.city.hotels[index].status == HotelStatus.closed) {
+                          } else if (hotels[index].status == HotelStatus.closed) {
                             statusColor = Colors.red;
-                          } else if (widget.city.hotels[index].status == HotelStatus.temporarilyClosed) {
+                          } else if (hotels[index].status == HotelStatus.temporarilyClosed) {
                             statusColor = Colors.orange;
                           }
                           return Card(
                             child: ListTile(
-                              onTap: () =>
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => HotelPage(hotel: widget.city.hotels[index]))),
+                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HotelPage(hotel: hotels[index]))),
                               iconColor: Colors.amber[800],
                               title: Row(
                                 children: [
                                   CircleAvatar(radius: 5, backgroundColor: statusColor),
                                   const SizedBox(width: 5),
-                                  Expanded(
-                                      child: Text(widget.city.hotels[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+                                  Expanded(child: Text(hotels[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
                                 ],
                               ),
                               subtitle: Column(
@@ -169,7 +156,7 @@ class _CityPageState extends State<CityPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
                                     child: Wrap(
-                                        children: widget.city.hotels[index].prices.map((e) {
+                                        children: hotels[index].prices.map((e) {
                                       String priceString = '';
                                       if (e.fromPrice != null && e.toPrice != null) {
                                         priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
@@ -208,7 +195,7 @@ class _CityPageState extends State<CityPage> {
                                 ],
                               ),
                               // Wrap(
-                              //     children: (widget.city.hotels[index].hotelFacilities)
+                              //     children: (hotels[index].hotelFacilities)
                               //         .map((e) => Icon(
                               //               hotelFacilityIconMap[e],
                               //               size: 20,
@@ -216,8 +203,8 @@ class _CityPageState extends State<CityPage> {
                               //             ))
                               //         .toList()),
                               // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),
-                              trailing: widget.city.hotels[index].bookingComScore != 0.0
-                                  ? BookingComScore(bookingComScore: widget.city.hotels[index].bookingComScore, size: 30)
+                              trailing: hotels[index].bookingComScore != 0.0
+                                  ? BookingComScore(bookingComScore: hotels[index].bookingComScore, size: 30)
                                   : const SizedBox.shrink(),
                             ),
                           );

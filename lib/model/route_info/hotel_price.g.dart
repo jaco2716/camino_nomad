@@ -12,7 +12,8 @@ HotelPrice _$HotelPriceFromJson(Map<String, dynamic> json) => HotelPrice(
       (json['toPrice'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$HotelPriceToJson(HotelPrice instance) => <String, dynamic>{
+Map<String, dynamic> _$HotelPriceToJson(HotelPrice instance) =>
+    <String, dynamic>{
       'type': _$HotelTypeEnumMap[instance.type]!,
       'fromPrice': instance.fromPrice,
       'toPrice': instance.toPrice,

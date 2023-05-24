@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:camino_nomad/model/route_info/hotel_price.dart';
+import 'package:flutter/services.dart';
 import '../model/route_info/hotel.dart';
 import '../model/route_info/route_city.dart';
 import '../model/route_info/route_data.dart';
@@ -40,8 +41,6 @@ class RouteLogic {
       var city = RouteCity(
         id: i,
         //TODO CHANGE!
-        routeIds: [],
-        hotels: [],
         facilities: [],
         name: cities[i]['name'],
         lat: double.parse(cities[i]['lat']),
@@ -89,14 +88,15 @@ class RouteLogic {
     printMore(jsonEncode(data.cities));
   }
 
-  generateHotels(int startID, List<dynamic> hotelsF, int cityId) {
+  generateHotels(int startID, RouteCity city) async {
     List<Hotel> newHotels = [];
+    dynamic cityfile = await loadHotelsFromFile(city);
+    List<dynamic> hotelsF = cityfile['hotels'];
 
     // for (var i = startID; i < hotelsF.length; i++) {
     for (var i = 0; i < hotelsF.length; i++) {
       var newItem = Hotel(
         id: i + startID,
-        cityId: cityId,
         name: hotelsF[i]['name'] ?? 'NULL',
         lat: double.parse(hotelsF[i]['latitude'] ?? '0.0'),
         lon: double.parse(hotelsF[i]['longitude'] ?? '0.0'),
@@ -205,6 +205,17 @@ class RouteLogic {
 
     printMore(jsonEncode(newHotels));
     // printMore(newHotels.toString());
+  }
+
+  Future<dynamic> loadHotelsFromFile(RouteCity city) async {
+    final String response = await rootBundle.loadString('assets/route_data/test.json');
+    final Map<String, dynamic> routeData = await json.decode(response);
+
+    // List<dynamic> routePoints = routeData['route_points'];
+    int cityindex = (routeData['cities'] as List<dynamic>).indexWhere((element) => element['name'] == city.name);
+    // dynamic cityfile = routeData['cities'][cityindex];
+    return routeData['cities'][cityindex];
+    // print(cityfile);
   }
 
   HotelStatus convertStatus(int status) {

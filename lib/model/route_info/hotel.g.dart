@@ -8,11 +8,11 @@ part of 'hotel.dart';
 
 Hotel _$HotelFromJson(Map<String, dynamic> json) => Hotel(
       id: json['id'] as int,
-      cityId: json['cityId'] as int,
       name: json['name'] as String,
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
-      status: $enumDecodeNullable(_$HotelStatusEnumMap, json['status']) ?? HotelStatus.unknown,
+      status: $enumDecodeNullable(_$HotelStatusEnumMap, json['status']) ??
+          HotelStatus.unknown,
       checkInTime: json['checkInTime'] as String? ?? '',
       checkOutTime: json['checkOutTime'] as String? ?? '',
       closeTime: json['closeTime'] as String? ?? '',
@@ -26,16 +26,30 @@ Hotel _$HotelFromJson(Map<String, dynamic> json) => Hotel(
       facebook: json['facebook'] as String? ?? '',
       dormatoryAmount: json['dormatoryAmount'] as int? ?? 0,
       dormatoryBedAmount: json['dormatoryBedAmount'] as int? ?? 0,
-      imageUrls: (json['imageUrls'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
-      prices: (json['prices'] as List<dynamic>?)?.map((e) => HotelPrice.fromJson(e as Map<String, dynamic>)).toList() ?? const [],
-      hotelFacilities: (json['hotelFacilities'] as List<dynamic>?)?.map((e) => $enumDecode(_$HotelFacilityEnumMap, e)).toList() ?? const [],
-      phones: (json['phones'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
-      emails: (json['emails'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      imageUrls: (json['imageUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      prices: (json['prices'] as List<dynamic>?)
+              ?.map((e) => HotelPrice.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      hotelFacilities: (json['hotelFacilities'] as List<dynamic>?)
+              ?.map((e) => $enumDecode(_$HotelFacilityEnumMap, e))
+              .toList() ??
+          const [],
+      phones: (json['phones'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      emails: (json['emails'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$HotelToJson(Hotel instance) => <String, dynamic>{
       'id': instance.id,
-      'cityId': instance.cityId,
       'name': instance.name,
       'lat': instance.lat,
       'lon': instance.lon,
@@ -55,7 +69,9 @@ Map<String, dynamic> _$HotelToJson(Hotel instance) => <String, dynamic>{
       'dormatoryBedAmount': instance.dormatoryBedAmount,
       'imageUrls': instance.imageUrls,
       'prices': instance.prices,
-      'hotelFacilities': instance.hotelFacilities.map((e) => _$HotelFacilityEnumMap[e]!).toList(),
+      'hotelFacilities': instance.hotelFacilities
+          .map((e) => _$HotelFacilityEnumMap[e]!)
+          .toList(),
       'phones': instance.phones,
       'emails': instance.emails,
     };

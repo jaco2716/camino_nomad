@@ -8,20 +8,16 @@ part 'route_city.g.dart';
 @JsonSerializable()
 class RouteCity {
   int id;
-  List<int> routeIds;
   String name;
   List<Facility> facilities;
-  List<Hotel> hotels;
   double lat;
   double lon;
   int routePointId;
 
   RouteCity({
     required this.id,
-    required this.routeIds,
     required this.name,
     required this.facilities,
-    required this.hotels,
     required this.lat,
     required this.lon,
     required this.routePointId,
