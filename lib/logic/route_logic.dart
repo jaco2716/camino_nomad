@@ -15,7 +15,9 @@ class RouteLogic {
     return 12742 * asin(sqrt(a));
   }
 
-  createAllCities(RouteData data, List<dynamic> cities) {
+  createAllCities(RouteData data) async {
+    List<dynamic> cities = await loadCitiesFromFile();
+
     List<RouteCity> newCities = [];
     for (var i = 0; i < cities.length; i++) {
       // for (var i = 0; i < 2; i++) {
@@ -47,6 +49,18 @@ class RouteLogic {
         lon: double.parse(cities[i]['lon']),
         routePointId: lowestIndex,
       );
+      if (cities[i]['has_atm'] == '1') city.facilities.add(Facility.atm);
+      if (cities[i]['has_bar_cafe'] == '1') city.facilities.add(Facility.barCafe);
+      if (cities[i]['has_restaurant'] == '1') city.facilities.add(Facility.restaurant);
+      if (cities[i]['has_shop'] == '1') city.facilities.add(Facility.shop);
+      if (cities[i]['has_med_clinic'] == '1') city.facilities.add(Facility.medClinic);
+      if (cities[i]['has_pharmacy'] == '1') city.facilities.add(Facility.pharmacy);
+      if (cities[i]['has_fountain'] == '1') city.facilities.add(Facility.fountain);
+      if (cities[i]['has_post_office'] == '1') city.facilities.add(Facility.postOffice);
+      if (cities[i]['has_busstation'] == '1') city.facilities.add(Facility.busStation);
+      if (cities[i]['has_trainstation'] == '1') city.facilities.add(Facility.trainStation);
+      if (cities[i]['has_airport'] == '1') city.facilities.add(Facility.airport);
+      if (cities[i]['has_tobaccostore'] == '1') city.facilities.add(Facility.tobaccoStore);
       // print(cityDistances);
       newCities.add(city);
     }
@@ -68,33 +82,15 @@ class RouteLogic {
     printMore(jsonEncode(points));
   }
 
-  addFacitiliesToCities(RouteData data, List<dynamic> cities) {
-    for (var i = 0; i < data.cities.length; i++) {
-      if (cities[i]['has_atm'] == '1') data.cities[i].facilities.add(Facility.atm);
-      if (cities[i]['has_bar_cafe'] == '1') data.cities[i].facilities.add(Facility.barCafe);
-      if (cities[i]['has_restaurant'] == '1') data.cities[i].facilities.add(Facility.restaurant);
-      if (cities[i]['has_shop'] == '1') data.cities[i].facilities.add(Facility.shop);
-      if (cities[i]['has_med_clinic'] == '1') data.cities[i].facilities.add(Facility.medClinic);
-      if (cities[i]['has_pharmacy'] == '1') data.cities[i].facilities.add(Facility.pharmacy);
-      if (cities[i]['has_fountain'] == '1') data.cities[i].facilities.add(Facility.fountain);
-      if (cities[i]['has_post_office'] == '1') data.cities[i].facilities.add(Facility.postOffice);
-      if (cities[i]['has_busstation'] == '1') data.cities[i].facilities.add(Facility.busStation);
-      if (cities[i]['has_trainstation'] == '1') data.cities[i].facilities.add(Facility.trainStation);
-      if (cities[i]['has_airport'] == '1') data.cities[i].facilities.add(Facility.airport);
-      if (cities[i]['has_tobaccostore'] == '1') data.cities[i].facilities.add(Facility.tobaccoStore);
+  generateHotels(int startID) async {
+    List<Hotel> newHotels = [];
+    List<dynamic> citiesFile = await loadCitiesFromFile();
+    List<dynamic> hotelsF = [];
+    for (var city in citiesFile) {
+      hotelsF.addAll(city['albergues']);
     }
 
-    // print(data.cities.length);
-    printMore(jsonEncode(data.cities));
-  }
-
-  generateHotels(int startID, RouteCity city) async {
-    List<Hotel> newHotels = [];
-    dynamic cityfile = await loadHotelsFromFile(city);
-    List<dynamic> hotelsF = cityfile['hotels'];
-
-    // for (var i = startID; i < hotelsF.length; i++) {
-    for (var i = 0; i < hotelsF.length; i++) {
+    for (var i = startID; i < hotelsF.length; i++) {
       var newItem = Hotel(
         id: i + startID,
         name: hotelsF[i]['name'] ?? 'NULL',
@@ -164,7 +160,10 @@ class RouteLogic {
       }
       if (hotelsF[i]['phones'] != null) {
         for (var j = 0; j < hotelsF[i]['phones'].length; j++) {
-          newItem.phones.add(hotelsF[i]['phones'][j]['number']);
+          String number = hotelsF[i]['phones'][j]['number'];
+          String haswhatsapp = hotelsF[i]['phones'][j]['whatsapp'] ?? '0';
+          if (haswhatsapp == '1') number += 'whatsapp';
+          newItem.phones.add(number);
         }
       }
 
@@ -202,21 +201,16 @@ class RouteLogic {
 
       newHotels.add(newItem);
     }
-
     printMore(jsonEncode(newHotels));
-    // printMore(newHotels.toString());
   }
 
-  Future<dynamic> loadHotelsFromFile(RouteCity city) async {
-    final String response = await rootBundle.loadString('assets/route_data/test.json');
+  Future<List<dynamic>> loadCitiesFromFile() async {
+    final String response = await rootBundle.loadString('assets/route_database/test.json');
     final Map<String, dynamic> routeData = await json.decode(response);
-
-    // List<dynamic> routePoints = routeData['route_points'];
-    int cityindex = (routeData['cities'] as List<dynamic>).indexWhere((element) => element['name'] == city.name);
-    // dynamic cityfile = routeData['cities'][cityindex];
-    return routeData['cities'][cityindex];
-    // print(cityfile);
+    return routeData['cities'] as List<dynamic>;
   }
+
+//TODO get route data without cities and all that.
 
   HotelStatus convertStatus(int status) {
     switch (status) {
@@ -239,4 +233,24 @@ class RouteLogic {
     final pattern = RegExp('.{1,5000}'); // 5000 is the size of each chunk
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
   }
+
+  // addFacitiliesToCities(RouteData data, List<dynamic> cities) {
+  //   for (var i = 0; i < data.cities.length; i++) {
+  //     if (cities[i]['has_atm'] == '1') data.cities[i].facilities.add(Facility.atm);
+  //     if (cities[i]['has_bar_cafe'] == '1') data.cities[i].facilities.add(Facility.barCafe);
+  //     if (cities[i]['has_restaurant'] == '1') data.cities[i].facilities.add(Facility.restaurant);
+  //     if (cities[i]['has_shop'] == '1') data.cities[i].facilities.add(Facility.shop);
+  //     if (cities[i]['has_med_clinic'] == '1') data.cities[i].facilities.add(Facility.medClinic);
+  //     if (cities[i]['has_pharmacy'] == '1') data.cities[i].facilities.add(Facility.pharmacy);
+  //     if (cities[i]['has_fountain'] == '1') data.cities[i].facilities.add(Facility.fountain);
+  //     if (cities[i]['has_post_office'] == '1') data.cities[i].facilities.add(Facility.postOffice);
+  //     if (cities[i]['has_busstation'] == '1') data.cities[i].facilities.add(Facility.busStation);
+  //     if (cities[i]['has_trainstation'] == '1') data.cities[i].facilities.add(Facility.trainStation);
+  //     if (cities[i]['has_airport'] == '1') data.cities[i].facilities.add(Facility.airport);
+  //     if (cities[i]['has_tobaccostore'] == '1') data.cities[i].facilities.add(Facility.tobaccoStore);
+  //   }
+
+  //   // print(data.cities.length);
+  //   printMore(jsonEncode(data.cities));
+  // }
 }

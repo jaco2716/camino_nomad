@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:camino_nomad/logic/route_logic.dart';
 import 'package:camino_nomad/pages/elevation_chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +21,7 @@ class RoutePage extends StatefulWidget {
 
 class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixin {
   late AppDataProvider appDataP;
+  final rl = RouteLogic();
 
   @override
   void initState() {
@@ -41,6 +43,8 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Column(
                 children: [
+                  ElevatedButton(onPressed: () => rl.generateHotels(0), child: const Text('get hotels')),
+                  ElevatedButton(onPressed: () => rl.createAllCities(appDataP.currentRouteData!), child: const Text('get cities')),
                   const SizedBox(height: 16),
                   SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),

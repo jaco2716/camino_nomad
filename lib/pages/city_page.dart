@@ -48,12 +48,12 @@ class _CityPageState extends State<CityPage> {
     }
   }
 
-  generateHotels() async {
-    final rl = RouteLogic();
-    int startID = hotels.length;
+  // generateHotels() async {
+  //   final rl = RouteLogic();
+  //   int startID = hotels.length;
 
-    rl.generateHotels(startID, widget.city);
-  }
+  //   rl.generateHotels(startID, widget.city);
+  // }
 
   @override
   Widget build(BuildContext context) {

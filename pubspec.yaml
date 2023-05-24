@@ -50,3 +50,5 @@ flutter:
     - assets/images/custom_icons/
     - assets/images/custom_icons/hotel_type/
     
+    - assets/route_database/
+    
