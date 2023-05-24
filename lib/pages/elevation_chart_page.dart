@@ -18,6 +18,11 @@ class ElevationChartPage extends StatelessWidget {
     double eleMax = eleMaxList?.reduce(max) ?? 0;
     if (eleMax < 1500) eleMax = 1500;
 
+    // appDataP.allDistances?.forEach((element) {
+    //   print(element);
+    // });
+    // var distSum = appDataP.allDistances?.reduce((a, b) => a + b);
+    // print(distSum);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Elevation'),
@@ -36,9 +41,11 @@ class ElevationChartPage extends StatelessWidget {
               if (cityRPIds.contains(routeData.routePoints[rpIndex].id)) {
                 var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].id);
                 double totalDistance = 0;
-                for (var i = 1; i <= cityIndex; i++) {
-                  totalDistance += appDataP.allDistances?[i + (appDataP.startCityIndex)] ?? 0;
+
+                for (var i = appDataP.startCityIndex + 1; i <= cityIndex; i++) {
+                  totalDistance += appDataP.allDistances?[i] ?? 0;
                 }
+
                 return Align(
                   alignment: Alignment.bottomCenter,
                   child: ConstrainedBox(

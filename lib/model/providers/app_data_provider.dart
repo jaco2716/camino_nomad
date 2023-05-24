@@ -120,9 +120,9 @@ class AppDataProvider with ChangeNotifier {
     kbSaved = response.toKb();
     if (response.isEmpty) {
       try {
-        response = await rootBundle.loadString('assets/route_data/route_file_$routeId.json');
+        response = await rootBundle.loadString('assets/route_database/route_data/route_file_$routeId.json');
       } catch (e) {
-        print('cant load file');
+        print('cant load file, Error: $e');
       }
     }
 

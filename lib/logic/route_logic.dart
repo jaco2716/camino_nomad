@@ -39,6 +39,8 @@ class RouteLogic {
       }
       var city = RouteCity(
         id: i,
+        //TODO CHANGE!
+        routeIds: [],
         hotels: [],
         facilities: [],
         name: cities[i]['name'],
