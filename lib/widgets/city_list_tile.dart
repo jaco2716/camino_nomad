@@ -24,7 +24,7 @@ class CityListTile extends StatelessWidget {
       alignment: Alignment.topCenter,
       children: [
         Padding(
-          padding: showBetweenDistance ? const EdgeInsets.only(top: 26.0) : const EdgeInsets.only(top: 8.0),
+          padding: showBetweenDistance ? const EdgeInsets.only(top: 26.0) : const EdgeInsets.only(top: 4.0, bottom: 4),
           child: Card(
             margin: const EdgeInsets.only(left: 4.0, right: 4.0),
             child: ListTile(
@@ -39,7 +39,7 @@ class CityListTile extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(children: (city.facilities).map((e) => Icon(facilityIconMap[e], size: 20)).toList()),
+                  Wrap(children: (city.facilities).map((e) => Icon(facilityIconMap[e], size: 18)).toList()),
                   Row(
                     children: [
                       const Icon(Icons.house, size: 20, color: Colors.blue),

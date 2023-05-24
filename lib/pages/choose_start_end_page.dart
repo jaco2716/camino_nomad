@@ -1,4 +1,6 @@
+import 'package:camino_nomad/pages/city_page.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../model/providers/app_data_provider.dart';
 import '../widgets/city_list_tile.dart';
@@ -19,12 +21,15 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
 
   late AppDataProvider appDataP;
   late List<bool> showCities;
+  // double modalHeight = 0;
 
   @override
   void initState() {
     super.initState();
     appDataP = Provider.of<AppDataProvider>(context, listen: false);
     showCities = List.generate(appDataP.currentRouteData?.cities.length ?? 0, (index) => true);
+    // print(MediaQuery.of(context).size.height);
+    // print(MediaQuery.of(context).padding.top);
   }
 
   @override
@@ -35,7 +40,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
       ),
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(top: 16.0, bottom: 16, left: 16, right: widget.isStart ? 16 : 4),
         child: Column(
           children: [
             TextFormField(
@@ -53,17 +58,18 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 20),
                 itemCount: (appDataP.currentRouteData?.cities.length ?? 0) - widget.startIndex,
-                itemBuilder: (context, index) {
-                  if (!showCities[index + widget.startIndex]) return const SizedBox.shrink();
+                itemBuilder: (lwcontext, index) {
+                  int cityIndex = index + widget.startIndex;
+                  if (!showCities[cityIndex]) return const SizedBox.shrink();
                   if (widget.isStart) {
                     return Card(
                         child: InkWell(
                       onTap: () {
                         if (widget.isStart) {
-                          appDataP.setStartIndex(index + widget.startIndex);
+                          appDataP.setStartIndex(cityIndex);
                           appDataP.setEndIndex(null);
                         } else {
-                          appDataP.setEndIndex(index + widget.startIndex);
+                          appDataP.setEndIndex(cityIndex);
                         }
                         Navigator.pop(context);
                       },
@@ -75,20 +81,50 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                           )),
                     ));
                   } else {
-                    int cityIndex = index + widget.startIndex;
                     double totalDistance = 0;
                     for (var i = 1; i <= index + 1; i++) {
                       totalDistance += appDataP.allDistances?[i + (appDataP.startCityIndex)] ?? 0;
                     }
-                    return CityListTile(
-                      showBetweenDistance: false,
-                      city: appDataP.currentRouteData!.cities[cityIndex],
-                      totalDistance: totalDistance,
-                      distanceBetween: index == 0 ? 0 : appDataP.allDistances![cityIndex],
-                      onPressed: () {
-                        appDataP.setEndIndex(index + widget.startIndex);
-                        Navigator.pop(context);
-                      },
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 22.0),
+                          child: CityListTile(
+                            showBetweenDistance: false,
+                            city: appDataP.currentRouteData!.cities[cityIndex],
+                            totalDistance: totalDistance,
+                            distanceBetween: index == 0 ? 0 : appDataP.allDistances![cityIndex],
+                            onPressed: () {
+                              appDataP.setEndIndex(cityIndex);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Material(
+                                shape: const CircleBorder(),
+                                clipBehavior: Clip.hardEdge,
+                                color: Colors.transparent,
+                                child: IconButton(
+                                    padding: const EdgeInsets.all(14),
+                                    onPressed: () {
+                                      double modalHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - 40;
+
+                                      showModalBottomSheet(
+                                        clipBehavior: Clip.hardEdge,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                        isScrollControlled: true,
+                                        constraints: BoxConstraints(maxHeight: modalHeight),
+                                        context: context,
+                                        builder: (context) {
+                                          return CityPage(city: appDataP.currentRouteData!.cities[cityIndex], totalDistance: totalDistance);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(FontAwesomeIcons.circleInfo)))),
+                      ],
                     );
                   }
                 },
