@@ -125,10 +125,11 @@ class AppDataProvider with ChangeNotifier {
     // String response = await rootBundle.loadString('assets/route_database/route_data/route_data.json');
     // List<Map<String, dynamic>> jsonData = jsonDecode(response);
     // routeData = jsonData.map((e) => RouteData.fromJson(e)).toList();
-    cities = await getListFromFile<RouteCity>('assets/route_database/cities/route_cities.json', (p0) => RouteCity.fromJson(p0));
     hotels = await getListFromFile<Hotel>('assets/route_database/hotels/route_hotels.json', (p0) => Hotel.fromJson(p0));
     routeData = await getListFromFile<RouteData>('assets/route_database/route_data/route_data.json', (p0) => RouteData.fromJson(p0));
     routeIndex = routeData.indexWhere((element) => element.id == appDataSettings.routeId);
+    var allCities = await getListFromFile<RouteCity>('assets/route_database/cities/route_cities.json', (p0) => RouteCity.fromJson(p0));
+    cities = sortCities(allCities);
 
     setAllDistances();
     notifyListeners();
@@ -144,6 +145,19 @@ class AppDataProvider with ChangeNotifier {
       log('Cant load file: $path', error: e);
       return [];
     }
+  }
+
+  List<RouteCity> sortCities(List<RouteCity> allCities) {
+    var rps = routeData[routeIndex].routePoints;
+    List<RouteCity> newCities = [];
+
+    for (var i = 0; i < allCities.length - 1; i++) {
+      if (rps.indexWhere((element) => element.id == allCities[i].routePointId) != -1) newCities.add(allCities[i]);
+    }
+    newCities.sort(
+        (a, b) => rps.indexWhere((element) => element.id == a.routePointId).compareTo(rps.indexWhere((element) => element.id == b.routePointId)));
+
+    return newCities;
   }
 
   void setStartIndex(int value) async {

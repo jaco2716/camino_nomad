@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import 'hotel.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'route_city.g.dart';
