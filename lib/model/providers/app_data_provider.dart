@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/file_management.dart';
+import 'package:camino_nomad/model/route_info/hotel.dart';
+import 'package:camino_nomad/model/route_info/route_city.dart';
 import 'package:camino_nomad/model/settings/app_data_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,24 +15,29 @@ import '../route_info/route_data.dart';
 import '../settings/shared_pref_names.dart';
 
 class AppDataProvider with ChangeNotifier {
-  RouteData? currentRouteData;
-  AppDataSettings? appDataSettings;
-  int routeId;
-  int startCityIndex;
-  int? endCityIndex;
+  late List<RouteData> routeData;
+  late List<RouteCity> cities;
+  late List<Hotel> hotels;
+  late AppDataSettings appDataSettings;
+  late int routeIndex;
+  // int routeId;
+  // int startCityIndex;
+  // int? endCityIndex;
 
-  List<double>? allDistances;
-  List<double>? allEleGain;
-  List<double>? allEleLoss;
-  List<double>? allMinEle;
-  List<double>? allMaxEle;
-  double? kbSaved;
+  late List<double> allDistances;
+  late List<double> allEleGain;
+  late List<double> allEleLoss;
+  late List<double> allMinEle;
+  late List<double> allMaxEle;
+  // double? kbSaved;
 
-  AppDataProvider({
-    this.routeId = 0,
-    this.currentRouteData,
-    this.startCityIndex = 0,
-  });
+  AppDataProvider(
+      // {
+      // this.routeId = 0,
+      // this.currentRouteData,
+      // this.startCityIndex = 0,
+      // }
+      );
   late SharedPreferences prefs;
   late FileManagement fm;
 
@@ -37,17 +45,17 @@ class AppDataProvider with ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     fm = FileManagement();
     String appDataString = prefs.getString(SharedPrefNames.appDataSettings.name) ?? '';
-    if (appDataString.isEmpty) return;
-    Map<String, dynamic> appDataJson = jsonDecode(appDataString);
-    appDataSettings = AppDataSettings.fromJson(appDataJson);
+    if (appDataString.isEmpty) {
+      appDataSettings = AppDataSettings(false, 0, 0);
+    } else {
+      Map<String, dynamic> appDataJson = jsonDecode(appDataString);
+      appDataSettings = AppDataSettings.fromJson(appDataJson);
+    }
   }
 
   void setAllDistances() {
-    if (currentRouteData == null) return;
     final RouteLogic rl = RouteLogic();
-
-    var cities = currentRouteData!.cities;
-    var routePoints = currentRouteData!.routePoints;
+    var routePoints = routeData[routeIndex].routePoints;
 
     //Distance
     List<double> tempCityDistances = [];
@@ -65,7 +73,7 @@ class AppDataProvider with ChangeNotifier {
 
     int startIndex = 0;
     for (var cityi = 0; cityi <= cities.length - 1; cityi++) {
-      for (var routei = startIndex + 1; routei < currentRouteData!.routePoints.length - 1; routei++) {
+      for (var routei = startIndex + 1; routei < routePoints.length - 1; routei++) {
         //Distance
         tempDistance +=
             rl.calculateDistance(routePoints[routei].lat, routePoints[routei].lon, routePoints[routei + 1].lat, routePoints[routei + 1].lon);
@@ -113,50 +121,64 @@ class AppDataProvider with ChangeNotifier {
 
   Future<void> getRouteData() async {
     await initValues();
+    // response = await rootBundle.loadString('assets/route_database/route_data/route_file_${appDataSettings.routeId}.json');
+    // String response = await rootBundle.loadString('assets/route_database/route_data/route_data.json');
+    // List<Map<String, dynamic>> jsonData = jsonDecode(response);
+    // routeData = jsonData.map((e) => RouteData.fromJson(e)).toList();
+    cities = await getListFromFile<RouteCity>('assets/route_database/cities/route_cities.json', (p0) => RouteCity.fromJson(p0));
+    hotels = await getListFromFile<Hotel>('assets/route_database/hotels/route_hotels.json', (p0) => Hotel.fromJson(p0));
+    routeData = await getListFromFile<RouteData>('assets/route_database/route_data/route_data.json', (p0) => RouteData.fromJson(p0));
+    routeIndex = routeData.indexWhere((element) => element.id == appDataSettings.routeId);
 
-    String response = '';
-    //Change to route ID instead og 0
-    response = await fm.readFile('${config.routeFilePrefix}$routeId');
-    kbSaved = response.toKb();
-    if (response.isEmpty) {
-      try {
-        response = await rootBundle.loadString('assets/route_database/route_data/route_file_$routeId.json');
-      } catch (e) {
-        print('cant load file, Error: $e');
-      }
-    }
-
-    if (response.isEmpty) return;
-
-    Map<String, dynamic> jsonData = jsonDecode(response);
-    RouteData data = RouteData.fromJson(jsonData);
-    currentRouteData = data;
+    setAllDistances();
     notifyListeners();
     return;
   }
 
-  void setStartIndex(int value) {
-    startCityIndex = value;
-    notifyListeners();
-  }
-
-  void setEndIndex(int? value) {
-    endCityIndex = value;
-    notifyListeners();
-  }
-
-  void setLowDataMode(bool value) {
-    appDataSettings?.lowDataMode = value;
-    notifyListeners();
-  }
-
-  void saveRouteToFile(int id) async {
-    int index = config.allRoutes.indexWhere((element) => element.id == id);
-    if (index != -1) {
-      String json = jsonEncode(currentRouteData);
-      await fm.writeFile('${config.routeFilePrefix}$id', json);
-      kbSaved = json.toKb();
+  Future<List<T>> getListFromFile<T>(String path, T Function(Map<String, dynamic>) fromJson) async {
+    try {
+      String response = await rootBundle.loadString(path);
+      List<dynamic> json = jsonDecode(response);
+      return json.map<T>((e) => fromJson(e)).toList();
+    } catch (e) {
+      log('Cant load file: $path', error: e);
+      return [];
     }
+  }
+
+  void setStartIndex(int value) async {
+    // startCityIndex = value;
+    appDataSettings.startIndex = value;
+    await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
     notifyListeners();
   }
+
+  void setEndIndex(int? value) async {
+    // endCityIndex = value;
+    appDataSettings.endIndex = value;
+    await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
+    notifyListeners();
+  }
+
+  void setLowDataMode(bool value) async {
+    appDataSettings.lowDataMode = value;
+    await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
+    notifyListeners();
+  }
+
+  void setRouteId(int id) async {
+    appDataSettings.routeId = id;
+    await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
+    notifyListeners();
+  }
+
+  // void saveRouteToFile(int id) async {
+  //   int index = config.allRoutes.indexWhere((element) => element.id == id);
+  //   if (index != -1) {
+  //     String json = jsonEncode(routeData);
+  //     await fm.writeFile('${config.routeFilePrefix}$id', json);
+  //     kbSaved = json.toKb();
+  //   }
+  //   notifyListeners();
+  // }
 }

@@ -8,13 +8,11 @@ part 'route_data.g.dart';
 class RouteData {
   int id;
   String name;
-  List<RouteCity> cities;
   List<RoutePoint> routePoints;
 
   RouteData({
     required this.id,
     required this.name,
-    required this.cities,
     required this.routePoints,
   });
 
@@ -23,6 +21,6 @@ class RouteData {
 
   @override
   String toString() {
-    return 'id: $id, name: $name, cities length: ${cities.length}, routePoints length: ${routePoints.length}.';
+    return 'id: $id, name: $name, routePoints length: ${routePoints.length}.';
   }
 }

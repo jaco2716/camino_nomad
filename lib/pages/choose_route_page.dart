@@ -42,7 +42,7 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                         child: InkWell(
                       onTap: () async {
                         var appDataP = context.read<AppDataProvider>();
-                        appDataP.routeId = config.allRoutes[index].id;
+                        appDataP.appDataSettings.routeId = config.allRoutes[index].id;
                         await appDataP.getRouteData();
                         if (mounted) Navigator.pop(context);
                       },

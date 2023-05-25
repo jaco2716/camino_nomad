@@ -18,7 +18,7 @@ class HotelHeaderImages extends StatelessWidget {
     if (hotel.imageUrls.isEmpty) {
       return const SizedBox.shrink();
     }
-    if (context.read<AppDataProvider>().appDataSettings?.lowDataMode ?? false) {
+    if (context.read<AppDataProvider>().appDataSettings.lowDataMode) {
       return const Text('Turn off Low Data Mode to see images.');
     }
     return InkWell(

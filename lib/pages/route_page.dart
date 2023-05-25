@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:camino_nomad/logic/route_logic.dart';
+import 'package:camino_nomad/logic/data_generation.dart';
+import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:camino_nomad/pages/elevation_chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,14 +22,13 @@ class RoutePage extends StatefulWidget {
 
 class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixin {
   late AppDataProvider appDataP;
-  final rl = RouteLogic();
+  final dg = DataGeneration();
 
   @override
   void initState() {
     super.initState();
 
     appDataP = context.read<AppDataProvider>();
-    appDataP.setAllDistances();
   }
 
   @override
@@ -43,20 +43,18 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Column(
                 children: [
-                  ElevatedButton(onPressed: () => rl.generateHotels(0), child: const Text('get hotels')),
-                  ElevatedButton(onPressed: () => rl.createAllCities(appDataP.currentRouteData!), child: const Text('get cities')),
+                  ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
+                  ElevatedButton(onPressed: () => dg.createAllCities(appDataP.routeData[appDataP.routeIndex]), child: const Text('get cities')),
                   const SizedBox(height: 16),
                   SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey'),
                   Consumer<AppDataProvider>(builder: (context, value, _) {
-                    String routeSub = value.currentRouteData?.name ?? 'Choose your route...';
+                    String routeSub = value.routeData[value.routeIndex].name;
 
-                    String startSub =
-                        (value.currentRouteData != null) ? value.currentRouteData!.cities[value.startCityIndex].name : 'Choose your start city...';
-                    String endSub = (value.endCityIndex != null && value.currentRouteData != null)
-                        ? value.currentRouteData!.cities[value.endCityIndex!].name
-                        : 'Choose your end city...';
+                    String startSub = value.cities[value.appDataSettings.startIndex].name;
+                    String endSub =
+                        value.appDataSettings.endIndex != null ? value.cities[value.appDataSettings.endIndex!].name : 'Choose your end city...';
 
                     return Column(
                       children: [
@@ -75,8 +73,10 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                             title: 'End here today!',
                             subtitle: endSub,
                             icon: const FaIcon(FontAwesomeIcons.locationCrosshairs),
-                            onTap: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => ChooseStartEndPage(isStart: false, startIndex: value.startCityIndex + 1)))),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChooseStartEndPage(isStart: false, startIndex: value.appDataSettings.startIndex + 1)))),
                       ],
                     );
                   }),
@@ -89,7 +89,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                       color: Colors.blue,
                       child: InkWell(
                         onTap: () {
-                          if (appDataP.endCityIndex != null) {
+                          if (appDataP.appDataSettings.endIndex != null) {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
                           }
                         },
@@ -101,20 +101,21 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                             double? eleLossSum;
                             double? eleMin;
                             double? eleMax;
-                            if (value.endCityIndex != null) {
-                              var distanceList = value.allDistances?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
-                              var eleGainList = value.allEleGain?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
-                              var eleLossList = value.allEleLoss?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
-                              var eleMinList = value.allMinEle?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
-                              var eleMaxList = value.allMaxEle?.getRange(value.startCityIndex + 1, value.endCityIndex! + 1);
+                            if (value.appDataSettings.endIndex != null) {
+                              var distanceList =
+                                  value.allDistances.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
+                              var eleGainList = value.allEleGain.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
+                              var eleLossList = value.allEleLoss.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
+                              var eleMinList = value.allMinEle.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
+                              var eleMaxList = value.allMaxEle.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
 
-                              distSum = distanceList?.reduce((a, b) => a + b);
-                              eleGainSum = eleGainList?.reduce((a, b) => a + b);
-                              eleLossSum = eleLossList?.reduce((a, b) => a + b);
-                              eleMin = eleMinList?.reduce(min);
-                              eleMax = eleMaxList?.reduce(max);
+                              distSum = distanceList.reduce((a, b) => a + b);
+                              eleGainSum = eleGainList.reduce((a, b) => a + b);
+                              eleLossSum = eleLossList.reduce((a, b) => a + b);
+                              eleMin = eleMinList.reduce(min);
+                              eleMax = eleMaxList.reduce(max);
                             }
-                            double? totalDistance = value.allDistances?.reduce((a, b) => a + b);
+                            double? totalDistance = value.allDistances.reduce((a, b) => a + b);
 
                             return Column(children: [
                               Row(
@@ -123,7 +124,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [const Text('Total Distance:'), Text('${totalDistance?.toStringAsFixed(2) ?? '?'} km')],
+                                children: [const Text('Total Distance:'), Text('${totalDistance.toStringAsFixed(2)} km')],
                               ),
                               const Divider(color: Colors.white),
                               Row(
@@ -148,7 +149,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   ),
                   const SizedBox(height: 16),
                   Consumer<AppDataProvider>(builder: (context, value, _) {
-                    if (value.endCityIndex == null) return const SizedBox.shrink();
+                    if (value.appDataSettings.endIndex == null) return const SizedBox.shrink();
                     return const LeftAlignedTitle('Cities on route');
                   }),
                 ],
@@ -156,23 +157,23 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
             ),
           ),
           Consumer<AppDataProvider>(builder: (context, value, _) {
-            if (value.endCityIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (value.appDataSettings.endIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
 
             return SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  int cityIndex = index + value.startCityIndex;
+                  int cityIndex = index + value.appDataSettings.startIndex;
                   double totalDistance = 0;
                   for (var i = 1; i <= index; i++) {
-                    totalDistance += value.allDistances?[i + (value.startCityIndex)] ?? 0;
+                    totalDistance += value.allDistances[i + (value.appDataSettings.startIndex)];
                   }
                   return CityListTile(
                       showBetweenDistance: index != 0,
-                      city: value.currentRouteData!.cities[cityIndex],
+                      city: value.cities[cityIndex],
                       totalDistance: totalDistance,
-                      distanceBetween: value.allDistances![cityIndex]);
+                      distanceBetween: value.allDistances[cityIndex]);
                 },
-                childCount: ((value.endCityIndex ?? -1) - (value.startCityIndex) + 1),
+                childCount: ((value.appDataSettings.endIndex ?? -1) - (value.appDataSettings.startIndex) + 1),
               ),
             );
           }),

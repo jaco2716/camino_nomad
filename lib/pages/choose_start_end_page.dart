@@ -27,7 +27,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   void initState() {
     super.initState();
     appDataP = Provider.of<AppDataProvider>(context, listen: false);
-    showCities = List.generate(appDataP.currentRouteData?.cities.length ?? 0, (index) => true);
+    showCities = List.generate(appDataP.cities.length, (index) => true);
     // print(MediaQuery.of(context).size.height);
     // print(MediaQuery.of(context).padding.top);
   }
@@ -57,7 +57,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 20),
-                itemCount: (appDataP.currentRouteData?.cities.length ?? 0) - widget.startIndex,
+                itemCount: appDataP.cities.length - widget.startIndex,
                 itemBuilder: (lwcontext, index) {
                   int cityIndex = index + widget.startIndex;
                   if (!showCities[cityIndex]) return const SizedBox.shrink();
@@ -76,14 +76,14 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                       child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
-                            appDataP.currentRouteData?.cities[index + widget.startIndex].name ?? '',
+                            appDataP.cities[index + widget.startIndex].name,
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                           )),
                     ));
                   } else {
                     double totalDistance = 0;
                     for (var i = 1; i <= index + 1; i++) {
-                      totalDistance += appDataP.allDistances?[i + (appDataP.startCityIndex)] ?? 0;
+                      totalDistance += appDataP.allDistances[i + (appDataP.appDataSettings.startIndex)];
                     }
                     return Stack(
                       alignment: Alignment.center,
@@ -92,9 +92,9 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                           padding: const EdgeInsets.only(right: 22.0),
                           child: CityListTile(
                             showBetweenDistance: false,
-                            city: appDataP.currentRouteData!.cities[cityIndex],
+                            city: appDataP.cities[cityIndex],
                             totalDistance: totalDistance,
-                            distanceBetween: index == 0 ? 0 : appDataP.allDistances![cityIndex],
+                            distanceBetween: index == 0 ? 0 : appDataP.allDistances[cityIndex],
                             onPressed: () {
                               appDataP.setEndIndex(cityIndex);
                               Navigator.pop(context);
@@ -119,7 +119,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                                         constraints: BoxConstraints(maxHeight: modalHeight),
                                         context: context,
                                         builder: (context) {
-                                          return CityPage(city: appDataP.currentRouteData!.cities[cityIndex], totalDistance: totalDistance);
+                                          return CityPage(city: appDataP.cities[cityIndex], totalDistance: totalDistance);
                                         },
                                       );
                                     },
@@ -137,11 +137,10 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   }
 
   searchCities(String value) {
-    if (appDataP.currentRouteData != null) {
+    if (appDataP.routeData != null) {
       final input = removeDiacritics(value).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase();
-      final tempShowCities = appDataP.currentRouteData!.cities
-          .map((e) => removeDiacritics(e.name).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase().contains(input))
-          .toList();
+      final tempShowCities =
+          appDataP.cities.map((e) => removeDiacritics(e.name).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase().contains(input)).toList();
       setState(() => showCities = tempShowCities);
     }
   }

@@ -45,10 +45,12 @@ flutter:
   
   assets:
     - assets/images/
-    - assets/route_database/route_data/
     - assets/images/hotel/
     - assets/images/custom_icons/
     - assets/images/custom_icons/hotel_type/
+    - assets/route_database/route_data/
+    - assets/route_database/cities/
+    - assets/route_database/hotels/
     
     - assets/route_database/
     

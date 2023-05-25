@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:camino_nomad/model/route_info/route_city.dart';
+import 'package:camino_nomad/model/route_info/route_data.dart';
+import 'package:camino_nomad/model/route_info/route_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,6 +25,10 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   late AppDataProvider appDataP;
+  late RouteData routeData;
+
+  late List<RoutePoint> routePoints;
+  late List<RouteCity> routeCities;
 
   // List<dynamic> cities = [];
 
@@ -33,6 +40,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     appDataP = context.read<AppDataProvider>();
+    routeData = appDataP.routeData[appDataP.routeIndex];
+    routePoints = routeData.routePoints;
+    routeCities = appDataP.cities;
     getMapRouteData();
     // readJson();
     super.initState();
@@ -48,26 +58,15 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   getMapRouteData() async {
     final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/city_pin.png', 70);
     var myIcon = BitmapDescriptor.fromBytes(markerIcon);
-    var routePoints = appDataP.currentRouteData!.routePoints;
-    var routeCities = appDataP.currentRouteData!.cities;
+
     polylineCoordinates = (routePoints).map<LatLng>((e) => LatLng(e.lat, e.lon)).toList();
     markers = routeCities
         .map<Marker>((e) =>
             Marker(markerId: MarkerId('${e.id}'), position: LatLng(e.lat, e.lon), infoWindow: InfoWindow(title: e.name), icon: myIcon, zIndex: 99))
         .toSet();
-    totalDistance = getTotalDistance();
+    totalDistance = appDataP.allDistances.reduce((a, b) => a + b);
 
     setState(() {});
-  }
-
-  double getTotalDistance() {
-    RouteLogic rl = RouteLogic();
-    double tempTotal = 0;
-    var data = polylineCoordinates;
-    for (var i = 0; i < data.length - 1; i++) {
-      tempTotal += rl.calculateDistance(data[i].latitude, data[i].longitude, data[i + 1].latitude, data[i + 1].longitude);
-    }
-    return tempTotal;
   }
 
   @override

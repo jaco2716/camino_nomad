@@ -27,11 +27,11 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
   void initState() {
     super.initState();
     appDataP = context.read<AppDataProvider>();
-    routeData = appDataP.currentRouteData!;
-    cityRPIds = routeData.cities.map((e) => e.routePointId).toList();
-    startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.startCityIndex]);
-    endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.endCityIndex!]);
-    eleMaxList = appDataP.allMaxEle?.getRange(appDataP.startCityIndex + 1, appDataP.endCityIndex! + 1);
+    routeData = appDataP.routeData[appDataP.routeIndex];
+    cityRPIds = appDataP.cities.map((e) => e.routePointId).toList();
+    startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.appDataSettings.startIndex]);
+    endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.appDataSettings.endIndex!]);
+    eleMaxList = appDataP.allMaxEle.getRange(appDataP.appDataSettings.startIndex + 1, appDataP.appDataSettings.endIndex! + 1);
     eleMax = eleMaxList?.reduce(max) ?? 0;
 
     if (eleMax < 1500) eleMax = 1500;
@@ -89,8 +89,8 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
                   var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].id);
                   double totalDistance = 0;
 
-                  for (var i = appDataP.startCityIndex + 1; i <= cityIndex; i++) {
-                    totalDistance += appDataP.allDistances?[i] ?? 0;
+                  for (var i = appDataP.appDataSettings.startIndex + 1; i <= cityIndex; i++) {
+                    totalDistance += appDataP.allDistances[i];
                   }
 
                   return Align(
@@ -106,7 +106,7 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
                           child: RotatedBox(
                             quarterTurns: -1,
                             child: Text(
-                              ' ${routeData.cities[cityIndex].name} - ${totalDistance.toStringAsFixed(2)} km',
+                              ' ${appDataP.cities[cityIndex].name} - ${totalDistance.toStringAsFixed(2)} km',
                               style: const TextStyle(
                                 height: 1,
                                 // fontSize: 14,
