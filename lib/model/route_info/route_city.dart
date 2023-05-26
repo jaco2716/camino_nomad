@@ -38,6 +38,7 @@ class RouteCity {
 }
 
 enum Facility {
+  hotel,
   atm,
   barCafe,
   restaurant,
@@ -53,6 +54,7 @@ enum Facility {
 }
 
 Map<Facility, IconData> facilityIconMap = {
+  Facility.hotel: Icons.home,
   Facility.atm: Icons.attach_money,
   Facility.barCafe: Icons.local_cafe,
   Facility.restaurant: Icons.dining,

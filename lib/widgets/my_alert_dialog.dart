@@ -109,9 +109,10 @@
 import 'package:flutter/material.dart';
 
 class MyInfoDialog extends StatelessWidget {
-  const MyInfoDialog({super.key, required this.child, this.title});
+  const MyInfoDialog({super.key, required this.child, this.title, this.action});
   final Widget child;
   final String? title;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +127,11 @@ class MyInfoDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             )
           : null,
-      actions: [Center(child: TextButton(onPressed: () => Navigator.maybePop(context), child: const Text('Close')))],
+      actions: [
+        Center(
+          child: action ?? TextButton(onPressed: () => Navigator.maybePop(context), child: const Text('Close')),
+        ),
+      ],
     );
   }
 }

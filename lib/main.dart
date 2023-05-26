@@ -58,6 +58,7 @@ class _MyAppState extends State<MyApp> {
               statusBarBrightness: Brightness.light, // For iOS (dark icons)
             ),
           ),
+          dialogBackgroundColor: const Color(0xFFFAFAFA),
           primarySwatch: Colors.blue,
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(40)),

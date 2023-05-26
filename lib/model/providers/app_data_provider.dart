@@ -20,9 +20,6 @@ class AppDataProvider with ChangeNotifier {
   late List<Hotel> hotels;
   late AppDataSettings appDataSettings;
   late int routeIndex;
-  // int routeId;
-  // int startCityIndex;
-  // int? endCityIndex;
 
   late List<double> allDistances;
   late List<double> allEleGain;
@@ -31,15 +28,10 @@ class AppDataProvider with ChangeNotifier {
   late List<double> allMaxEle;
   // double? kbSaved;
 
-  AppDataProvider(
-      // {
-      // this.routeId = 0,
-      // this.currentRouteData,
-      // this.startCityIndex = 0,
-      // }
-      );
   late SharedPreferences prefs;
   late FileManagement fm;
+
+  AppDataProvider();
 
   Future<void> initValues() async {
     prefs = await SharedPreferences.getInstance();
@@ -104,7 +96,9 @@ class AppDataProvider with ChangeNotifier {
 
           tempEleGain = 0;
           tempEleLoss = 0;
-          if (routePoints.length > routei + 3) tempMin = routePoints[routei + 2].ele;
+          //TODO check if min is correct.
+          // if (routePoints.length > routei + 3) tempMin = routePoints[routei + 2].ele;
+          tempMin = routePoints[routei + 1].ele;
           tempMax = 0;
           break;
         }

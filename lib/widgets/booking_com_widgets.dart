@@ -33,19 +33,32 @@ class BookingComScore extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius:
-            BorderRadius.only(topLeft: Radius.circular(size / 5), topRight: Radius.circular(size / 5), bottomRight: Radius.circular(size / 5)),
-        color: Colors.blue[800],
-      ),
-      child: Text(
-        '$bookingComScore',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: size / 2.2, color: Colors.white),
-      ),
+    return Row(
+      children: [
+        Icon(
+          Icons.star,
+          size: 14,
+          color: Colors.amber[800],
+        ),
+        Text(
+          '$bookingComScore',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: size / 2.2, color: Colors.amber[800]),
+        ),
+      ],
     );
+    // return Container(
+    //   alignment: Alignment.center,
+    //   width: size,
+    //   height: size,
+    //   decoration: BoxDecoration(
+    //     borderRadius:
+    //         BorderRadius.only(topLeft: Radius.circular(size / 5), topRight: Radius.circular(size / 5), bottomRight: Radius.circular(size / 5)),
+    //     color: Colors.blue[800],
+    //   ),
+    //   child: Text(
+    //     '$bookingComScore',
+    //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: size / 2.2, color: Colors.white),
+    //   ),
+    // );
   }
 }

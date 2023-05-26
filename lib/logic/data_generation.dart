@@ -43,6 +43,8 @@ class DataGeneration {
         lon: double.parse(cities[i]['lon']),
         routePointId: lowestIndex,
       );
+
+      if ((cities[i]['albergues'] as List<dynamic>?)?.isNotEmpty ?? false) city.facilities.add(Facility.hotel);
       if (cities[i]['has_atm'] == '1') city.facilities.add(Facility.atm);
       if (cities[i]['has_bar_cafe'] == '1') city.facilities.add(Facility.barCafe);
       if (cities[i]['has_restaurant'] == '1') city.facilities.add(Facility.restaurant);

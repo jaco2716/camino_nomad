@@ -29,6 +29,7 @@ class Hotel {
   List<HotelFacility> hotelFacilities;
   List<String> phones;
   List<String> emails;
+  double? cityDistance;
 
   Hotel({
     required this.id,

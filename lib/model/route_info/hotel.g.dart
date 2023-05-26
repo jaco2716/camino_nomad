@@ -46,7 +46,7 @@ Hotel _$HotelFromJson(Map<String, dynamic> json) => Hotel(
               ?.map((e) => e as String)
               .toList() ??
           const [],
-    );
+    )..cityDistance = (json['cityDistance'] as num?)?.toDouble();
 
 Map<String, dynamic> _$HotelToJson(Hotel instance) => <String, dynamic>{
       'id': instance.id,
@@ -74,6 +74,7 @@ Map<String, dynamic> _$HotelToJson(Hotel instance) => <String, dynamic>{
           .toList(),
       'phones': instance.phones,
       'emails': instance.emails,
+      'cityDistance': instance.cityDistance,
     };
 
 const _$HotelStatusEnumMap = {

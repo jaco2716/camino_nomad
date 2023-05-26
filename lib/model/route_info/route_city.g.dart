@@ -28,6 +28,7 @@ Map<String, dynamic> _$RouteCityToJson(RouteCity instance) => <String, dynamic>{
     };
 
 const _$FacilityEnumMap = {
+  Facility.hotel: 'hotel',
   Facility.atm: 'atm',
   Facility.barCafe: 'barCafe',
   Facility.restaurant: 'restaurant',
