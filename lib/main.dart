@@ -61,7 +61,8 @@ class _MyAppState extends State<MyApp> {
           dialogBackgroundColor: const Color(0xFFFAFAFA),
           primarySwatch: Colors.blue,
           inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(40)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
           ),
           cardTheme: CardTheme(
             elevation: 0,

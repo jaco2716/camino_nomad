@@ -1,13 +1,12 @@
-
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/url_logic.dart';
 import 'package:camino_nomad/model/route_info/hotel.dart';
+import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../widgets/hotel_header_images.dart';
 import '../../widgets/booking_com_widgets.dart';
-import '../../widgets/my_alert_dialog.dart';
 import 'hotel_info_list_tile.dart';
 
 class HotelPage extends StatelessWidget {
@@ -54,6 +53,15 @@ class HotelPage extends StatelessWidget {
             const SizedBox(width: 18),
           ],
         ),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditHotelPage(hotel: hotel),
+                  )),
+              icon: const Icon(Icons.edit))
+        ],
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -90,56 +98,7 @@ class HotelPage extends StatelessWidget {
                         ],
                       ),
                       // const SizedBox(height: 10),
-                      InkWell(
-                        borderRadius: BorderRadius.circular(10),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return MyInfoDialog(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: highlightedFacilityImagePaths
-                                      .map((e) => e['title'] == 'info'
-                                          ? const SizedBox.shrink()
-                                          : SizedBox(
-                                              height: 35,
-                                              child: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(6.0),
-                                                    child: Image.asset(
-                                                      e['image'],
-                                                      color: e['image'].contains('bookinglogo') ? null : Colors.blue,
-                                                    ),
-                                                  ),
-                                                  Text(e['title']),
-                                                ],
-                                              )))
-                                      .toList(),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-                          child: Wrap(
-                              children: highlightedFacilityImagePaths
-                                  .map((e) => e['title'] == 'info'
-                                      ? (e['image'] as Widget)
-                                      : SizedBox(
-                                          height: 30,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(right: 8.0),
-                                            child: Image.asset(
-                                              e['image'],
-                                              color: e['image'].contains('bookinglogo') ? null : Colors.blue,
-                                            ),
-                                          )))
-                                  .toList()),
-                        ),
-                      ),
+
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
                         child: Column(
@@ -242,7 +201,13 @@ class HotelPage extends StatelessWidget {
                                 children: hotel.emails.map((e) => ContactTextButton(name: e, url: 'mailto:$e')).toList()),
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: hotel.phones.map((e) => ContactTextButton(name: e, url: 'tel:$e')).toList()),
+                                children: hotel.phones.map((e) {
+                                  String number = e.split('whatsapp')[0];
+                                  return ContactTextButton(
+                                      name: number,
+                                      icon: e.contains('whatsapp') ? const Icon(FontAwesomeIcons.whatsapp, color: Colors.green, size: 18) : null,
+                                      url: 'tel:$number');
+                                }).toList()),
                           ],
                         ),
                       ),
@@ -308,9 +273,11 @@ class ContactTextButton extends StatelessWidget {
     super.key,
     required this.name,
     required this.url,
+    this.icon,
   });
   final String name;
   final String url;
+  final Icon? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +290,72 @@ class ContactTextButton extends StatelessWidget {
             )));
       },
       onPressed: () => UrlLogic.launchUrlFunc(url),
-      child: Text(name),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(name),
+          icon != null
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: icon,
+                )
+              : const SizedBox.shrink()
+        ],
+      ),
     );
   }
 }
+
+
+
+// // Highlighted Facilities
+                      // InkWell(
+                      //   borderRadius: BorderRadius.circular(10),
+                      //   onTap: () {
+                      //     showDialog(
+                      //       context: context,
+                      //       builder: (context) {
+                      //         return MyInfoDialog(
+                      //           child: Column(
+                      //             mainAxisSize: MainAxisSize.min,
+                      //             children: highlightedFacilityImagePaths
+                      //                 .map((e) => e['title'] == 'info'
+                      //                     ? const SizedBox.shrink()
+                      //                     : SizedBox(
+                      //                         height: 35,
+                      //                         child: Row(
+                      //                           children: [
+                      //                             Padding(
+                      //                               padding: const EdgeInsets.all(6.0),
+                      //                               child: Image.asset(
+                      //                                 e['image'],
+                      //                                 color: e['image'].contains('bookinglogo') ? null : Colors.blue,
+                      //                               ),
+                      //                             ),
+                      //                             Text(e['title']),
+                      //                           ],
+                      //                         )))
+                      //                 .toList(),
+                      //           ),
+                      //         );
+                      //       },
+                      //     );
+                      //   },
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
+                      //     child: Wrap(
+                      //         children: highlightedFacilityImagePaths
+                      //             .map((e) => e['title'] == 'info'
+                      //                 ? (e['image'] as Widget)
+                      //                 : SizedBox(
+                      //                     height: 30,
+                      //                     child: Padding(
+                      //                       padding: const EdgeInsets.only(right: 8.0),
+                      //                       child: Image.asset(
+                      //                         e['image'],
+                      //                         color: e['image'].contains('bookinglogo') ? null : Colors.blue,
+                      //                       ),
+                      //                     )))
+                      //             .toList()),
+                      //   ),
+                      // ),

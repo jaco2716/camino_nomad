@@ -57,16 +57,6 @@ class Hotel {
     this.emails = const [],
   });
 
-  //open from
-  //open to
-  //city id
-  //city slug
-  //country
-  //region
-  //province
-  //postal Code
-  //share_url
-
   factory Hotel.fromJson(Map<String, dynamic> json) => _$HotelFromJson(json);
   Map<String, dynamic> toJson() => _$HotelToJson(this);
 }

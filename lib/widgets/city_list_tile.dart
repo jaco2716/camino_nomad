@@ -33,28 +33,28 @@ class CityListTile extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CityPage(city: city, totalDistance: totalDistance)));
                   },
               dense: true,
-              isThreeLine: true,
+              // isThreeLine: true,
               iconColor: Colors.amber[800],
               title: Text(city.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Wrap(children: (city.facilities).map((e) => Icon(facilityIconMap[e], size: 18)).toList()),
-                  Row(
-                    children: [
-                      const Icon(Icons.house, size: 20, color: Colors.blue),
-                      Text(
-                        // ': ${city.hotels.length}',
-                        'TODO',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     const Icon(Icons.house, size: 20, color: Colors.blue),
+                  //     Text(
+                  //       // ': ${city.hotels.length}',
+                  //       'TODO',
+                  //       style: const TextStyle(fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               trailing: Text('${totalDistance.toStringAsFixed(1)} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              horizontalTitleGap: 5,
-              // contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              // horizontalTitleGap: 5,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             ),
           ),
         ),

@@ -15,7 +15,7 @@ class BookingComLink extends StatelessWidget {
       padding: const EdgeInsets.only(right: 4),
       child: TextButton(
         onPressed: () => UrlLogic.launchUrlFunc(url),
-        child: const Text('Booking.com', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19, color: Colors.blue, letterSpacing: -1)),
+        child: const Text('Booking.com →', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19, color: Colors.blue, letterSpacing: -1)),
       ),
     );
   }
