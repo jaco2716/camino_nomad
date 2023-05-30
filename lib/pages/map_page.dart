@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/model/route_info/route_city.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:camino_nomad/model/route_info/route_point.dart';
@@ -13,22 +14,19 @@ import '../model/providers/app_data_provider.dart';
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(43.16, -4.8),
-    zoom: 6,
-  );
-
   @override
   State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  late CameraPosition initPos;
   late AppDataProvider appDataP;
   late RouteData routeData;
 
   late List<RoutePoint> routePoints;
   late List<RouteCity> routeCities;
+  late int currentRouteIndex;
 
   // List<dynamic> cities = [];
 
@@ -40,12 +38,20 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     appDataP = context.read<AppDataProvider>();
+    super.initState();
+  }
+
+  Future<void> dataSetup() async {
+    currentRouteIndex = appDataP.routeIndex;
     routeData = appDataP.routeData[appDataP.routeIndex];
     routePoints = routeData.routePoints;
     routeCities = appDataP.cities;
+    var initRP = routePoints.length > 2 ? routePoints[(routePoints.length / 2).round()] : RoutePoint(0, 43.16, -4.8, 0);
+    initPos = CameraPosition(
+      target: LatLng(initRP.lat, initRP.lon),
+      zoom: 6,
+    );
     getMapRouteData();
-    // readJson();
-    super.initState();
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -55,8 +61,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-  getMapRouteData() async {
-    final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/city_pin.png', 70);
+  void getMapRouteData() {
+    // final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/map_pin.png', 30);
+    final Uint8List markerIcon = config.mapPinIcon;
     var myIcon = BitmapDescriptor.fromBytes(markerIcon);
 
     polylineCoordinates = (routePoints).map<LatLng>((e) => LatLng(e.lat, e.lon)).toList();
@@ -64,89 +71,113 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         .map<Marker>((e) =>
             Marker(markerId: MarkerId('${e.id}'), position: LatLng(e.lat, e.lon), infoWindow: InfoWindow(title: e.name), icon: myIcon, zIndex: 99))
         .toSet();
-    totalDistance = appDataP.allDistances.reduce((a, b) => a + b);
-
-    setState(() {});
+    totalDistance = appDataP.allDistances.isNotEmpty ? appDataP.allDistances.reduce((a, b) => a + b) : 0;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return SafeArea(
-      child: Stack(
-        children: [
-          Center(
-            child: GoogleMap(
-              // mapType: MapType.hybrid,
-              initialCameraPosition: MapPage._kGooglePlex,
-
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId('routeStroke'),
-                  points: polylineCoordinates,
-                  color: const Color(0xFF0070CC),
-                  width: 6,
-                ),
-                Polyline(
-                  polylineId: const PolylineId('route'),
-                  points: polylineCoordinates,
-                  color: Colors.blue,
-                  width: 3,
-                  zIndex: 1,
-                ),
-              },
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-
-              onCameraIdle: () async {
-                var c = await _controller.future;
-                var zoom = await c.getZoomLevel();
-                if (zoom < 10) {
-                  setState(() {
-                    _showMarkers = false;
-                  });
-                } else {
-                  setState(() {
-                    _showMarkers = true;
-                  });
-                }
-              },
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              onLongPress: (argument) {
-                RouteLogic rl = RouteLogic();
-                // rl.addFacitiliesToCities(appDataP.routeData!, cities);
-              },
-
-              markers: _showMarkers ? markers : const <Marker>{},
-            ),
-          ),
-          Card(
-            color: const Color(0xCCFFFFFF),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+      child: Consumer<AppDataProvider>(builder: (context, value, _) {
+        return FutureBuilder<void>(
+            future: dataSetup(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return Stack(
                 children: [
-                  Text(
-                    'Camino Frances',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[800], fontSize: 15),
+                  Center(
+                    child: StatefulBuilder(builder: (context, modalState) {
+                      return GoogleMap(
+                        // mapType: MapType.hybrid,
+                        initialCameraPosition: initPos,
+
+                        polylines: {
+                          Polyline(
+                            polylineId: const PolylineId('routeStroke'),
+                            points: polylineCoordinates,
+                            color: const Color(0xFF0070CC),
+                            width: 6,
+                          ),
+                          Polyline(
+                            polylineId: const PolylineId('route'),
+                            points: polylineCoordinates,
+                            color: Colors.blue,
+                            width: 3,
+                            zIndex: 1,
+                          ),
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          if (!_controller.isCompleted) _controller.complete(controller);
+                        },
+
+                        onCameraIdle: () async {
+                          var c = await _controller.future;
+                          var zoom = await c.getZoomLevel();
+                          print(zoom);
+                          if (zoom < 10 && _showMarkers) {
+                            modalState(() {
+                              _showMarkers = false;
+                            });
+                          } else if (zoom > 10 && !_showMarkers) {
+                            modalState(() {
+                              _showMarkers = true;
+                            });
+                          }
+                        },
+                        myLocationButtonEnabled: true,
+                        myLocationEnabled: true,
+                        onLongPress: (argument) {
+                          RouteLogic rl = RouteLogic();
+                          // rl.addFacitiliesToCities(appDataP.routeData!, cities);
+                        },
+
+                        markers: _showMarkers ? markers : const <Marker>{},
+                      );
+                    }),
                   ),
-                  const SizedBox(width: 10),
-                  Text('${(totalDistance * 100).roundToDouble() / 100} km', style: const TextStyle(fontSize: 12, height: 1.4)),
+                  Card(
+                    color: const Color(0xCCFFFFFF),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Camino Frances',
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[800], fontSize: 15),
+                          ),
+                          const SizedBox(width: 10),
+                          Text('${(totalDistance * 100).roundToDouble() / 100} km', style: const TextStyle(fontSize: 12, height: 1.4)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Center(
+                  //     child: Card(
+                  //   child: Icon(
+                  //     Icons.,
+                  //     size: 200,
+                  //     color: Colors.amber[800],
+                  //   ),
+                  // )),
                 ],
-              ),
-            ),
-          )
-        ],
-      ),
+              );
+            });
+      }),
     );
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  // @override
+  // void didUpdateWidget(covariant MapPage oldWidget) {
+  //   // TODO: implement didUpdateWidget
+  //   super.didUpdateWidget(oldWidget);
+  // }
 }
 
 

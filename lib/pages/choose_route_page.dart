@@ -42,8 +42,10 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                         child: InkWell(
                       onTap: () async {
                         var appDataP = context.read<AppDataProvider>();
-                        appDataP.appDataSettings.routeId = config.allRoutes[index].id;
-                        await appDataP.getRouteData();
+                        appDataP.setRouteId(config.allRoutes[index].id);
+                        // appDataP.appDataSettings.routeId = config.allRoutes[index].id;
+                        // await appDataP.getRouteData();
+
                         if (mounted) Navigator.pop(context);
                       },
                       child: Padding(
@@ -64,33 +66,36 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                               ],
                             ),
                             const SizedBox(height: 6),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [const Text('Elevation min/max:'), Text('${dataList[index]['elevmin']} m / ${dataList[index]['elevmax']} m')],
-                            // ),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     const Text('Elevation gain/loss:'),
-                            //     Text('${dataList[index]['elevgain']} m / ${dataList[index]['elevloss']} m')
-                            //   ],
-                            // ),
                             Row(
-                              children: const [
-                                // Spacer(),
-                                CircleAvatar(
-                                  radius: 8,
-                                  backgroundColor: Colors.blue,
-                                  child: Icon(
-                                    Icons.download,
-                                    color: Colors.white,
-                                    size: 11,
-                                  ),
-                                ),
-                                SizedBox(width: 6),
-                                Text('Downloaded'),
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Elevation min/max:'),
+                                Text('${config.allRoutes[index].eleMin.round()} m / ${config.allRoutes[index].eleMax.round()} m')
                               ],
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Elevation gain/loss:'),
+                                Text('${config.allRoutes[index].eleGain.round()} m / -${config.allRoutes[index].eleLoss.round()} m')
+                              ],
+                            ),
+                            // Row(
+                            //   children: const [
+                            //     // Spacer(),
+                            //     CircleAvatar(
+                            //       radius: 8,
+                            //       backgroundColor: Colors.blue,
+                            //       child: Icon(
+                            //         Icons.download,
+                            //         color: Colors.white,
+                            //         size: 11,
+                            //       ),
+                            //     ),
+                            //     SizedBox(width: 6),
+                            //     Text('Downloaded'),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),

@@ -52,9 +52,12 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   Consumer<AppDataProvider>(builder: (context, value, _) {
                     String routeSub = value.routeData[value.routeIndex].name;
 
-                    String startSub = value.cities[value.appDataSettings.startIndex].name;
-                    String endSub =
-                        value.appDataSettings.endIndex != null ? value.cities[value.appDataSettings.endIndex!].name : 'Choose your end city...';
+                    String startSub = value.cities.isNotEmpty ? value.cities[value.appDataSettings.startIndex].name : 'No Cities';
+                    String endSub = value.appDataSettings.endIndex != null
+                        ? value.cities.isNotEmpty
+                            ? value.cities[value.appDataSettings.endIndex!].name
+                            : 'No Cities'
+                        : 'Choose your end city...';
 
                     return Column(
                       children: [
@@ -101,7 +104,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                             double? eleLossSum;
                             double? eleMin;
                             double? eleMax;
-                            if (value.appDataSettings.endIndex != null) {
+                            if (value.appDataSettings.endIndex != null && value.cities.isNotEmpty) {
                               var distanceList =
                                   value.allDistances.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
                               var eleGainList = value.allEleGain.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
@@ -115,7 +118,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                               eleMin = eleMinList.reduce(min);
                               eleMax = eleMaxList.reduce(max);
                             }
-                            double? totalDistance = value.allDistances.reduce((a, b) => a + b);
+                            double totalDistance = value.allDistances.isNotEmpty ? value.allDistances.reduce((a, b) => a + b) : 0;
 
                             return Column(children: [
                               Row(
@@ -158,7 +161,6 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
           ),
           Consumer<AppDataProvider>(builder: (context, value, _) {
             if (value.appDataSettings.endIndex == null) return const SliverToBoxAdapter(child: SizedBox.shrink());
-
             return SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {

@@ -1,3 +1,4 @@
+import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:camino_nomad/pages/more_pages/offline_settings_page.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,10 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
             ButtonListTile(
               title: 'Contact',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactPage())),
+            ),
+            ButtonListTile(
+              title: 'Add Hotel',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditHotelPage())),
             ),
           ],
         ),
