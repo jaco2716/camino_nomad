@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FileManagement {
   Future<String> get _localPath async {
@@ -36,6 +37,13 @@ class FileManagement {
       // If encountering an error, return error message.
       return "Error getting content from $fileName";
     }
+  }
+
+  Future<void> exportFile(String fileName) async {
+    final path = await _localPath;
+
+    XFile file = XFile('$path/$fileName.json');
+    await Share.shareXFiles([file]);
   }
 
   // exportData(BuildContext context, String ingredientFileName,

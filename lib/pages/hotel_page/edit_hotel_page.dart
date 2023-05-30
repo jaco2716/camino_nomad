@@ -193,9 +193,9 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   keyboardType: TextInputType.url,
                   initialValue: hotel.bookingComUrl,
                   validator: null,
-                  onSaved: (newValue) => hotel.bookingComUrl = newValue ?? '',
+                  onSaved: (newValue) => hotel.bookingComUrl = convertStringToLink(newValue),
                 ),
-                const PaddedTitle('Booking.com score (0.0 - 10.0)'),
+                const PaddedTitle('Booking.com score (0,0 - 10,0)'),
                 TextFormField(
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   initialValue: hotel.bookingComScore.toString().replaceAll('.', ','),
@@ -207,14 +207,14 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   keyboardType: TextInputType.url,
                   initialValue: hotel.website,
                   validator: null,
-                  onSaved: (newValue) => hotel.website = newValue ?? '',
+                  onSaved: (newValue) => hotel.website = convertStringToLink(newValue),
                 ),
                 const PaddedTitle('Facebook'),
                 TextFormField(
                   keyboardType: TextInputType.url,
                   initialValue: hotel.facebook,
                   validator: null,
-                  onSaved: (newValue) => hotel.facebook = newValue ?? '',
+                  onSaved: (newValue) => hotel.facebook = convertStringToLink(newValue),
                 ),
                 const PaddedTitle('Dormatory Amount'),
                 TextFormField(
@@ -343,8 +343,6 @@ class _EditHotelPageState extends State<EditHotelPage> {
           newFacil.add(allFacilities[i]);
         }
       }
-      print('score');
-      print(hotel.bookingComScore);
 
       Hotel editedHotel = Hotel(
         id: hotel.id,
@@ -373,6 +371,18 @@ class _EditHotelPageState extends State<EditHotelPage> {
       );
       context.read<AppDataProvider>().saveHotelsLocal(editedHotel);
       Navigator.pop(context);
+    }
+  }
+
+  String convertStringToLink(String? text) {
+    if (text == null) {
+      return '';
+    } else if (text.contains('www.')) {
+      return 'https://${text.split('www.')[1]}';
+    } else if (text.contains('//')) {
+      return 'https://${text.split('//')[1]}';
+    } else {
+      return 'https://$text';
     }
   }
 
@@ -463,11 +473,18 @@ class _EditHotelPageState extends State<EditHotelPage> {
                 onPressed: () {
                   if (_pricesFormKey.currentState!.validate()) {
                     _pricesFormKey.currentState!.save();
-                    if (e != null) {
+                    if (newPrice.fromPrice == null && newPrice.toPrice == null) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const MyInfoDialog(child: Text('Add at least one price'));
+                        },
+                      );
+                      return;
+                    } else if (e != null) {
                       int priceIndex = hotel.prices.indexWhere((element) => e.type == element.type);
                       hotel.prices[priceIndex] = newPrice;
                     } else {
-                      //TODO finish
                       if (hotel.prices.isNotEmpty) {
                         int newIndex = HotelType.values.indexWhere((element) => element == newPrice.type);
                         int insertIndex = -1;
@@ -493,7 +510,6 @@ class _EditHotelPageState extends State<EditHotelPage> {
                         if (insertIndex == -1) {
                           hotel.prices.add(newPrice);
                         } else {
-                          print('Inserted at $insertIndex');
                           hotel.prices.insert(insertIndex, newPrice);
                         }
                       } else {

@@ -110,7 +110,6 @@ class _CityPageState extends State<CityPage> {
           bottom: false,
           child: Consumer<AppDataProvider>(builder: (context, value, _) {
             hotels = filterHotelsWithDistance();
-            print('update');
             return Padding(
               padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

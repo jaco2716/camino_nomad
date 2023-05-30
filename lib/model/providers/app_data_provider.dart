@@ -189,17 +189,17 @@ class AppDataProvider with ChangeNotifier {
 
   void saveHotelsLocal(Hotel hotel) async {
     int hotelIndex = hotels.indexWhere((element) => element.id == hotel.id);
-    print(hotelIndex);
+    // await fm.writeFile(config.hotelsFileName, '');
+    // return;
     if (hotelIndex == -1) {
+      hotel.id = hotels.length;
       hotels.add(hotel);
     } else {
       hotels[hotelIndex] = hotel;
-      print(hotels[hotelIndex]);
     }
 
     String json = jsonEncode(hotels);
     await fm.writeFile(config.hotelsFileName, json);
-    print('saved');
     notifyListeners();
   }
 

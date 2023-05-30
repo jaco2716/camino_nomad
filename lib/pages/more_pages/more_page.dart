@@ -1,3 +1,5 @@
+import 'package:camino_nomad/constants/env_config.dart' as config;
+import 'package:camino_nomad/logic/file_management.dart';
 import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin {
+  final fm = FileManagement();
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -47,6 +50,10 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
             ButtonListTile(
               title: 'Add Hotel',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditHotelPage())),
+            ),
+            ButtonListTile(
+              title: 'Export Hotels Data',
+              onTap: () => fm.exportFile(config.hotelsFileName),
             ),
           ],
         ),
