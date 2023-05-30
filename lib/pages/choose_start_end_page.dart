@@ -137,7 +137,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   }
 
   searchCities(String value) {
-    if (appDataP.routeData != null) {
+    if (appDataP.cities.isNotEmpty) {
       final input = removeDiacritics(value).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase();
       final tempShowCities =
           appDataP.cities.map((e) => removeDiacritics(e.name).replaceAll(RegExp('[^A-Za-z0-9]'), '').toLowerCase().contains(input)).toList();

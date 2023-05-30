@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:camino_nomad/logic/data_generation.dart';
-import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:camino_nomad/pages/elevation_chart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -43,8 +41,8 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Column(
                 children: [
-                  ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
-                  ElevatedButton(onPressed: () => dg.createAllCities(appDataP.routeData[appDataP.routeIndex]), child: const Text('get cities')),
+                  // ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
+                  // ElevatedButton(onPressed: () => dg.createAllCities(appDataP.routeData[appDataP.routeIndex]), child: const Text('get cities')),
                   const SizedBox(height: 16),
                   SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),

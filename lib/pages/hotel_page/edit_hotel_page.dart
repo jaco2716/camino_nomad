@@ -1,13 +1,11 @@
 import 'dart:convert';
-
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
-import 'package:camino_nomad/widgets/left_aligned_title.dart';
+import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '../../model/route_info/hotel.dart';
 import '../../model/route_info/hotel_price.dart';
 
@@ -69,7 +67,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [TextButton(onPressed: () {}, child: const Text('Save'))],
+        actions: [TextButton(onPressed: () => saveHotel(), child: const Text('Save'))],
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -82,6 +80,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
               children: [
                 const PaddedTitle('Name'),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   initialValue: hotel.name,
                   validator: validateString,
                   onSaved: (newValue) => hotel.name = newValue!,
@@ -109,24 +108,28 @@ class _EditHotelPageState extends State<EditHotelPage> {
 
                 const PaddedTitle('Address'),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   initialValue: hotel.address,
                   validator: null,
                   onSaved: (newValue) => hotel.address = newValue ?? '',
                 ),
                 const PaddedTitle('City Name'),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   initialValue: hotel.cityName,
                   validator: null,
                   onSaved: (newValue) => hotel.cityName = newValue ?? '',
                 ),
                 const PaddedTitle('Country'),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   initialValue: hotel.country,
                   validator: null,
                   onSaved: (newValue) => hotel.country = newValue ?? '',
                 ),
                 const PaddedTitle('Postal Code'),
                 TextFormField(
+                  keyboardType: TextInputType.number,
                   initialValue: hotel.postalCode,
                   validator: null,
                   onSaved: (newValue) => hotel.postalCode = newValue ?? '',
@@ -187,6 +190,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
 
                 const PaddedTitle('Booking.com url'),
                 TextFormField(
+                  keyboardType: TextInputType.url,
                   initialValue: hotel.bookingComUrl,
                   validator: null,
                   onSaved: (newValue) => hotel.bookingComUrl = newValue ?? '',
@@ -194,18 +198,20 @@ class _EditHotelPageState extends State<EditHotelPage> {
                 const PaddedTitle('Booking.com score (0.0 - 10.0)'),
                 TextFormField(
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  initialValue: hotel.bookingComScore.toString(),
+                  initialValue: hotel.bookingComScore.toString().replaceAll('.', ','),
                   validator: validateDouble,
-                  onSaved: (newValue) => hotel.bookingComScore = double.tryParse(newValue ?? '') ?? 0.0,
+                  onSaved: (newValue) => hotel.bookingComScore = double.tryParse(newValue?.replaceAll(',', '.') ?? '') ?? 0.0,
                 ),
                 const PaddedTitle('Website'),
                 TextFormField(
+                  keyboardType: TextInputType.url,
                   initialValue: hotel.website,
                   validator: null,
                   onSaved: (newValue) => hotel.website = newValue ?? '',
                 ),
                 const PaddedTitle('Facebook'),
                 TextFormField(
+                  keyboardType: TextInputType.url,
                   initialValue: hotel.facebook,
                   validator: null,
                   onSaved: (newValue) => hotel.facebook = newValue ?? '',
@@ -225,23 +231,33 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   onSaved: (newValue) => hotel.dormatoryBedAmount = int.tryParse(newValue ?? '') ?? 0,
                 ),
                 const PaddedTitle('Prices'),
-                ...hotel.prices.map((e) => Row(
-                      children: [
-                        Text('${e.type.name}:  ${e.fromPrice ?? '...'} - ${e.toPrice ?? '...'}'),
-                        const Spacer(),
-                        ElevatedButton(onPressed: () => showPriceDialog(e), child: const Text('Edit')),
-                        const SizedBox(width: 20),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              hotel.prices.remove(e);
-                            });
-                          },
-                          style: TextButton.styleFrom(foregroundColor: Colors.red),
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    )),
+                ...hotel.prices.map((e) {
+                  String priceString = '';
+                  if (e.fromPrice != null && e.toPrice != null) {
+                    priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                  } else if (e.fromPrice != null) {
+                    priceString = '${e.fromPrice!.round()}€ +';
+                  } else {
+                    priceString = '${e.toPrice!.round()}€';
+                  }
+                  return Row(
+                    children: [
+                      Text('${e.type.name.camelToSentence()}:  $priceString'),
+                      const Spacer(),
+                      ElevatedButton(onPressed: () => showPriceDialog(e), child: const Text('Edit')),
+                      const SizedBox(width: 20),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            hotel.prices.remove(e);
+                          });
+                        },
+                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  );
+                }),
                 ElevatedButton(onPressed: () => showPriceDialog(null), child: const Text('Add New Price')),
                 const PaddedTitle('Hotel Facilities'),
                 GridView.builder(
@@ -327,6 +343,8 @@ class _EditHotelPageState extends State<EditHotelPage> {
           newFacil.add(allFacilities[i]);
         }
       }
+      print('score');
+      print(hotel.bookingComScore);
 
       Hotel editedHotel = Hotel(
         id: hotel.id,
@@ -353,8 +371,8 @@ class _EditHotelPageState extends State<EditHotelPage> {
         phones: hotel.phones,
         emails: hotel.emails,
       );
-
       context.read<AppDataProvider>().saveHotelsLocal(editedHotel);
+      Navigator.pop(context);
     }
   }
 
@@ -377,9 +395,17 @@ class _EditHotelPageState extends State<EditHotelPage> {
                     _phoneEmailFormKey.currentState!.save();
                     if (isPhone) {
                       String phoneDone = hasWhatsapp ? '${newPhoneEmail}whatsapp' : newPhoneEmail;
-                      hotel.phones.add(phoneDone);
+                      if (hotel.phones.isEmpty) {
+                        hotel.phones = [phoneDone];
+                      } else {
+                        hotel.phones.add(phoneDone);
+                      }
                     } else {
-                      hotel.emails.add(newPhoneEmail);
+                      if (hotel.emails.isEmpty) {
+                        hotel.emails = [newPhoneEmail];
+                      } else {
+                        hotel.emails.add(newPhoneEmail);
+                      }
                     }
 
                     Navigator.pop(context);
@@ -442,11 +468,37 @@ class _EditHotelPageState extends State<EditHotelPage> {
                       hotel.prices[priceIndex] = newPrice;
                     } else {
                       //TODO finish
-                      // for (var i = 0; i < HotelType.values.length; i++) {
-                      //   hotel.prices[i].type == HotelType.
-                      // }
-                      // hotel.prices.insert(index, element)
-                      hotel.prices.add(newPrice);
+                      if (hotel.prices.isNotEmpty) {
+                        int newIndex = HotelType.values.indexWhere((element) => element == newPrice.type);
+                        int insertIndex = -1;
+                        bool typeExists = false;
+                        for (var i = 0; i < hotel.prices.length; i++) {
+                          if (hotel.prices[i].type == newPrice.type) typeExists = true;
+
+                          int currentIndex = HotelType.values.indexWhere((element) => element == hotel.prices[i].type);
+                          if (newIndex < currentIndex) {
+                            insertIndex = i;
+                            break;
+                          }
+                        }
+                        if (typeExists) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return MyInfoDialog(child: Text('${newPrice.type.name.camelToSentence()} price already exists'));
+                            },
+                          );
+                          return;
+                        }
+                        if (insertIndex == -1) {
+                          hotel.prices.add(newPrice);
+                        } else {
+                          print('Inserted at $insertIndex');
+                          hotel.prices.insert(insertIndex, newPrice);
+                        }
+                      } else {
+                        hotel.prices = [newPrice];
+                      }
                     }
                     Navigator.pop(context);
                     setState(() {});
@@ -476,7 +528,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
                           .map(
                             (e) => DropdownMenuItem(
                               value: e,
-                              child: Text(e.name),
+                              child: Text(e.name.camelToSentence()),
                             ),
                           )
                           .toList(),
@@ -490,18 +542,21 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   const PaddedTitle('From Price'),
                   TextFormField(
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    initialValue: e?.fromPrice?.toString() ?? '',
+                    initialValue: e?.fromPrice?.toString().replaceAll('.', ',') ?? '',
                     validator: (value) => validateDouble((value == '' || value == null) ? '0.0' : value),
-                    onSaved: (newValue) => newPrice.fromPrice = double.tryParse(newValue ?? ''),
+                    onSaved: (newValue) => newPrice.fromPrice = double.tryParse(newValue?.replaceAll(',', '.') ?? ''),
                   ),
                   const PaddedTitle('To price'),
                   TextFormField(
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    initialValue: e?.toPrice?.toString() ?? '',
+                    initialValue: e?.toPrice?.toString().replaceAll('.', ',') ?? '',
                     validator: (value) => validateDouble((value == '' || value == null) ? '0.0' : value),
-                    onSaved: (newValue) => newPrice.toPrice = double.tryParse(newValue ?? ''),
+                    onSaved: (newValue) => newPrice.toPrice = double.tryParse(newValue?.replaceAll(',', '.') ?? ''),
                   ),
-                  const SizedBox(height: 20),
+                  const Text(
+                    'How prices are displayed:\nBoth prices set: 1-5€\nOnly From price set: 1+€\nOnly To price set: 5€',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
                 ],
               );
             }),
@@ -547,7 +602,7 @@ class _GetCoordinatesMapState extends State<GetCoordinatesMap> {
   void initState() {
     super.initState();
     if (widget.hotel.lat == 0 && widget.hotel.lon == 0) {
-      initPos = CameraPosition(
+      initPos = const CameraPosition(
         target: LatLng(42, -4),
         zoom: 5.5,
       );
@@ -618,6 +673,5 @@ class PaddedTitle extends StatelessWidget {
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
-    ;
   }
 }

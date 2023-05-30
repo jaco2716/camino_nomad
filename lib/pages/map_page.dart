@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
-import '../logic/route_logic.dart';
 import '../model/providers/app_data_provider.dart';
 
 class MapPage extends StatefulWidget {
@@ -115,7 +114,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         onCameraIdle: () async {
                           var c = await _controller.future;
                           var zoom = await c.getZoomLevel();
-                          print(zoom);
                           if (zoom < 10 && _showMarkers) {
                             modalState(() {
                               _showMarkers = false;
@@ -128,11 +126,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         },
                         myLocationButtonEnabled: true,
                         myLocationEnabled: true,
-                        onLongPress: (argument) {
-                          RouteLogic rl = RouteLogic();
-                          // rl.addFacitiliesToCities(appDataP.routeData!, cities);
-                        },
-
                         markers: _showMarkers ? markers : const <Marker>{},
                       );
                     }),
@@ -172,12 +165,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
 
   @override
   bool get wantKeepAlive => true;
-
-  // @override
-  // void didUpdateWidget(covariant MapPage oldWidget) {
-  //   // TODO: implement didUpdateWidget
-  //   super.didUpdateWidget(oldWidget);
-  // }
 }
 
 

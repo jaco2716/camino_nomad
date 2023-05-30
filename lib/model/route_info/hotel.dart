@@ -57,6 +57,9 @@ class Hotel {
     this.emails = const [],
   });
 
+  @override
+  String toString() => 'id: $id, name: $name';
+
   factory Hotel.fromJson(Map<String, dynamic> json) => _$HotelFromJson(json);
   Map<String, dynamic> toJson() => _$HotelToJson(this);
 }

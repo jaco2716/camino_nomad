@@ -1,20 +1,36 @@
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/logic/url_logic.dart';
+import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/model/route_info/hotel.dart';
 import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/hotel_header_images.dart';
 import '../../widgets/booking_com_widgets.dart';
 import 'hotel_info_list_tile.dart';
 
-class HotelPage extends StatelessWidget {
-  const HotelPage({super.key, required this.hotel});
-  final Hotel hotel;
+class HotelPage extends StatefulWidget {
+  const HotelPage({super.key, required this.hotelId});
+  final int hotelId;
+
+  @override
+  State<HotelPage> createState() => _HotelPageState();
+}
+
+class _HotelPageState extends State<HotelPage> {
+  late Hotel hotel;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    hotel = context.read<AppDataProvider>().hotels.firstWhere((element) => element.id == widget.hotelId);
+
     List<dynamic> highlightedFacilityImagePaths = [];
     if (hotel.bookingComUrl.isNotEmpty) {
       highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/bookinglogo.png', 'title': 'Book with Booking.com'});
@@ -55,11 +71,14 @@ class HotelPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditHotelPage(hotel: hotel),
-                  )),
+              onPressed: () async {
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditHotelPage(hotel: hotel),
+                    ));
+                setState(() {});
+              },
               icon: const Icon(Icons.edit))
         ],
       ),

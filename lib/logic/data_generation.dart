@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../model/route_info/hotel.dart';
@@ -36,7 +37,6 @@ class DataGeneration {
       }
       var city = RouteCity(
         id: i,
-        //TODO CHANGE!
         facilities: [],
         name: cities[i]['name'],
         lat: double.parse(cities[i]['lat']),
@@ -65,7 +65,6 @@ class DataGeneration {
   }
 
   addIdtoRoutePoints(RouteData data) {
-    print(data.routePoints.length);
     List<RoutePoint> points = [];
     for (var i = 0; i < data.routePoints.length; i++) {
       points.add(RoutePoint(
@@ -206,8 +205,6 @@ class DataGeneration {
     return routeData['cities'] as List<dynamic>;
   }
 
-//TODO get route data without cities and all that.
-
   HotelStatus convertStatus(int status) {
     switch (status) {
       case 0:
@@ -227,7 +224,11 @@ class DataGeneration {
 
   printMore(String text) {
     final pattern = RegExp('.{1,5000}'); // 5000 is the size of each chunk
-    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+    pattern.allMatches(text).forEach((match) {
+      if (kDebugMode) {
+        print(match.group(0));
+      }
+    });
   }
 }
 

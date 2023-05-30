@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:camino_nomad/constants/env_config.dart' as config;
-import 'package:camino_nomad/extensions/string_extensions.dart';
+
 import 'package:camino_nomad/logic/file_management.dart';
 import 'package:camino_nomad/model/route_info/hotel.dart';
 import 'package:camino_nomad/model/route_info/route_city.dart';
@@ -97,8 +97,6 @@ class AppDataProvider with ChangeNotifier {
 
           tempEleGain = 0;
           tempEleLoss = 0;
-          //TODO check if min is correct.
-          // if (routePoints.length > routei + 3) tempMin = routePoints[routei + 2].ele;
           tempMin = routePoints[routei + 1].ele;
           tempMax = 0;
           break;
@@ -191,14 +189,17 @@ class AppDataProvider with ChangeNotifier {
 
   void saveHotelsLocal(Hotel hotel) async {
     int hotelIndex = hotels.indexWhere((element) => element.id == hotel.id);
-
+    print(hotelIndex);
     if (hotelIndex == -1) {
       hotels.add(hotel);
     } else {
       hotels[hotelIndex] = hotel;
+      print(hotels[hotelIndex]);
     }
+
     String json = jsonEncode(hotels);
     await fm.writeFile(config.hotelsFileName, json);
+    print('saved');
     notifyListeners();
   }
 

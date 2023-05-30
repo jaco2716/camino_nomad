@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-
-import '../model/providers/app_data_provider.dart';
 import 'map_page.dart';
 import 'more_pages/more_page.dart';
 import 'route_page.dart';

@@ -1,9 +1,7 @@
 import 'dart:math';
-
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ElevationChartPage extends StatefulWidget {

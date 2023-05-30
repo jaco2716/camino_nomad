@@ -1,10 +1,7 @@
 import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
-import 'package:camino_nomad/pages/more_pages/offline_settings_page.dart';
 import 'package:flutter/material.dart';
-
 import '../../widgets/button_list_tile.dart';
-import '../coming_soon_page.dart';
 import 'useful_links_page.dart';
 import 'package:share_plus/share_plus.dart';
 
