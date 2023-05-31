@@ -4,6 +4,7 @@ import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/button_list_tile.dart';
+import 'manage_hotels_page.dart';
 import 'useful_links_page.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -35,8 +36,16 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
             // ),
             ButtonListTile(
               title: 'Share app',
-              onTap: () {
-                Share.share('Download Camino Nomad for iOS and Android: https://caminonomad.com');
+              onTap: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) =>
+                      const Dialog(elevation: 0, backgroundColor: Colors.transparent, child: Center(child: CircularProgressIndicator())),
+                );
+                await Share.shareWithResult('Download Camino Nomad for iOS and Android: https://caminonomad.com');
+                if (mounted) {
+                  Navigator.maybePop(context);
+                }
               },
             ),
             ButtonListTile(
@@ -47,13 +56,11 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
               title: 'Contact',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactPage())),
             ),
+
+            const Divider(height: 30),
             ButtonListTile(
-              title: 'Add Hotel',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditHotelPage())),
-            ),
-            ButtonListTile(
-              title: 'Export Hotels Data',
-              onTap: () => fm.exportFile(config.hotelsFileName),
+              title: 'Manage Hotels',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageHotelsPage())),
             ),
           ],
         ),

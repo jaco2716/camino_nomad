@@ -4,13 +4,14 @@ import 'package:camino_nomad/model/route_info/hotel_price.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import '../logic/route_logic.dart';
-import '../pages/hotel_page/hotel_page.dart';
-import '../widgets/booking_com_widgets.dart';
+import '../../logic/route_logic.dart';
+import '../hotel_page/hotel_page.dart';
+import '../../widgets/booking_com_widgets.dart';
 import 'package:flutter/material.dart';
-import '../model/route_info/hotel.dart';
-import '../model/route_info/route_city.dart';
-import '../widgets/left_aligned_title.dart';
+import '../../model/route_info/hotel.dart';
+import '../../model/route_info/route_city.dart';
+import '../../widgets/left_aligned_title.dart';
+import 'hotel_list_tile.dart';
 
 class CityPage extends StatefulWidget {
   const CityPage({super.key, required this.city, required this.totalDistance});
@@ -267,103 +268,8 @@ class _CityPageState extends State<CityPage> {
                             // if (hotels[index].hotelFacilities.contains(HotelFacility.communityDinner)) {
                             //   highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
                             // }
-                            Color statusColor = statusToColor(hotels[index].status);
 
-                            String hotelDist = distToString(hotels[index].cityDistance);
-
-                            return Card(
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HotelPage(hotelId: hotels[index].id))),
-                                iconColor: Colors.amber[800],
-                                title: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4.0),
-                                      child: CircleAvatar(radius: 5, backgroundColor: statusColor),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Expanded(child: Text(hotels[index].name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 2.0),
-                                      child: Icon(
-                                        Icons.location_on,
-                                        size: 12,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    Text(hotelDist, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blue)),
-                                  ],
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Wrap(
-                                            children: hotels[index].prices.map((e) {
-                                          String priceString = '';
-                                          if (e.fromPrice != null && e.toPrice != null) {
-                                            priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                                          } else if (e.fromPrice != null) {
-                                            priceString = '${e.fromPrice!.round()}€ +';
-                                          } else {
-                                            priceString = '${e.toPrice!.round()}€';
-                                          }
-                                          return Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              SizedBox(
-                                                  height: 20,
-                                                  child: Image.asset(
-                                                    hotelTypeIconMap[e.type]!,
-                                                    color: Colors.amber[800],
-                                                  )),
-                                              Text(priceString),
-                                              const SizedBox(width: 6),
-                                            ],
-                                          );
-                                        }).toList()),
-                                      ),
-                                      hotels[index].bookingComScore != 0.0
-                                          ? BookingComScore(bookingComScore: hotels[index].bookingComScore, size: 30)
-                                          : const SizedBox.shrink(),
-                                      // Wrap(
-                                      //     children: highlightedFacilityImagePaths
-                                      //         .map((e) => SizedBox(
-                                      //             height: 20,
-                                      //             child: Padding(
-                                      //               padding: const EdgeInsets.only(right: 8.0),
-                                      //               child: Image.asset(
-                                      //                 e,
-                                      //                 color: e.contains('bookinglogo') ? null : Colors.blue,
-                                      //               ),
-                                      //             )))
-                                      //         .toList()),
-                                    ],
-                                  ),
-                                ),
-                                // Wrap(
-                                //     children: (hotels[index].hotelFacilities)
-                                //         .map((e) => Icon(
-                                //               hotelFacilityIconMap[e],
-                                //               size: 20,
-                                //               color: Colors.amber[800],
-                                //             ))
-                                //         .toList()),
-                                // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),
-                                // trailing: Column(
-                                //   children: [
-                                //     Text(hotelDist, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey)),
-                                //     hotels[index].bookingComScore != 0.0
-                                //         ? BookingComScore(bookingComScore: hotels[index].bookingComScore, size: 30)
-                                //         : const SizedBox.shrink(),
-                                //   ],
-                                // ),
-                              ),
-                            );
+                            return HotelListTile(hotel: hotels[index]);
                           },
                         ),
                       ),
@@ -371,28 +277,6 @@ class _CityPageState extends State<CityPage> {
             );
           })),
     );
-  }
-
-  String distToString(double? dist) {
-    if (dist == null) {
-      return '- km';
-    } else if (dist < 1) {
-      return '${(dist * 1000).round()} m';
-    } else {
-      return '${(dist.toStringAsFixed(2))} km';
-    }
-  }
-
-  Color statusToColor(HotelStatus status) {
-    if (status == HotelStatus.unknown) {
-      return Colors.yellow[600]!;
-    } else if (status == HotelStatus.closed) {
-      return Colors.red;
-    } else if (status == HotelStatus.temporarilyClosed) {
-      return Colors.orange;
-    } else {
-      return Colors.green;
-    }
   }
 
   double getLowestPrice(List<HotelPrice> prices) {

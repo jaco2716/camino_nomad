@@ -203,6 +203,16 @@ class AppDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteHotel(Hotel hotel) async {
+    int hotelIndex = hotels.indexWhere((element) => element.id == hotel.id);
+    if (hotelIndex != -1) {
+      hotels.removeAt(hotelIndex);
+    }
+
+    String json = jsonEncode(hotels);
+    await fm.writeFile(config.hotelsFileName, json);
+    notifyListeners();
+  }
   // void saveRouteToFile(int id) async {
   //   int index = config.allRoutes.indexWhere((element) => element.id == id);
   //   if (index != -1) {

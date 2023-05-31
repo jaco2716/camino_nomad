@@ -1,4 +1,4 @@
-import 'package:camino_nomad/pages/city_page.dart';
+import 'package:camino_nomad/pages/city_page/city_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';

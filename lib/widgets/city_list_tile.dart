@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../model/route_info/route_city.dart';
-import '../pages/city_page.dart';
+import '../pages/city_page/city_page.dart';
 
 class CityListTile extends StatelessWidget {
   const CityListTile({

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
+import 'package:camino_nomad/pages/more_pages/manage_hotels_page.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,7 +71,8 @@ class _EditHotelPageState extends State<EditHotelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [TextButton(onPressed: () => saveHotel(), child: const Text('Save'))],
+        title: Text(hotel.id == -1 ? 'Create Hotel' : 'Edit Hotel'),
+        actions: [TextButton.icon(onPressed: () => saveHotel(), icon: const Text('Save'), label: const Icon(Icons.save))],
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -81,7 +83,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const PaddedTitle('Name'),
+                const PaddedTitle('Hotel Name'),
                 TextFormField(
                   textCapitalization: TextCapitalization.words,
                   initialValue: hotel.name,
@@ -151,7 +153,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
                           }
                           setState(() {});
                         },
-                        child: Text('Edit')),
+                        child: const Text('Edit')),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -187,7 +189,8 @@ class _EditHotelPageState extends State<EditHotelPage> {
                 //   validator: null,
                 //   onSaved: (newValue) => status = newValue,
                 // ),
-                const PaddedTitle('Check in Time (HH:MM)'),
+                const PaddedTitle('Check in Time'),
+                const Text('fx: 14:00 or 14:00-20:00'),
                 TextFormField(
                   keyboardType: TextInputType.datetime,
                   initialValue: hotel.checkInTime,
@@ -195,6 +198,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   onSaved: (newValue) => hotel.checkInTime = newValue ?? '',
                 ),
                 const PaddedTitle('Check out Time (HH:MM)'),
+                const Text('fx: 14:00 or 14:00-20:00'),
                 TextFormField(
                   keyboardType: TextInputType.datetime,
                   initialValue: hotel.checkOutTime,
@@ -202,6 +206,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   onSaved: (newValue) => hotel.checkOutTime = newValue ?? '',
                 ),
                 const PaddedTitle('Close Time (HH:MM)'),
+                const Text('fx: 20:00'),
                 TextFormField(
                   keyboardType: TextInputType.datetime,
                   initialValue: hotel.closeTime,
@@ -244,7 +249,7 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   validator: validateDouble,
                   onSaved: (newValue) => hotel.dormatoryAmount = int.tryParse(newValue ?? '') ?? 0,
                 ),
-                const PaddedTitle('Dormatory Bed Amount'),
+                const PaddedTitle('Amount of Dormatory Beds'),
                 TextFormField(
                   keyboardType: const TextInputType.numberWithOptions(),
                   initialValue: hotel.dormatoryBedAmount.toString(),
@@ -345,6 +350,53 @@ class _EditHotelPageState extends State<EditHotelPage> {
                       ],
                     )),
                 ElevatedButton(onPressed: () => showAddPhoneEmail(false), child: const Text('Add New E-mail')),
+                const SizedBox(height: 20),
+                hotel.id == -1
+                    ? const SizedBox.shrink()
+                    : Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return MyInfoDialog(
+                                    action: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            context.read<AppDataProvider>().deleteHotel(hotel);
+                                            Navigator.popUntil(context, (route) => route.isFirst);
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageHotelsPage()));
+                                          },
+                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                          child: const Text('Delete'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel'),
+                                        ),
+                                      ],
+                                    ),
+                                    title: 'Delete Hotel?',
+                                    child: Text(
+                                      'Are you sure you want to delete ${hotel.name}?\nThis cannot be undone',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.delete),
+                            label: const Text('Delete Hotel'),
+                            style: TextButton.styleFrom(foregroundColor: Colors.red),
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -652,7 +704,7 @@ class _GetCoordinatesMapState extends State<GetCoordinatesMap> {
     super.initState();
     _searchController.text = widget.address;
 
-    if (widget.address.isNotEmpty && widget.hotel.lat != 0 && widget.hotel.lon != 0) searchAdress(widget.address);
+    if (widget.address.isNotEmpty && widget.hotel.lat == 0 && widget.hotel.lon == 0) searchAdress(widget.address);
     if (widget.hotel.lat == 0 && widget.hotel.lon == 0) {
       initPos = const CameraPosition(
         target: LatLng(42, -4),
@@ -671,7 +723,7 @@ class _GetCoordinatesMapState extends State<GetCoordinatesMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose coordinates'),
+        title: const Text('Choose coordinates'),
       ),
       body: SizedBox(
         height: 500,

@@ -29,7 +29,10 @@ class _HotelPageState extends State<HotelPage> {
 
   @override
   Widget build(BuildContext context) {
-    hotel = context.read<AppDataProvider>().hotels.firstWhere((element) => element.id == widget.hotelId);
+    hotel = context.read<AppDataProvider>().hotels.firstWhere(
+          (element) => element.id == widget.hotelId,
+          orElse: () => Hotel(id: -1, name: 'Null', lat: 0, lon: 0),
+        );
 
     List<dynamic> highlightedFacilityImagePaths = [];
     if (hotel.bookingComUrl.isNotEmpty) {
