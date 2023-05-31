@@ -114,11 +114,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         onCameraIdle: () async {
                           var c = await _controller.future;
                           var zoom = await c.getZoomLevel();
-                          if (zoom < 10 && _showMarkers) {
+                          if (zoom < 9 && _showMarkers) {
                             modalState(() {
                               _showMarkers = false;
                             });
-                          } else if (zoom > 10 && !_showMarkers) {
+                          } else if (zoom > 9 && !_showMarkers) {
                             modalState(() {
                               _showMarkers = true;
                             });

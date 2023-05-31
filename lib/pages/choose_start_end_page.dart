@@ -54,82 +54,84 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                 hintText: 'Search...',
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 20),
-                itemCount: appDataP.cities.length - widget.startIndex,
-                itemBuilder: (lwcontext, index) {
-                  int cityIndex = index + widget.startIndex;
-                  if (!showCities[cityIndex]) return const SizedBox.shrink();
-                  if (widget.isStart) {
-                    return Card(
-                        child: InkWell(
-                      onTap: () {
+            appDataP.cities.isEmpty
+                ? const Expanded(child: Center(child: Text('No cities on selected route.')))
+                : Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(top: 20),
+                      itemCount: appDataP.cities.length - widget.startIndex,
+                      itemBuilder: (lwcontext, index) {
+                        int cityIndex = index + widget.startIndex;
+                        if (!showCities[cityIndex]) return const SizedBox.shrink();
                         if (widget.isStart) {
-                          appDataP.setStartIndex(cityIndex);
-                          appDataP.setEndIndex(null);
-                        } else {
-                          appDataP.setEndIndex(cityIndex);
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            appDataP.cities[index + widget.startIndex].name,
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                          )),
-                    ));
-                  } else {
-                    double totalDistance = 0;
-                    for (var i = 1; i <= index + 1; i++) {
-                      totalDistance += appDataP.allDistances[i + (appDataP.appDataSettings.startIndex)];
-                    }
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 22.0),
-                          child: CityListTile(
-                            showBetweenDistance: false,
-                            city: appDataP.cities[cityIndex],
-                            totalDistance: totalDistance,
-                            distanceBetween: index == 0 ? 0 : appDataP.allDistances[cityIndex],
-                            onPressed: () {
-                              appDataP.setEndIndex(cityIndex);
+                          return Card(
+                              child: InkWell(
+                            onTap: () {
+                              if (widget.isStart) {
+                                appDataP.setStartIndex(cityIndex);
+                                appDataP.setEndIndex(null);
+                              } else {
+                                appDataP.setEndIndex(cityIndex);
+                              }
                               Navigator.pop(context);
                             },
-                          ),
-                        ),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: Material(
-                                shape: const CircleBorder(),
-                                clipBehavior: Clip.hardEdge,
-                                color: Colors.transparent,
-                                child: IconButton(
-                                    padding: const EdgeInsets.all(14),
-                                    onPressed: () {
-                                      double modalHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - 40;
+                            child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  appDataP.cities[index + widget.startIndex].name,
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                                )),
+                          ));
+                        } else {
+                          double totalDistance = 0;
+                          for (var i = 1; i <= index + 1; i++) {
+                            totalDistance += appDataP.allDistances[i + (appDataP.appDataSettings.startIndex)];
+                          }
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 22.0),
+                                child: CityListTile(
+                                  showBetweenDistance: false,
+                                  city: appDataP.cities[cityIndex],
+                                  totalDistance: totalDistance,
+                                  distanceBetween: index == 0 ? 0 : appDataP.allDistances[cityIndex],
+                                  onPressed: () {
+                                    appDataP.setEndIndex(cityIndex);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                              Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Material(
+                                      shape: const CircleBorder(),
+                                      clipBehavior: Clip.hardEdge,
+                                      color: Colors.transparent,
+                                      child: IconButton(
+                                          padding: const EdgeInsets.all(14),
+                                          onPressed: () {
+                                            double modalHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - 40;
 
-                                      showModalBottomSheet(
-                                        clipBehavior: Clip.hardEdge,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                        isScrollControlled: true,
-                                        constraints: BoxConstraints(maxHeight: modalHeight),
-                                        context: context,
-                                        builder: (context) {
-                                          return CityPage(city: appDataP.cities[cityIndex], totalDistance: totalDistance);
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(FontAwesomeIcons.circleInfo)))),
-                      ],
-                    );
-                  }
-                },
-              ),
-            )
+                                            showModalBottomSheet(
+                                              clipBehavior: Clip.hardEdge,
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                              isScrollControlled: true,
+                                              constraints: BoxConstraints(maxHeight: modalHeight),
+                                              context: context,
+                                              builder: (context) {
+                                                return CityPage(city: appDataP.cities[cityIndex], totalDistance: totalDistance);
+                                              },
+                                            );
+                                          },
+                                          icon: const Icon(FontAwesomeIcons.circleInfo)))),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  )
           ],
         ),
       )),

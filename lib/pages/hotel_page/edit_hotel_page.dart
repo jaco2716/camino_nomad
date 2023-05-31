@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../model/route_info/hotel.dart';
 import '../../model/route_info/hotel_price.dart';
+import 'package:geocoding/geocoding.dart';
 
 class EditHotelPage extends StatefulWidget {
   const EditHotelPage({super.key, this.hotel});
@@ -85,26 +88,6 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   validator: validateString,
                   onSaved: (newValue) => hotel.name = newValue!,
                 ),
-                const PaddedTitle('Coordinates'),
-                ElevatedButton(
-                    onPressed: () async {
-                      LatLng? pos = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            contentPadding: EdgeInsets.zero,
-                            content: SizedBox(height: 400, width: double.infinity, child: GetCoordinatesMap(hotel: hotel)),
-                          );
-                        },
-                      );
-                      if (pos != null) {
-                        hotel.lat = pos.latitude;
-                        hotel.lon = pos.longitude;
-                      }
-                      setState(() {});
-                    },
-                    child: Text('Coordinates: ${hotel.lat}, ${hotel.lon}')),
-                const SizedBox(height: 10),
 
                 const PaddedTitle('Address'),
                 TextFormField(
@@ -134,6 +117,44 @@ class _EditHotelPageState extends State<EditHotelPage> {
                   validator: null,
                   onSaved: (newValue) => hotel.postalCode = newValue ?? '',
                 ),
+                const PaddedTitle('Coordinates'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Lat: ${hotel.lat}, Lon: ${hotel.lon}'),
+                    ElevatedButton(
+                        onPressed: () async {
+                          _formKey.currentState!.save();
+                          String address = '';
+                          if (hotel.address.isNotEmpty) address += hotel.address;
+                          if (hotel.cityName.isNotEmpty) address += ', ${hotel.cityName}';
+                          if (hotel.country.isNotEmpty) address += ', ${hotel.country}';
+                          LatLng? pos = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GetCoordinatesMap(
+                                        hotel: hotel,
+                                        address: address,
+                                      )));
+                          // LatLng? pos = await showDialog(
+                          //   context: context,
+                          //   builder: (context) {
+                          //     return AlertDialog(
+                          //       contentPadding: EdgeInsets.zero,
+                          //       content: SizedBox(height: 400, width: double.infinity, child: GetCoordinatesMap(hotel: hotel)),
+                          //     );
+                          //   },
+                          // );
+                          if (pos != null) {
+                            hotel.lat = pos.latitude;
+                            hotel.lon = pos.longitude;
+                          }
+                          setState(() {});
+                        },
+                        child: Text('Edit')),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 const SizedBox(height: 10),
                 const PaddedTitle('status'),
                 Container(
@@ -335,6 +356,15 @@ class _EditHotelPageState extends State<EditHotelPage> {
   void saveHotel() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      if (hotel.lat == 0 && hotel.lon == 0) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const MyInfoDialog(child: Text('Select Coordinates'));
+          },
+        );
+        return;
+      }
 
       List<HotelFacility> newFacil = [];
 
@@ -603,29 +633,35 @@ class _EditHotelPageState extends State<EditHotelPage> {
 }
 
 class GetCoordinatesMap extends StatefulWidget {
-  const GetCoordinatesMap({super.key, required this.hotel});
+  const GetCoordinatesMap({super.key, required this.hotel, required this.address});
   final Hotel hotel;
+  final String address;
 
   @override
   State<GetCoordinatesMap> createState() => _GetCoordinatesMapState();
 }
 
 class _GetCoordinatesMapState extends State<GetCoordinatesMap> {
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  final _searchController = TextEditingController();
   late CameraPosition initPos;
   Set<Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
+    _searchController.text = widget.address;
+
+    if (widget.address.isNotEmpty && widget.hotel.lat != 0 && widget.hotel.lon != 0) searchAdress(widget.address);
     if (widget.hotel.lat == 0 && widget.hotel.lon == 0) {
       initPos = const CameraPosition(
         target: LatLng(42, -4),
-        zoom: 5.5,
+        zoom: 6,
       );
     } else {
       initPos = CameraPosition(
         target: LatLng(widget.hotel.lat, widget.hotel.lon),
-        zoom: 18,
+        zoom: 17,
       );
     }
     markers = {Marker(markerId: const MarkerId('0'), position: LatLng(widget.hotel.lat, widget.hotel.lon))};
@@ -633,47 +669,109 @@ class _GetCoordinatesMapState extends State<GetCoordinatesMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GoogleMap(
-          markers: markers,
-          myLocationButtonEnabled: true,
-          myLocationEnabled: true,
-          initialCameraPosition: initPos,
-          onLongPress: (argument) {
-            int accuracy = 1000000;
-            var roundedPos =
-                LatLng((argument.latitude * accuracy).roundToDouble() / accuracy, (argument.longitude * accuracy).roundToDouble() / accuracy);
-            setState(() {
-              markers = {Marker(markerId: const MarkerId('0'), position: roundedPos)};
-            });
-          },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Choose coordinates'),
+      ),
+      body: SizedBox(
+        height: 500,
+        child: Stack(
+          children: [
+            GoogleMap(
+              markers: markers,
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
+              initialCameraPosition: initPos,
+              onMapCreated: (GoogleMapController controller) {
+                if (!_controller.isCompleted) _controller.complete(controller);
+              },
+              onLongPress: setLocation,
+            ),
+            Column(
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: TextFormField(
+                    controller: _searchController,
+                    onFieldSubmitted: searchAdress,
+                    textInputAction: TextInputAction.search,
+                    decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: Icon(Icons.search),
+                      isDense: true,
+                      hintText: 'Search...',
+                    ),
+                  ),
+                ),
+                const Card(
+                    color: Colors.black,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
+                      child: Text(
+                        'Long press to set location manually',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    )),
+              ],
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    child: const Text('Close'),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, markers.first.position);
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
-        const Align(alignment: Alignment.topCenter, child: Card(child: Text('Long press to select'))),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                child: const Text('Close'),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, markers.first.position);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-        )
-      ],
+      ),
     );
+  }
+
+  setLocation(LatLng argument) {
+    int accuracy = 1000000;
+    var roundedPos = LatLng((argument.latitude * accuracy).roundToDouble() / accuracy, (argument.longitude * accuracy).roundToDouble() / accuracy);
+    setState(() {
+      markers = {Marker(markerId: const MarkerId('0'), position: roundedPos)};
+    });
+  }
+
+  searchAdress(String value) async {
+    List<Location> locations = [];
+    try {
+      locations = await locationFromAddress(value);
+      print(locations);
+    } catch (e) {
+      print(e);
+    }
+    if (locations.isNotEmpty) {
+      var c = await _controller.future;
+      var loc = LatLng(locations.first.latitude, locations.first.longitude);
+      await c.animateCamera(CameraUpdate.newLatLngZoom(loc, 17));
+      setLocation(loc);
+    } else {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => const MyInfoDialog(child: Text("Can't find address")),
+        );
+      }
+    }
   }
 }
 

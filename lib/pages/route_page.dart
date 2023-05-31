@@ -50,7 +50,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   Consumer<AppDataProvider>(builder: (context, value, _) {
                     String routeSub = value.routeData[value.routeIndex].name;
 
-                    String startSub = value.cities.isNotEmpty ? value.cities[value.appDataSettings.startIndex].name : 'No Cities';
+                    String startSub = value.cities.isNotEmpty ? value.cities[value.appDataSettings.startIndex].name : 'Choose your start city...';
                     String endSub = value.appDataSettings.endIndex != null
                         ? value.cities.isNotEmpty
                             ? value.cities[value.appDataSettings.endIndex!].name
