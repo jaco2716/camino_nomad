@@ -5,17 +5,17 @@ part 'app_data_settings.g.dart';
 @JsonSerializable()
 class AppDataSettings {
   bool lowDataMode;
-  // List<OfflineRoute> offlineDataList;
   int routeId;
   int startIndex;
   int? endIndex;
+  bool showAdvancedSettings;
 
   AppDataSettings(
     this.lowDataMode,
-    // this.offlineDataList,
     this.routeId,
     this.startIndex, {
     this.endIndex,
+    this.showAdvancedSettings = false,
   });
 
   factory AppDataSettings.fromJson(Map<String, dynamic> json) => _$AppDataSettingsFromJson(json);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../model/route_info/hotel.dart';
 import '../../widgets/booking_com_widgets.dart';
 import '../hotel_page/hotel_page.dart';
@@ -11,7 +10,7 @@ class HotelListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color statusColor = statusToColor(hotel.status);
+    // Color statusColor = statusToColor(hotel.status);
 
     String hotelDist = distToString(hotel.cityDistance);
     return Card(
@@ -22,11 +21,12 @@ class HotelListTile extends StatelessWidget {
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: CircleAvatar(radius: 5, backgroundColor: statusColor),
-            ),
-            const SizedBox(width: 5),
+            // STATUS, add later
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 4.0),
+            //   child: CircleAvatar(radius: 5, backgroundColor: statusColor),
+            // ),
+            // const SizedBox(width: 5),
             Expanded(child: Text(hotel.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
             const Padding(
               padding: EdgeInsets.only(top: 2.0),
@@ -42,35 +42,45 @@ class HotelListTile extends StatelessWidget {
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
           child: Row(
+            // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Wrap(children: [
-                  ...hotel.prices.map((e) {
-                    String priceString = '';
-                    if (e.fromPrice != null && e.toPrice != null) {
-                      priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                    } else if (e.fromPrice != null) {
-                      priceString = '${e.fromPrice!.round()}€ +';
-                    } else {
-                      priceString = '${e.toPrice!.round()}€';
-                    }
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                            height: 20,
-                            child: Image.asset(
-                              hotelTypeIconMap[e.type]!,
-                              color: Colors.amber[800],
-                            )),
-                        Text(priceString),
-                        const SizedBox(width: 6),
-                      ],
-                    );
-                  }).toList(),
-                  Icon(Icons.abc)
-                ]),
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    ...hotel.prices.map((e) {
+                      String priceString = '';
+                      if (e.fromPrice != null && e.toPrice != null) {
+                        priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                      } else if (e.fromPrice != null) {
+                        priceString = '${e.fromPrice!.round()}€ +';
+                      } else {
+                        priceString = '${e.toPrice!.round()}€';
+                      }
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                              height: 20,
+                              child: Image.asset(
+                                hotelTypeIconMap[e.type]!,
+                                color: Colors.amber[800],
+                              )),
+                          Text(priceString),
+                          const SizedBox(width: 6),
+                        ],
+                      );
+                    }).toList(),
+                    // Text(
+                    //   'B',
+                    //   style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w900),
+                    // ),
+                    hotel.bookingComUrl.isNotEmpty
+                        ? SizedBox(width: 12, child: Image.asset('assets/images/custom_icons/bookinglogo.png'))
+                        : const SizedBox.shrink(),
+                  ],
+                ),
               ),
               hotel.bookingComScore != 0.0 ? BookingComScore(bookingComScore: hotel.bookingComScore, size: 30) : const SizedBox.shrink(),
               // Wrap(
@@ -119,15 +129,15 @@ class HotelListTile extends StatelessWidget {
     }
   }
 
-  Color statusToColor(HotelStatus status) {
-    if (status == HotelStatus.unknown) {
-      return Colors.yellow[600]!;
-    } else if (status == HotelStatus.closed) {
-      return Colors.red;
-    } else if (status == HotelStatus.temporarilyClosed) {
-      return Colors.orange;
-    } else {
-      return Colors.green;
-    }
-  }
+  // Color statusToColor(HotelStatus status) {
+  //   if (status == HotelStatus.unknown) {
+  //     return Colors.yellow[600]!;
+  //   } else if (status == HotelStatus.closed) {
+  //     return Colors.red;
+  //   } else if (status == HotelStatus.temporarilyClosed) {
+  //     return Colors.orange;
+  //   } else {
+  //     return Colors.green;
+  //   }
+  // }
 }

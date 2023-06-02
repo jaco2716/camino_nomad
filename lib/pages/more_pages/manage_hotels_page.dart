@@ -27,12 +27,47 @@ class _ManageHotelsPageState extends State<ManageHotelsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Manage Hotels')),
-      body: SafeArea(
-        child: Consumer<AppDataProvider>(builder: (context, value, _) {
-          hotels = value.hotels.reversed.toList();
-          return Padding(
+    return Consumer<AppDataProvider>(builder: (context, value, _) {
+      hotels = value.hotels.reversed.toList();
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Manage Hotels'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return MyInfoDialog(
+                        title: 'Disable Advanced Settings?',
+                        action: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            TextButton(onPressed: () {}, child: const Text('Cancel')),
+                            ElevatedButton(
+                                onPressed: () {
+                                  value.setAdvancedSettings(false);
+                                  Navigator.pop(context);
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const MyInfoDialog(child: Text('Advanced Settings Disabled'));
+                                    },
+                                  );
+                                },
+                                child: const Text('Disable'))
+                          ],
+                        ),
+                        child: const SizedBox.shrink(),
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.settings))
+          ],
+        ),
+        body: SafeArea(
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
@@ -82,9 +117,9 @@ class _ManageHotelsPageState extends State<ManageHotelsPage> {
                 ),
               ],
             ),
-          );
-        }),
-      ),
-    );
+          ),
+        ),
+      );
+    });
   }
 }

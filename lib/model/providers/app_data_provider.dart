@@ -213,6 +213,13 @@ class AppDataProvider with ChangeNotifier {
     await fm.writeFile(config.hotelsFileName, json);
     notifyListeners();
   }
+
+  void setAdvancedSettings(bool value) async {
+    appDataSettings.showAdvancedSettings = value;
+    await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
+    notifyListeners();
+  }
+
   // void saveRouteToFile(int id) async {
   //   int index = config.allRoutes.indexWhere((element) => element.id == id);
   //   if (index != -1) {

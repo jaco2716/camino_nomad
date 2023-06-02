@@ -1,8 +1,10 @@
 import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/logic/file_management.dart';
+import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/button_list_tile.dart';
 import 'manage_hotels_page.dart';
 import 'useful_links_page.dart';
@@ -57,11 +59,17 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactPage())),
             ),
 
-            const Divider(height: 30),
-            ButtonListTile(
-              title: 'Manage Hotels',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageHotelsPage())),
-            ),
+            Consumer<AppDataProvider>(builder: (context, value, _) {
+              return value.appDataSettings.showAdvancedSettings
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 40.0),
+                      child: ButtonListTile(
+                        title: 'Manage Hotels',
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageHotelsPage())),
+                      ),
+                    )
+                  : const SizedBox.shrink();
+            }),
           ],
         ),
       ),

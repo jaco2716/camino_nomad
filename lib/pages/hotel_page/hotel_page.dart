@@ -29,220 +29,224 @@ class _HotelPageState extends State<HotelPage> {
 
   @override
   Widget build(BuildContext context) {
-    hotel = context.read<AppDataProvider>().hotels.firstWhere(
-          (element) => element.id == widget.hotelId,
-          orElse: () => Hotel(id: -1, name: 'Null', lat: 0, lon: 0),
-        );
+    // Color statusColor = Colors.green;
+    // String statusText = hotel.status.name.camelToSentence();
+    // if (hotel.status == HotelStatus.unknown) {
+    //   statusColor = Colors.yellow[600]!;
+    // } else if (hotel.status == HotelStatus.closed) {
+    //   statusColor = Colors.red;
+    // } else if (hotel.status == HotelStatus.temporarilyClosed) {
+    //   statusColor = Colors.orange;
+    // }
 
-    List<dynamic> highlightedFacilityImagePaths = [];
-    if (hotel.bookingComUrl.isNotEmpty) {
-      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/bookinglogo.png', 'title': 'Book with Booking.com'});
-    }
-    if (hotel.hotelFacilities.contains(HotelFacility.kitchen)) {
-      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/kitchen.png', 'title': 'Kitchen availabe'});
-    }
-    if (hotel.hotelFacilities.contains(HotelFacility.vegan) || hotel.hotelFacilities.contains(HotelFacility.vegetarian)) {
-      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/vegan.png', 'title': 'Vegetarian options'});
-    }
-    if (hotel.hotelFacilities.contains(HotelFacility.communityDinner)) {
-      highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/dinner.png', 'title': 'Community dinner'});
-    }
-    if (highlightedFacilityImagePaths.isNotEmpty) {
-      highlightedFacilityImagePaths.add({'image': const Icon(FontAwesomeIcons.solidCircleQuestion, size: 10, color: Colors.grey), 'title': 'info'});
-    }
+    return Consumer<AppDataProvider>(builder: (context, value, _) {
+      hotel = value.hotels.firstWhere(
+        (element) => element.id == widget.hotelId,
+        orElse: () => Hotel(id: -1, name: 'Null', lat: 0, lon: 0),
+      );
 
-    Color statusColor = Colors.green;
-    String statusText = hotel.status.name.camelToSentence();
-    if (hotel.status == HotelStatus.unknown) {
-      statusColor = Colors.yellow[600]!;
-    } else if (hotel.status == HotelStatus.closed) {
-      statusColor = Colors.red;
-    } else if (hotel.status == HotelStatus.temporarilyClosed) {
-      statusColor = Colors.orange;
-    }
+      List<dynamic> highlightedFacilityImagePaths = [];
+      if (hotel.bookingComUrl.isNotEmpty) {
+        highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/bookinglogo.png', 'title': 'Book with Booking.com'});
+      }
+      if (hotel.hotelFacilities.contains(HotelFacility.kitchen)) {
+        highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/kitchen.png', 'title': 'Kitchen availabe'});
+      }
+      if (hotel.hotelFacilities.contains(HotelFacility.vegan) || hotel.hotelFacilities.contains(HotelFacility.vegetarian)) {
+        highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/vegan.png', 'title': 'Vegetarian options'});
+      }
+      if (hotel.hotelFacilities.contains(HotelFacility.communityDinner)) {
+        highlightedFacilityImagePaths.add({'image': 'assets/images/custom_icons/dinner.png', 'title': 'Community dinner'});
+      }
+      if (highlightedFacilityImagePaths.isNotEmpty) {
+        highlightedFacilityImagePaths.add({'image': const Icon(FontAwesomeIcons.solidCircleQuestion, size: 10, color: Colors.grey), 'title': 'info'});
+      }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(backgroundColor: statusColor.withAlpha(80), radius: 10, child: CircleAvatar(backgroundColor: statusColor, radius: 7)),
-            const SizedBox(width: 8),
-            Text(statusText),
-            const SizedBox(width: 18),
-          ],
+      return Scaffold(
+        appBar: AppBar(
+          // title: Row(
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: [
+          //     CircleAvatar(backgroundColor: statusColor.withAlpha(80), radius: 10, child: CircleAvatar(backgroundColor: statusColor, radius: 7)),
+          //     const SizedBox(width: 8),
+          //     Text(statusText),
+          //     const SizedBox(width: 18),
+          //   ],
+          // ),
+          actions: value.appDataSettings.showAdvancedSettings
+              ? [
+                  IconButton(
+                      onPressed: () async {
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditHotelPage(hotel: hotel),
+                            ));
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.edit))
+                ]
+              : null,
         ),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditHotelPage(hotel: hotel),
-                    ));
-                setState(() {});
-              },
-              icon: const Icon(Icons.edit))
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            children: [
-              HotelHeaderImages(hotel: hotel),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(hotel.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on,
-                            color: Colors.blue,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text('${hotel.address},\n${hotel.postalCode} ${hotel.cityName}, ${hotel.country}',
-                                style: const TextStyle(fontSize: 12.5, color: Colors.black54)),
-                          ),
-                          IconButton(
-                            onPressed: () => UrlLogic.openMapApp(hotel.lat, hotel.lon),
-                            icon: const Icon(Icons.directions),
-                            color: Colors.amber[800],
-                            iconSize: 40,
-                          ),
-                        ],
-                      ),
-                      // const SizedBox(height: 10),
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Column(
+              children: [
+                HotelHeaderImages(hotel: hotel),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(hotel.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              color: Colors.blue,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text('${hotel.address},\n${hotel.postalCode} ${hotel.cityName}, ${hotel.country}',
+                                  style: const TextStyle(fontSize: 12.5, color: Colors.black54)),
+                            ),
+                            IconButton(
+                              onPressed: () => UrlLogic.openMapApp(hotel.lat, hotel.lon),
+                              icon: const Icon(Icons.directions),
+                              color: Colors.amber[800],
+                              iconSize: 40,
+                            ),
+                          ],
+                        ),
+                        // const SizedBox(height: 10),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                        child: Column(
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Info:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                              const SizedBox(height: 6),
+                              Column(
+                                  children: hotel.prices.map((e) {
+                                String priceString = '';
+                                if (e.fromPrice != null && e.toPrice != null) {
+                                  priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
+                                } else if (e.fromPrice != null) {
+                                  priceString = '${e.fromPrice!.round()}€ +';
+                                } else {
+                                  priceString = '${e.toPrice!.round()}€';
+                                }
+                                return Container(
+                                  height: 24,
+                                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5))),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                        child: Image.asset(
+                                          hotelTypeIconMap[e.type]!,
+                                          color: Colors.amber[800],
+                                          // size: 18,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(e.type.name.camelToSentence()),
+                                      const Spacer(),
+                                      Text(priceString),
+                                      const SizedBox(width: 12),
+                                    ],
+                                  ),
+                                );
+                              }).toList()),
+                              // const SizedBox(height: 10),
+                              HotelInfoListTile('Check-in:', trailing: hotel.checkInTime, show: hotel.checkInTime.isNotEmpty),
+                              HotelInfoListTile('Check-out:', trailing: hotel.checkInTime, show: hotel.checkOutTime.isNotEmpty),
+                              HotelInfoListTile('Close:', trailing: hotel.closeTime, show: hotel.closeTime.isNotEmpty),
+                              HotelInfoListTile('Beds:', trailing: '${hotel.dormatoryBedAmount}', show: hotel.dormatoryBedAmount > 0),
+                              HotelInfoListTile('Dormitories:', trailing: '${hotel.dormatoryAmount}', show: hotel.dormatoryAmount > 0),
+                            ],
+                          ),
+                        ),
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Info:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                            const SizedBox(height: 6),
-                            Column(
-                                children: hotel.prices.map((e) {
-                              String priceString = '';
-                              if (e.fromPrice != null && e.toPrice != null) {
-                                priceString = '${e.fromPrice!.round()}-${e.toPrice!.round()}€';
-                              } else if (e.fromPrice != null) {
-                                priceString = '${e.fromPrice!.round()}€ +';
-                              } else {
-                                priceString = '${e.toPrice!.round()}€';
-                              }
-                              return Container(
-                                height: 24,
-                                decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5))),
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                      child: Image.asset(
-                                        hotelTypeIconMap[e.type]!,
-                                        color: Colors.amber[800],
-                                        // size: 18,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(e.type.name.camelToSentence()),
-                                    const Spacer(),
-                                    Text(priceString),
-                                    const SizedBox(width: 12),
-                                  ],
-                                ),
-                              );
-                            }).toList()),
-                            // const SizedBox(height: 10),
-                            HotelInfoListTile('Check-in:', trailing: hotel.checkInTime, show: hotel.checkInTime.isNotEmpty),
-                            HotelInfoListTile('Check-out:', trailing: hotel.checkInTime, show: hotel.checkOutTime.isNotEmpty),
-                            HotelInfoListTile('Close:', trailing: hotel.closeTime, show: hotel.closeTime.isNotEmpty),
-                            HotelInfoListTile('Beds:', trailing: '${hotel.dormatoryBedAmount}', show: hotel.dormatoryBedAmount > 0),
-                            HotelInfoListTile('Dormitories:', trailing: '${hotel.dormatoryAmount}', show: hotel.dormatoryAmount > 0),
+                            hotel.hotelFacilities.isNotEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.only(left: 24.0, bottom: 6, top: 12),
+                                    child: Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                  )
+                                : const SizedBox.shrink(),
+                            GridView.count(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              childAspectRatio: 8,
+                              children: hotel.hotelFacilities
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
+                                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                          Icon(
+                                            Icons.check,
+                                            // hotelFacilityIconMap[e],
+                                            size: 15,
+                                            color: Colors.amber[800],
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(e.name.camelToSentence())
+                                        ]),
+                                      ))
+                                  .toList(),
+                            ),
                           ],
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          hotel.hotelFacilities.isNotEmpty
-                              ? const Padding(
-                                  padding: EdgeInsets.only(left: 24.0, bottom: 6, top: 12),
-                                  child: Text('Facilities:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                                )
-                              : const SizedBox.shrink(),
-                          GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            crossAxisCount: 2,
-                            childAspectRatio: 8,
-                            children: hotel.hotelFacilities
-                                .map((e) => Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
-                                      child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                        Icon(
-                                          Icons.check,
-                                          // hotelFacilityIconMap[e],
-                                          size: 15,
-                                          color: Colors.amber[800],
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(e.name.camelToSentence())
-                                      ]),
-                                    ))
-                                .toList(),
+                        // const SizedBox(height: 16),
+                        BookingAndFacebookRow(hotel: hotel),
+                        // const SizedBox(height: 16),
+                        hotel.website.isNotEmpty
+                            ? Center(
+                                child: TextButton(
+                                    onPressed: () => UrlLogic.launchUrlFunc(hotel.website),
+                                    child: Text('Visit Website →',
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Colors.amber[800]
+                                            // color: Colors.blue,
+                                            ))),
+                              )
+                            : const SizedBox.shrink(),
+                        const SizedBox(height: 6),
+                        Center(
+                          child: Column(
+                            children: [
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: hotel.emails.map((e) => ContactTextButton(name: e, url: 'mailto:$e')).toList()),
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: hotel.phones.map((e) {
+                                    String number = e.split('whatsapp')[0];
+                                    return ContactTextButton(
+                                        name: number,
+                                        icon: e.contains('whatsapp') ? const Icon(FontAwesomeIcons.whatsapp, color: Colors.green, size: 18) : null,
+                                        url: 'tel:$number');
+                                  }).toList()),
+                            ],
                           ),
-                        ],
-                      ),
-                      // const SizedBox(height: 16),
-                      BookingAndFacebookRow(hotel: hotel),
-                      // const SizedBox(height: 16),
-                      hotel.website.isNotEmpty
-                          ? Center(
-                              child: TextButton(
-                                  onPressed: () => UrlLogic.launchUrlFunc(hotel.website),
-                                  child: Text('Visit Website →',
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Colors.amber[800]
-                                          // color: Colors.blue,
-                                          ))),
-                            )
-                          : const SizedBox.shrink(),
-                      const SizedBox(height: 6),
-                      Center(
-                        child: Column(
-                          children: [
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: hotel.emails.map((e) => ContactTextButton(name: e, url: 'mailto:$e')).toList()),
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: hotel.phones.map((e) {
-                                  String number = e.split('whatsapp')[0];
-                                  return ContactTextButton(
-                                      name: number,
-                                      icon: e.contains('whatsapp') ? const Icon(FontAwesomeIcons.whatsapp, color: Colors.green, size: 18) : null,
-                                      url: 'tel:$number');
-                                }).toList()),
-                          ],
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

@@ -12,6 +12,7 @@ AppDataSettings _$AppDataSettingsFromJson(Map<String, dynamic> json) =>
       json['routeId'] as int,
       json['startIndex'] as int,
       endIndex: json['endIndex'] as int?,
+      showAdvancedSettings: json['showAdvancedSettings'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$AppDataSettingsToJson(AppDataSettings instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$AppDataSettingsToJson(AppDataSettings instance) =>
       'routeId': instance.routeId,
       'startIndex': instance.startIndex,
       'endIndex': instance.endIndex,
+      'showAdvancedSettings': instance.showAdvancedSettings,
     };
