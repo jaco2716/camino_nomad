@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'dart:ui' as ui;
 import '../model/providers/app_data_provider.dart';
 
 class MapPage extends StatefulWidget {
@@ -20,9 +19,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
-  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  late Completer<GoogleMapController> _controller;
   late CameraPosition initPos;
-  late AppDataProvider appDataP;
+  // late AppDataProvider appDataP;
   late RouteData routeData;
 
   late List<RoutePoint> routePoints;
@@ -37,12 +36,16 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   List<LatLng> polylineCoordinates = [];
   @override
   void initState() {
-    appDataP = context.read<AppDataProvider>();
+    // appDataP = context.read<AppDataProvider>();
     super.initState();
   }
 
-  Future<void> dataSetup() async {
+  Future<void> dataSetup(AppDataProvider appDataP) async {
+    _controller = Completer<GoogleMapController>();
     status = await Permission.locationWhenInUse.status;
+    if (!status.isGranted) {
+      status = await Permission.location.request();
+    }
 
     currentRouteIndex = appDataP.routeIndex;
     routeData = appDataP.routeData[appDataP.routeIndex];
@@ -53,7 +56,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       target: LatLng(initRP.lat, initRP.lon),
       zoom: 6,
     );
-    getMapRouteData();
+    getMapRouteData(appDataP);
   }
 
   // Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -63,7 +66,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   //   return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   // }
 
-  void getMapRouteData() {
+  void getMapRouteData(AppDataProvider appDataP) {
     // final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/map_pin.png', 30);
     final Uint8List markerIcon = config.mapPinIcon;
     var myIcon = BitmapDescriptor.fromBytes(markerIcon);
@@ -84,7 +87,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     return SafeArea(
       child: Consumer<AppDataProvider>(builder: (context, value, _) {
         return FutureBuilder<void>(
-            future: dataSetup(),
+            future: dataSetup(value),
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Center(child: CircularProgressIndicator());
@@ -113,7 +116,9 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                           ),
                         },
                         onMapCreated: (GoogleMapController controller) {
-                          if (!_controller.isCompleted) _controller.complete(controller);
+                          if (!_controller.isCompleted) {
+                            _controller.complete(controller);
+                          }
                         },
 
                         onCameraIdle: () async {
