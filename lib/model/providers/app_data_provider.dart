@@ -66,7 +66,7 @@ class AppDataProvider with ChangeNotifier {
 
     int startIndex = 0;
     for (var cityi = 0; cityi <= cities.length - 1; cityi++) {
-      for (var routei = startIndex + 1; routei < routePoints.length - 1; routei++) {
+      for (var routei = startIndex; routei < routePoints.length - 1; routei++) {
         //Distance
         tempDistance +=
             rl.calculateDistance(routePoints[routei].lat, routePoints[routei].lon, routePoints[routei + 1].lat, routePoints[routei + 1].lon);
@@ -84,8 +84,10 @@ class AppDataProvider with ChangeNotifier {
         }
 
         // if (routePoints[routei + 1].id == cities[cityi].routePointId) {
-        if (routePoints[routei + 1].cityId == cities[cityi].id) {
+        if (routePoints[routei + 1].cityId == cities[cityi].id || (routei == 0 && routePoints[routei].cityId == cities[cityi].id)) {
+          // print(cities[cityi].id);
           startIndex = routei;
+
           //Distance
           tempCityDistances.add(tempDistance);
           tempDistance = 0;
@@ -104,7 +106,6 @@ class AppDataProvider with ChangeNotifier {
         }
       }
     }
-
     allDistances = tempCityDistances;
     allEleGain = tempCityEleGain;
     allEleLoss = tempCityEleLoss;
@@ -149,14 +150,19 @@ class AppDataProvider with ChangeNotifier {
     var rps = routeData[routeIndex].routePoints;
     List<RouteCity> newCities = [];
     for (var i = 0; i < allCitiesToSort.length - 1; i++) {
-      if (rps.indexWhere((element) => element.cityId == allCitiesToSort[i].id) != -1) newCities.add(allCitiesToSort[i]);
+      if (rps.indexWhere((element) => element.cityId == allCitiesToSort[i].id) != -1) {
+        newCities.add(allCitiesToSort[i]);
+        // print(allCitiesToSort[i]);
+      }
       // if (rps.indexWhere((element) => element.id == allCitiesToSort[i].routePointId) != -1) newCities.add(allCitiesToSort[i]);
     }
     newCities.sort((a, b) => rps.indexWhere((element) => element.cityId == a.id).compareTo(rps.indexWhere((element) => element.cityId == b.id)));
     // (a, b) => rps.indexWhere((element) => element.id == a.routePointId).compareTo(rps.indexWhere((element) => element.id == b.routePointId)));
     cities = newCities;
-    print(newCities.length);
+    // print(cities.indexWhere((element) => element.id == 293));
     setAllDistances();
+    print(newCities.length);
+    print(allDistances.length);
     // return newCities;
   }
 

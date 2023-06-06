@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:camino_nomad/logic/route_logic.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -12,9 +13,11 @@ import '../model/route_info/route_point.dart';
 
 class DataGeneration {
   createAllCities(RouteData data, List<RouteCity> cities) async {
-    List<dynamic> citiesFile = await loadCitiesFromFile();
+    final String response = await rootBundle.loadString('assets/route_database/rawdata.json');
+    final List<dynamic> routeData = await json.decode(response);
+    List<dynamic> citiesFile = routeData[0]['cities'] as List<dynamic>;
 
-    int startID = cities.last.id;
+    int startID = cities.last.id + 1;
 
     List<RouteCity> newCities = [];
     for (var i = 0; i < citiesFile.length; i++) {
@@ -227,29 +230,46 @@ class DataGeneration {
   }
 
   void addCityIdtoRoutePoints(RouteData data, List<RouteCity> cities) {
+    for (var dat in data.routePoints) {
+      dat.cityId = null;
+    }
+    var rl = RouteLogic();
     for (var i = 0; i < cities.length; i++) {
-      List<double> routeDistances = [];
-      List<int> distanceCityIds = [];
+      // List<double> routeDistances = [];
+      // List<int> distanceCityIds = [];
       int lowestIndex = -1;
       int lowestCityIndex = -1;
       double minValue = 9999;
 
       for (var j = 0; j < data.routePoints.length; j++) {
-        var latdistance = cities[i].lat - data.routePoints[j].lat;
-        if (latdistance < 0) latdistance = latdistance * -1;
-        var londistance = cities[i].lon - data.routePoints[j].lon;
-        if (londistance < 0) londistance = londistance * -1;
-        routeDistances.add(latdistance + londistance);
-        distanceCityIds.add(i);
-        if ((latdistance + londistance) < minValue) {
-          minValue = latdistance + londistance;
-          lowestCityIndex = i;
-          lowestIndex = j;
+        var distance = rl.calculateDistance(cities[i].lat, cities[i].lon, data.routePoints[j].lat, data.routePoints[j].lon);
+        if (distance < minValue) {
+          minValue = distance;
+          //Only set index if distance less than 5km
+          if (minValue < 5) {
+            lowestCityIndex = i;
+            lowestIndex = j;
+          }
         }
+        // var latdistance = cities[i].lat - data.routePoints[j].lat;
+        // if (latdistance < 0) latdistance = latdistance * -1;
+        // var londistance = cities[i].lon - data.routePoints[j].lon;
+        // if (londistance < 0) londistance = londistance * -1;
+        // routeDistances.add(latdistance + londistance);
+        // distanceCityIds.add(i);
+        // if ((latdistance + londistance) < minValue) {
+        //   minValue = latdistance + londistance;
+        //   if(minValue<)
+        //   lowestCityIndex = i;
+        //   lowestIndex = j;
+        // }
       }
-      int closestCityId = cities[lowestCityIndex].id;
 
-      data.routePoints[lowestIndex].cityId = closestCityId;
+      if (lowestCityIndex != -1) {
+        int closestCityId = cities[lowestCityIndex].id;
+
+        data.routePoints[lowestIndex].cityId = closestCityId;
+      }
 
       // print('lenth: ${routeDistances.length}');
 

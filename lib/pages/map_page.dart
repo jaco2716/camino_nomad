@@ -70,6 +70,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
         .map<Marker>((e) =>
             Marker(markerId: MarkerId('${e.id}'), position: LatLng(e.lat, e.lon), infoWindow: InfoWindow(title: e.name), icon: myIcon, zIndex: 99))
         .toSet();
+
+    // markers.add(Marker(markerId: MarkerId('test'), position: LatLng(40.926794, -8.548325)));
     totalDistance = appDataP.allDistances.isNotEmpty ? appDataP.allDistances.reduce((a, b) => a + b) : 0;
   }
 
@@ -127,6 +129,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         myLocationButtonEnabled: true,
                         myLocationEnabled: true,
                         markers: _showMarkers ? markers : const <Marker>{},
+                        // markers: markers,
                       );
                     }),
                   ),
