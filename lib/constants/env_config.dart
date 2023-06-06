@@ -4,13 +4,13 @@ import '../model/settings/route_config.dart';
 
 const List<RouteConfig> allRoutes = [
   RouteConfig(0, 'Camino Frances', distance: 779.59, eleMin: 171, eleMax: 1512, eleGain: 13833, eleLoss: 13632),
-  RouteConfig(1, 'Camino Test', distance: 204.2, eleMin: 450, eleMax: 890, eleGain: 8200, eleLoss: 4023),
+  RouteConfig(1, 'Caminho Português Central', distance: 324.67, eleMin: 450, eleMax: 890, eleGain: 8200, eleLoss: 4023),
 ];
 
 const String routeFilePrefix = 'route_file_';
 const String hotelsFileName = 'hotels_saved';
 
-Uint8List mapPinIcon = Uint8List.fromList([
+final Uint8List mapPinIcon = Uint8List.fromList([
   137,
   80,
   78,

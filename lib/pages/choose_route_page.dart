@@ -55,9 +55,11 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  config.allRoutes[index].name,
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                                Expanded(
+                                  child: Text(
+                                    config.allRoutes[index].name,
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                                  ),
                                 ),
                                 Text(
                                   '${config.allRoutes[index].distance} km',

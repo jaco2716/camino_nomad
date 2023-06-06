@@ -83,7 +83,8 @@ class AppDataProvider with ChangeNotifier {
           tempMin = routePoints[routei + 1].ele;
         }
 
-        if (routePoints[routei + 1].id == cities[cityi].routePointId) {
+        // if (routePoints[routei + 1].id == cities[cityi].routePointId) {
+        if (routePoints[routei + 1].cityId == cities[cityi].id) {
           startIndex = routei;
           //Distance
           tempCityDistances.add(tempDistance);
@@ -144,15 +145,17 @@ class AppDataProvider with ChangeNotifier {
     }
   }
 
-  void sortCities(List<RouteCity> allCities) {
+  void sortCities(List<RouteCity> allCitiesToSort) {
     var rps = routeData[routeIndex].routePoints;
     List<RouteCity> newCities = [];
-    for (var i = 0; i < allCities.length - 1; i++) {
-      if (rps.indexWhere((element) => element.id == allCities[i].routePointId) != -1) newCities.add(allCities[i]);
+    for (var i = 0; i < allCitiesToSort.length - 1; i++) {
+      if (rps.indexWhere((element) => element.cityId == allCitiesToSort[i].id) != -1) newCities.add(allCitiesToSort[i]);
+      // if (rps.indexWhere((element) => element.id == allCitiesToSort[i].routePointId) != -1) newCities.add(allCitiesToSort[i]);
     }
-    newCities.sort(
-        (a, b) => rps.indexWhere((element) => element.id == a.routePointId).compareTo(rps.indexWhere((element) => element.id == b.routePointId)));
+    newCities.sort((a, b) => rps.indexWhere((element) => element.cityId == a.id).compareTo(rps.indexWhere((element) => element.cityId == b.id)));
+    // (a, b) => rps.indexWhere((element) => element.id == a.routePointId).compareTo(rps.indexWhere((element) => element.id == b.routePointId)));
     cities = newCities;
+    print(newCities.length);
     setAllDistances();
     // return newCities;
   }

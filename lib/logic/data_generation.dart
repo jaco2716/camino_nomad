@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -10,17 +11,25 @@ import '../model/route_info/route_data.dart';
 import '../model/route_info/route_point.dart';
 
 class DataGeneration {
-  createAllCities(RouteData data) async {
-    List<dynamic> cities = await loadCitiesFromFile();
+  createAllCities(RouteData data, List<RouteCity> cities) async {
+    List<dynamic> citiesFile = await loadCitiesFromFile();
+
+    int startID = cities.last.id;
 
     List<RouteCity> newCities = [];
-    for (var i = 0; i < cities.length; i++) {
+    for (var i = 0; i < citiesFile.length; i++) {
+      if (cities.indexWhere((element) => removeDiacritics(element.name) == removeDiacritics(citiesFile[i]['name'])) != -1) {
+        if (kDebugMode) {
+          print('Skipped: ${citiesFile[i]['name']}');
+        }
+        break;
+      }
       // for (var i = 0; i < 2; i++) {
       List<double> routeDistances = [];
       for (var j = 0; j < data.routePoints.length; j++) {
-        var latdistance = double.parse(cities[i]['lat']) - data.routePoints[j].lat;
+        var latdistance = double.parse(citiesFile[i]['lat']) - data.routePoints[j].lat;
         if (latdistance < 0) latdistance = latdistance * -1;
-        var londistance = double.parse(cities[i]['lon']) - data.routePoints[j].lon;
+        var londistance = double.parse(citiesFile[i]['lon']) - data.routePoints[j].lon;
         if (londistance < 0) londistance = londistance * -1;
         routeDistances.add(latdistance + londistance);
       }
@@ -36,27 +45,27 @@ class DataGeneration {
         }
       }
       var city = RouteCity(
-        id: i,
+        id: i + startID,
         facilities: [],
-        name: cities[i]['name'],
-        lat: double.parse(cities[i]['lat']),
-        lon: double.parse(cities[i]['lon']),
+        name: citiesFile[i]['name'],
+        lat: double.parse(citiesFile[i]['lat']),
+        lon: double.parse(citiesFile[i]['lon']),
         routePointId: lowestIndex,
       );
 
-      if ((cities[i]['albergues'] as List<dynamic>?)?.isNotEmpty ?? false) city.facilities.add(Facility.hotel);
-      if (cities[i]['has_atm'] == '1') city.facilities.add(Facility.atm);
-      if (cities[i]['has_bar_cafe'] == '1') city.facilities.add(Facility.barCafe);
-      if (cities[i]['has_restaurant'] == '1') city.facilities.add(Facility.restaurant);
-      if (cities[i]['has_shop'] == '1') city.facilities.add(Facility.shop);
-      if (cities[i]['has_med_clinic'] == '1') city.facilities.add(Facility.medClinic);
-      if (cities[i]['has_pharmacy'] == '1') city.facilities.add(Facility.pharmacy);
-      if (cities[i]['has_fountain'] == '1') city.facilities.add(Facility.fountain);
-      if (cities[i]['has_post_office'] == '1') city.facilities.add(Facility.postOffice);
-      if (cities[i]['has_busstation'] == '1') city.facilities.add(Facility.busStation);
-      if (cities[i]['has_trainstation'] == '1') city.facilities.add(Facility.trainStation);
-      if (cities[i]['has_airport'] == '1') city.facilities.add(Facility.airport);
-      if (cities[i]['has_tobaccostore'] == '1') city.facilities.add(Facility.tobaccoStore);
+      if ((citiesFile[i]['albergues'] as List<dynamic>?)?.isNotEmpty ?? false) city.facilities.add(Facility.hotel);
+      if (citiesFile[i]['has_atm'] == '1') city.facilities.add(Facility.atm);
+      if (citiesFile[i]['has_bar_cafe'] == '1') city.facilities.add(Facility.barCafe);
+      if (citiesFile[i]['has_restaurant'] == '1') city.facilities.add(Facility.restaurant);
+      if (citiesFile[i]['has_shop'] == '1') city.facilities.add(Facility.shop);
+      if (citiesFile[i]['has_med_clinic'] == '1') city.facilities.add(Facility.medClinic);
+      if (citiesFile[i]['has_pharmacy'] == '1') city.facilities.add(Facility.pharmacy);
+      if (citiesFile[i]['has_fountain'] == '1') city.facilities.add(Facility.fountain);
+      if (citiesFile[i]['has_post_office'] == '1') city.facilities.add(Facility.postOffice);
+      if (citiesFile[i]['has_busstation'] == '1') city.facilities.add(Facility.busStation);
+      if (citiesFile[i]['has_trainstation'] == '1') city.facilities.add(Facility.trainStation);
+      if (citiesFile[i]['has_airport'] == '1') city.facilities.add(Facility.airport);
+      if (citiesFile[i]['has_tobaccostore'] == '1') city.facilities.add(Facility.tobaccoStore);
       // print(cityDistances);
       newCities.add(city);
     }
@@ -197,6 +206,62 @@ class DataGeneration {
       newHotels.add(newItem);
     }
     printMore(jsonEncode(newHotels));
+  }
+
+  void generateRoutePoints() async {
+    final String response = await rootBundle.loadString('assets/route_database/rawdata.json');
+    final List<dynamic> routeData = await json.decode(response);
+    var routePointsFile = routeData[0]['route_points'] as List<dynamic>;
+    // print(routeData[0]['route_name']);
+    // print(routePointsFile[1]);
+
+    List<RoutePoint> newRoutePoints = [];
+
+    for (var i = 0; i < routePointsFile.length; i++) {
+      newRoutePoints.add(
+          RoutePoint(i, double.parse(routePointsFile[i]['lat']), double.parse(routePointsFile[i]['lon']), double.parse(routePointsFile[i]['ele'])));
+    }
+    var newRouteData = RouteData(id: 1, name: routeData[0]['route_name'], routePoints: newRoutePoints);
+
+    printMore(jsonEncode(newRouteData));
+  }
+
+  void addCityIdtoRoutePoints(RouteData data, List<RouteCity> cities) {
+    for (var i = 0; i < cities.length; i++) {
+      List<double> routeDistances = [];
+      List<int> distanceCityIds = [];
+      int lowestIndex = -1;
+      int lowestCityIndex = -1;
+      double minValue = 9999;
+
+      for (var j = 0; j < data.routePoints.length; j++) {
+        var latdistance = cities[i].lat - data.routePoints[j].lat;
+        if (latdistance < 0) latdistance = latdistance * -1;
+        var londistance = cities[i].lon - data.routePoints[j].lon;
+        if (londistance < 0) londistance = londistance * -1;
+        routeDistances.add(latdistance + londistance);
+        distanceCityIds.add(i);
+        if ((latdistance + londistance) < minValue) {
+          minValue = latdistance + londistance;
+          lowestCityIndex = i;
+          lowestIndex = j;
+        }
+      }
+      int closestCityId = cities[lowestCityIndex].id;
+
+      data.routePoints[lowestIndex].cityId = closestCityId;
+
+      // print('lenth: ${routeDistances.length}');
+
+      // for (var ik = 0; ik < routeDistances.length; ik++) {
+      //   if (routeDistances[ik] < minValue) {
+      //     minValue = routeDistances[ik];
+      //     lowestIndex = ik;
+      //     // print('minValue: $lowestIndex:  ${minValue} ');
+      //   }
+      // }
+    }
+    printMore(jsonEncode(data));
   }
 
   Future<List<dynamic>> loadCitiesFromFile() async {

@@ -26,9 +26,12 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
     super.initState();
     appDataP = context.read<AppDataProvider>();
     routeData = appDataP.routeData[appDataP.routeIndex];
-    cityRPIds = appDataP.cities.map((e) => e.routePointId).toList();
-    startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.appDataSettings.startIndex]);
-    endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.appDataSettings.endIndex!]);
+    // cityRPIds = appDataP.cities.map((e) => e.routePointId).toList();
+    cityRPIds = appDataP.cities.map((e) => e.id).toList();
+    // startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.appDataSettings.startIndex]);
+    // endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.appDataSettings.endIndex!]);
+    startEleIndex = routeData.routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.startIndex]);
+    endEleIndex = routeData.routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.endIndex!]);
     eleMaxList = appDataP.allMaxEle.getRange(appDataP.appDataSettings.startIndex + 1, appDataP.appDataSettings.endIndex! + 1);
     eleMax = eleMaxList?.reduce(max) ?? 0;
 
@@ -83,8 +86,10 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
                   chartHeight = routeData.routePoints[rpIndex].ele / eleMax * constraints.maxWidth;
                 }
 
-                if (cityRPIds.contains(routeData.routePoints[rpIndex].id)) {
-                  var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].id);
+                // if (cityRPIds.contains(routeData.routePoints[rpIndex].id)) {
+                if (cityRPIds.contains(routeData.routePoints[rpIndex].cityId)) {
+                  // var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].id);
+                  var cityIndex = cityRPIds.indexOf(routeData.routePoints[rpIndex].cityId ?? -1);
                   double totalDistance = 0;
 
                   for (var i = appDataP.appDataSettings.startIndex + 1; i <= cityIndex; i++) {

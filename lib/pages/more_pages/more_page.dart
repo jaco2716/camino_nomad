@@ -1,7 +1,5 @@
-import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/logic/file_management.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
-import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

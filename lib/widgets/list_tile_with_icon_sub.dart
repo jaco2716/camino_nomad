@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class ListTileWithIconSub extends StatelessWidget {
@@ -8,23 +7,33 @@ class ListTileWithIconSub extends StatelessWidget {
     required this.subtitle,
     required this.icon,
     required this.onTap,
+    this.backgroundColor,
   });
 
   final String title;
   final String subtitle;
   final Widget icon;
   final void Function() onTap;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: backgroundColor,
       child: ListTile(
         onTap: onTap,
         dense: true,
-        iconColor: Colors.amber[800],
+        iconColor: backgroundColor == null ? Colors.amber[800] : Colors.white,
         leading: SizedBox(width: 30, child: Center(child: icon)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: backgroundColor == null ? Colors.black : Colors.white)),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 15,
+            color: backgroundColor == null ? const Color(0x90000000) : const Color(0xDDFFFFFF),
+          ),
+        ),
         trailing: const Icon(Icons.arrow_forward_ios),
         horizontalTitleGap: 0,
       ),

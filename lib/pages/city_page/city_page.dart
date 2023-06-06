@@ -5,8 +5,6 @@ import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../logic/route_logic.dart';
-import '../hotel_page/hotel_page.dart';
-import '../../widgets/booking_com_widgets.dart';
 import 'package:flutter/material.dart';
 import '../../model/route_info/hotel.dart';
 import '../../model/route_info/route_city.dart';
@@ -29,7 +27,7 @@ class _CityPageState extends State<CityPage> {
 
   List<Hotel> hotels = [];
   late AppDataProvider appDataP;
-  double filterDistance = 5;
+  double filterDistance = 3;
   static const List<String> sortByList = <String>[
     'Distance to city center',
     'Rating',
@@ -227,8 +225,8 @@ class _CityPageState extends State<CityPage> {
                                       Slider(
                                         min: 1,
                                         value: currentSliderValue,
-                                        max: 50,
-                                        divisions: 50,
+                                        max: 30,
+                                        divisions: 30,
                                         label: currentSliderValue.round().toString(),
                                         onChanged: (double value) {
                                           modalState(() => currentSliderValue = value.roundToDouble());

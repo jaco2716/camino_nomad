@@ -165,7 +165,7 @@ class _HotelPageState extends State<HotelPage> {
                               }).toList()),
                               // const SizedBox(height: 10),
                               HotelInfoListTile('Check-in:', trailing: hotel.checkInTime, show: hotel.checkInTime.isNotEmpty),
-                              HotelInfoListTile('Check-out:', trailing: hotel.checkInTime, show: hotel.checkOutTime.isNotEmpty),
+                              HotelInfoListTile('Check-out:', trailing: hotel.checkOutTime, show: hotel.checkOutTime.isNotEmpty),
                               HotelInfoListTile('Close:', trailing: hotel.closeTime, show: hotel.closeTime.isNotEmpty),
                               HotelInfoListTile('Beds:', trailing: '${hotel.dormatoryBedAmount}', show: hotel.dormatoryBedAmount > 0),
                               HotelInfoListTile('Dormitories:', trailing: '${hotel.dormatoryAmount}', show: hotel.dormatoryAmount > 0),

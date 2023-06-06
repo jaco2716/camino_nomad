@@ -4,8 +4,8 @@ import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/pages/more_pages/manage_hotels_page.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -807,9 +807,10 @@ class _GetCoordinatesMapState extends State<GetCoordinatesMap> {
     List<Location> locations = [];
     try {
       locations = await locationFromAddress(value);
-      print(locations);
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
     if (locations.isNotEmpty) {
       var c = await _controller.future;

@@ -3,16 +3,11 @@ import 'package:camino_nomad/logic/file_management.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/model/route_info/hotel.dart';
 import 'package:camino_nomad/pages/hotel_page/edit_hotel_page.dart';
-import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../widgets/booking_com_widgets.dart';
 import '../../widgets/button_list_tile.dart';
 import '../city_page/hotel_list_tile.dart';
-import '../hotel_page/hotel_page.dart';
-import 'useful_links_page.dart';
-import 'package:share_plus/share_plus.dart';
 
 class ManageHotelsPage extends StatefulWidget {
   const ManageHotelsPage({super.key});
