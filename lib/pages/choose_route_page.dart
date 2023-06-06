@@ -23,15 +23,15 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: Icon(Icons.search),
-                isDense: true,
-                hintText: 'Search...',
-              ),
-            ),
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     filled: true,
+            //     fillColor: Colors.white,
+            //     prefixIcon: Icon(Icons.search),
+            //     isDense: true,
+            //     hintText: 'Search...',
+            //   ),
+            // ),
             Expanded(
               child: ListView.builder(
                 itemCount: config.allRoutes.length,
@@ -62,7 +62,7 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                                   ),
                                 ),
                                 Text(
-                                  '${config.allRoutes[index].distance} km',
+                                  ' ${config.allRoutes[index].distance} km',
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber[800]),
                                 ),
                               ],

@@ -43,13 +43,13 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               child: Column(
                 children: [
                   // ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
-                  ElevatedButton(
-                      onPressed: () => dg.addCityIdtoRoutePoints(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
-                      child: const Text('addCityToPR')),
-                  ElevatedButton(onPressed: () => dg.generateRoutePoints(), child: const Text('get routepoints')),
-                  ElevatedButton(
-                      onPressed: () => dg.createAllCities(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
-                      child: const Text('get cities')),
+                  // ElevatedButton(
+                  //     onPressed: () => dg.addCityIdtoRoutePoints(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
+                  //     child: const Text('addCityToPR')),
+                  // ElevatedButton(onPressed: () => dg.generateRoutePoints(), child: const Text('get routepoints')),
+                  // ElevatedButton(
+                  //     onPressed: () => dg.createAllCities(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
+                  //     child: const Text('get cities')),
                   const SizedBox(height: 16),
                   SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   const SizedBox(height: 16),

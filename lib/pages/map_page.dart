@@ -3,9 +3,11 @@ import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/model/route_info/route_city.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:camino_nomad/model/route_info/route_point.dart';
+import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 import '../model/providers/app_data_provider.dart';
@@ -26,8 +28,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   late List<RoutePoint> routePoints;
   late List<RouteCity> routeCities;
   late int currentRouteIndex;
-
-  // List<dynamic> cities = [];
+  late PermissionStatus status;
 
   double totalDistance = 0;
   Set<Marker> markers = {};
@@ -41,6 +42,8 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   }
 
   Future<void> dataSetup() async {
+    status = await Permission.locationWhenInUse.status;
+
     currentRouteIndex = appDataP.routeIndex;
     routeData = appDataP.routeData[appDataP.routeIndex];
     routePoints = routeData.routePoints;
@@ -53,12 +56,12 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     getMapRouteData();
   }
 
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
-  }
+  // Future<Uint8List> getBytesFromAsset(String path, int width) async {
+  //   ByteData data = await rootBundle.load(path);
+  //   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+  //   ui.FrameInfo fi = await codec.getNextFrame();
+  //   return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  // }
 
   void getMapRouteData() {
     // final Uint8List markerIcon = await getBytesFromAsset('assets/images/custom_icons/map_pin.png', 30);
@@ -133,22 +136,73 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                       );
                     }),
                   ),
-                  Card(
-                    color: const Color(0xCCFFFFFF),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Camino Frances',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[800], fontSize: 15),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Card(
+                          color: const Color(0xCCFFFFFF),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  routeData.name,
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[800], fontSize: 15),
+                                ),
+                                const SizedBox(width: 10),
+                                Text('${(totalDistance * 100).roundToDouble() / 100} km', style: const TextStyle(fontSize: 12, height: 1.4)),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 10),
-                          Text('${(totalDistance * 100).roundToDouble() / 100} km', style: const TextStyle(fontSize: 12, height: 1.4)),
-                        ],
-                      ),
+                        ),
+                        status.isGranted
+                            ? const SizedBox.shrink()
+                            : Material(
+                                clipBehavior: Clip.hardEdge,
+                                shape: const CircleBorder(),
+                                color: Colors.white,
+                                child: InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return MyInfoDialog(
+                                            child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text('Location is denied.'),
+                                            TextButton(
+                                                onPressed: () async {
+                                                  await Permission.location.request();
+                                                  if (mounted) {
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  }
+                                                },
+                                                child: const Text('Try again'))
+                                          ],
+                                        ));
+                                      },
+                                    );
+                                  },
+                                  child: Ink(
+                                    width: 40,
+                                    height: 40,
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: const Icon(
+                                      Icons.warning_rounded,
+                                      color: Colors.orange,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ],
                     ),
                   ),
                   // Center(

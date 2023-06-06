@@ -85,7 +85,6 @@ class AppDataProvider with ChangeNotifier {
 
         // if (routePoints[routei + 1].id == cities[cityi].routePointId) {
         if (routePoints[routei + 1].cityId == cities[cityi].id || (routei == 0 && routePoints[routei].cityId == cities[cityi].id)) {
-          // print(cities[cityi].id);
           startIndex = routei;
 
           //Distance
@@ -152,17 +151,13 @@ class AppDataProvider with ChangeNotifier {
     for (var i = 0; i < allCitiesToSort.length - 1; i++) {
       if (rps.indexWhere((element) => element.cityId == allCitiesToSort[i].id) != -1) {
         newCities.add(allCitiesToSort[i]);
-        // print(allCitiesToSort[i]);
       }
       // if (rps.indexWhere((element) => element.id == allCitiesToSort[i].routePointId) != -1) newCities.add(allCitiesToSort[i]);
     }
     newCities.sort((a, b) => rps.indexWhere((element) => element.cityId == a.id).compareTo(rps.indexWhere((element) => element.cityId == b.id)));
     // (a, b) => rps.indexWhere((element) => element.id == a.routePointId).compareTo(rps.indexWhere((element) => element.id == b.routePointId)));
     cities = newCities;
-    // print(cities.indexWhere((element) => element.id == 293));
     setAllDistances();
-    print(newCities.length);
-    print(allDistances.length);
     // return newCities;
   }
 
