@@ -4,6 +4,7 @@ import 'package:camino_nomad/model/route_info/hotel_price.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../constants/styles_config.dart' as styles;
 import '../../logic/route_logic.dart';
 import 'package:flutter/material.dart';
 import '../../model/route_info/hotel.dart';
@@ -62,7 +63,7 @@ class _CityPageState extends State<CityPage> {
           .map((e) => Icon(
                 facilityIconMap[e],
                 size: 20,
-                color: Colors.amber[800],
+                color: styles.primaryColor,
               ))
           .toList();
 
@@ -135,7 +136,7 @@ class _CityPageState extends State<CityPage> {
                               children: (widget.city.facilities)
                                   .map((e) => Row(
                                         children: [
-                                          Icon(facilityIconMap[e], size: 20, color: Colors.amber[800]),
+                                          Icon(facilityIconMap[e], size: 20, color: styles.primaryColor),
                                           const SizedBox(width: 10),
                                           Text(e.name.camelToSentence()),
                                         ],

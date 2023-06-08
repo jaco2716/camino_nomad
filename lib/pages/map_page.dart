@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../model/providers/app_data_provider.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -43,9 +44,12 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   Future<void> dataSetup(AppDataProvider appDataP) async {
     _controller = Completer<GoogleMapController>();
     status = await Permission.locationWhenInUse.status;
+    print('getting status');
+    print(status);
     if (!status.isGranted) {
       status = await Permission.location.request();
     }
+    print(status);
 
     currentRouteIndex = appDataP.routeIndex;
     routeData = appDataP.routeData[appDataP.routeIndex];
@@ -147,21 +151,25 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Card(
-                          color: const Color(0xCCFFFFFF),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  routeData.name,
-                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[800], fontSize: 15),
-                                ),
-                                const SizedBox(width: 10),
-                                Text('${(totalDistance * 100).roundToDouble() / 100} km', style: const TextStyle(fontSize: 12, height: 1.4)),
-                              ],
+                        Flexible(
+                          child: Card(
+                            color: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      routeData.name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold, color: styles.primaryColor, fontSize: 15),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text('${(totalDistance * 100).roundToDouble() / 100} km', style: const TextStyle(fontSize: 12, height: 1.4)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -215,7 +223,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                   //   child: Icon(
                   //     Icons.,
                   //     size: 200,
-                  //     color: Colors.amber[800],
+                  //     color: styles.primaryColor,
                   //   ),
                   // )),
                 ],

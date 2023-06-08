@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class MySwitchListTile extends StatelessWidget {
   const MySwitchListTile({
@@ -17,7 +18,7 @@ class MySwitchListTile extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        iconColor: Colors.amber[800],
+        iconColor: styles.primaryColor,
         leading: const SizedBox(width: 30, child: Center(child: Icon(FontAwesomeIcons.powerOff))),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: const Text('On', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class HotelInfoListTile extends StatelessWidget {
   const HotelInfoListTile(
@@ -18,7 +19,7 @@ class HotelInfoListTile extends StatelessWidget {
             height: 24,
             decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5))),
             child: Row(children: [
-              SizedBox(width: 20, child: Icon(Icons.horizontal_rule_rounded, color: Colors.amber[800], size: 12)),
+              const SizedBox(width: 20, child: Icon(Icons.horizontal_rule_rounded, color: styles.primaryColor, size: 12)),
               const SizedBox(width: 10),
               Text(title),
               const Spacer(),

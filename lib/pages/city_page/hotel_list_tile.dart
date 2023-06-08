@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../model/route_info/hotel.dart';
 import '../../widgets/booking_com_widgets.dart';
 import '../hotel_page/hotel_page.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class HotelListTile extends StatelessWidget {
   const HotelListTile({super.key, required this.hotel});
@@ -17,7 +18,7 @@ class HotelListTile extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HotelPage(hotelId: hotel.id))),
-        iconColor: Colors.amber[800],
+        iconColor: styles.primaryColor,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,7 +66,7 @@ class HotelListTile extends StatelessWidget {
                               height: 20,
                               child: Image.asset(
                                 hotelTypeIconMap[e.type]!,
-                                color: Colors.amber[800],
+                                color: styles.primaryColor,
                               )),
                           Text(priceString),
                           const SizedBox(width: 6),
@@ -103,7 +104,7 @@ class HotelListTile extends StatelessWidget {
         //         .map((e) => Icon(
         //               hotelFacilityIconMap[e],
         //               size: 20,
-        //               color: Colors.amber[800],
+        //               color: styles.primaryColor,
         //             ))
         //         .toList()),
         // visualDensity: const VisualDensity(vertical: VisualDensity.maximumDensity),

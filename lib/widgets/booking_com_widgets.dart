@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../logic/url_logic.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class BookingComLink extends StatelessWidget {
   const BookingComLink({
@@ -35,14 +36,14 @@ class BookingComScore extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.star,
           size: 14,
-          color: Colors.amber[800],
+          color: styles.primaryColor,
         ),
         Text(
           '$bookingComScore',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: size / 2.2, color: Colors.amber[800]),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: size / 2.2, color: styles.primaryColor),
         ),
       ],
     );

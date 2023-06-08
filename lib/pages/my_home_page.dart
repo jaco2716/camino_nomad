@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'map_page.dart';
 import 'more_pages/more_page.dart';
 import 'route_page.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: styles.primaryColor,
         onTap: _onItemTapped,
       ),
     );

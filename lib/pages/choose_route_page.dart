@@ -2,6 +2,7 @@ import 'package:camino_nomad/constants/env_config.dart' as config;
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class ChooseRoutePage extends StatefulWidget {
   const ChooseRoutePage({super.key});
@@ -63,7 +64,7 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                                 ),
                                 Text(
                                   ' ${config.allRoutes[index].distance} km',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber[800]),
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: styles.primaryColor),
                                 ),
                               ],
                             ),

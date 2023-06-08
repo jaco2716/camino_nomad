@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../model/route_info/route_city.dart';
 import '../pages/city_page/city_page.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class CityListTile extends StatelessWidget {
   const CityListTile({
@@ -34,7 +35,7 @@ class CityListTile extends StatelessWidget {
                   },
               dense: true,
               // isThreeLine: true,
-              iconColor: Colors.amber[800],
+              iconColor: styles.primaryColor,
               title: Text(city.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class ListTileWithIconSub extends StatelessWidget {
   const ListTileWithIconSub({
@@ -23,7 +24,7 @@ class ListTileWithIconSub extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        iconColor: backgroundColor == null ? Colors.amber[800] : Colors.white,
+        iconColor: backgroundColor == null ? styles.primaryColor : Colors.white,
         leading: SizedBox(width: 30, child: Center(child: icon)),
         title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: backgroundColor == null ? Colors.black : Colors.white)),
         subtitle: Text(

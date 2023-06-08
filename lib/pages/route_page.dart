@@ -11,6 +11,7 @@ import '../widgets/left_aligned_title.dart';
 import '../widgets/list_tile_with_icon_sub.dart';
 import 'choose_route_page.dart';
 import 'choose_start_end_page.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class RoutePage extends StatefulWidget {
   const RoutePage({super.key});
@@ -32,6 +33,8 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
 
   @override
   Widget build(BuildContext context) {
+    print('getting status');
+
     super.build(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -51,7 +54,8 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   //     onPressed: () => dg.createAllCities(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
                   //     child: const Text('get cities')),
                   const SizedBox(height: 16),
-                  SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
+                  // SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
+                  SizedBox(height: 90, child: Image.asset('assets/images/icon-v3.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey'),
                   Consumer<AppDataProvider>(builder: (context, value, _) {
@@ -67,7 +71,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                     return Column(
                       children: [
                         ListTileWithIconSub(
-                            backgroundColor: Colors.amber[800],
+                            backgroundColor: styles.primaryColor,
                             title: 'Route',
                             subtitle: routeSub,
                             icon: const FaIcon(FontAwesomeIcons.route),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class ButtonListTile extends StatelessWidget {
   const ButtonListTile({
@@ -15,7 +16,7 @@ class ButtonListTile extends StatelessWidget {
     return Card(
         child: ListTile(
       onTap: onTap,
-      iconColor: Colors.amber[800],
+      iconColor: styles.primaryColor,
       title: Text(
         title,
         style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),

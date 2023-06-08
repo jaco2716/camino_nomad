@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../widgets/hotel_header_images.dart';
 import '../../widgets/booking_com_widgets.dart';
 import 'hotel_info_list_tile.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class HotelPage extends StatefulWidget {
   const HotelPage({super.key, required this.hotelId});
@@ -117,7 +118,7 @@ class _HotelPageState extends State<HotelPage> {
                             IconButton(
                               onPressed: () => UrlLogic.openMapApp(hotel.lat, hotel.lon),
                               icon: const Icon(Icons.directions),
-                              color: Colors.amber[800],
+                              color: styles.primaryColor,
                               iconSize: 40,
                             ),
                           ],
@@ -150,7 +151,7 @@ class _HotelPageState extends State<HotelPage> {
                                         height: 20,
                                         child: Image.asset(
                                           hotelTypeIconMap[e.type]!,
-                                          color: Colors.amber[800],
+                                          color: styles.primaryColor,
                                           // size: 18,
                                         ),
                                       ),
@@ -190,11 +191,11 @@ class _HotelPageState extends State<HotelPage> {
                                   .map((e) => Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6),
                                         child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.check,
                                             // hotelFacilityIconMap[e],
                                             size: 15,
-                                            color: Colors.amber[800],
+                                            color: styles.primaryColor,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(e.name.camelToSentence())
@@ -211,8 +212,8 @@ class _HotelPageState extends State<HotelPage> {
                             ? Center(
                                 child: TextButton(
                                     onPressed: () => UrlLogic.launchUrlFunc(hotel.website),
-                                    child: Text('Visit Website →',
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Colors.amber[800]
+                                    child: const Text('Visit Website →',
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: styles.primaryColor
                                             // color: Colors.blue,
                                             ))),
                               )

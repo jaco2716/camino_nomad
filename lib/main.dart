@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
 import 'model/providers/app_data_provider.dart';
 import 'pages/my_home_page.dart';
+import '../../constants/styles_config.dart' as styles;
 
 void main() {
   runApp(MultiProvider(
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber[800],
+              backgroundColor: styles.primaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
