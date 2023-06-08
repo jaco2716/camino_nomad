@@ -33,8 +33,6 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
 
   @override
   Widget build(BuildContext context) {
-    print('getting status');
-
     super.build(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -57,44 +55,45 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   // SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
                   SizedBox(height: 90, child: Image.asset('assets/images/icon-v3.png')),
                   const SizedBox(height: 16),
-                  const LeftAlignedTitle('Start Your Journey'),
+                  const LeftAlignedTitle('Start Your Journey', color: styles.primaryColor),
                   Consumer<AppDataProvider>(builder: (context, value, _) {
                     String routeSub = value.routeData[value.routeIndex].name;
 
-                    String startSub = value.cities.isNotEmpty ? value.cities[value.appDataSettings.startIndex].name : 'Choose your start city...';
-                    String endSub = value.appDataSettings.endIndex != null
-                        ? value.cities.isNotEmpty
-                            ? value.cities[value.appDataSettings.endIndex!].name
-                            : 'No Cities'
-                        : 'Choose your end city...';
+                    String startSub =
+                        value.appDataSettings.startIndex != null ? value.cities[value.appDataSettings.startIndex!].name : 'Choose your city';
+                    String endSub = value.appDataSettings.endIndex != null ? value.cities[value.appDataSettings.endIndex!].name : 'Choose your city';
 
                     return Column(
                       children: [
                         ListTileWithIconSub(
-                            backgroundColor: styles.primaryColor,
+                            // backgroundColor: styles.primaryColor,
+                            backgroundColor: styles.secoundaryColor,
                             title: 'Route',
                             subtitle: routeSub,
                             icon: const FaIcon(FontAwesomeIcons.route),
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChooseRoutePage()))),
                         ListTileWithIconSub(
-                            title: 'Start here today!',
+                            backgroundColor: styles.primaryColor,
+                            title: 'Starting here today',
                             subtitle: startSub,
                             icon: const FaIcon(FontAwesomeIcons.mapPin),
                             onTap: () => Navigator.push(
                                 context, MaterialPageRoute(builder: (context) => const ChooseStartEndPage(isStart: true, startIndex: 0)))),
                         ListTileWithIconSub(
-                            title: 'End here today!',
+                            backgroundColor: styles.primaryColor,
+                            title: 'Walking here today',
                             subtitle: endSub,
                             icon: const FaIcon(FontAwesomeIcons.locationCrosshairs),
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ChooseStartEndPage(isStart: false, startIndex: value.appDataSettings.startIndex + 1)))),
+                                    builder: (context) =>
+                                        ChooseStartEndPage(isStart: false, startIndex: (value.appDataSettings.startIndex ?? 0) + 1)))),
                       ],
                     );
                   }),
                   const SizedBox(height: 16),
-                  const LeftAlignedTitle('Current route'),
+                  const LeftAlignedTitle("Today's Stage", color: styles.primaryColor),
                   Theme(
                     data: Theme.of(context).copyWith(
                         textTheme: const TextTheme(
@@ -104,93 +103,109 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                       ),
                     )),
                     child: Card(
-                      color: Colors.blue,
-                      child: Container(
-                        margin: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          // color: Colors.blue[600],
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: const LinearGradient(
-                              colors: [
-                                Color.fromARGB(255, 0, 140, 255),
-                                Color.fromARGB(255, 51, 163, 255),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: [0.5, 0.5]),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              if (appDataP.appDataSettings.endIndex != null) {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return const MyInfoDialog(child: Text('Choose start and end point to view Elevation Map'));
-                                  },
-                                );
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Consumer<AppDataProvider>(builder: (context, value, _) {
-                                double? distSum;
-                                double? eleGainSum;
-                                double? eleLossSum;
-                                double? eleMin;
-                                double? eleMax;
-                                if (value.appDataSettings.endIndex != null && value.cities.isNotEmpty) {
-                                  var distanceList =
-                                      value.allDistances.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
-                                  var eleGainList =
-                                      value.allEleGain.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
-                                  var eleLossList =
-                                      value.allEleLoss.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
-                                  var eleMinList =
-                                      value.allMinEle.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
-                                  var eleMaxList =
-                                      value.allMaxEle.getRange(value.appDataSettings.startIndex + 1, value.appDataSettings.endIndex! + 1);
+                      // color: Colors.transparent,
+                      clipBehavior: Clip.hardEdge,
+                      color: styles.secoundaryColor,
+                      child: InkWell(
+                        onTap: () {
+                          if (appDataP.appDataSettings.endIndex != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const MyInfoDialog(child: Text('Choose start and end point to view Elevation Map'));
+                              },
+                            );
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                                // padding: const EdgeInsets.all(0),
+                                child: Ink(
+                                  // margin: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
+                                  decoration: BoxDecoration(
+                                    // color: Colors.blue[600],
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(255, 0, 140, 255),
+                                          Color.fromARGB(255, 51, 163, 255),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        stops: [0.35, 0.35]),
+                                  ),
+                                  // clipBehavior: Clip.hardEdge,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Consumer<AppDataProvider>(builder: (context, value, _) {
+                                      double? distSum;
+                                      double? eleGainSum;
+                                      double? eleLossSum;
+                                      double? eleMin;
+                                      double? eleMax;
+                                      if (value.appDataSettings.endIndex != null && value.cities.isNotEmpty) {
+                                        var distanceList = value.allDistances
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleGainList = value.allEleGain
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleLossList = value.allEleLoss
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleMinList = value.allMinEle
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleMaxList = value.allMaxEle
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
 
-                                  distSum = distanceList.reduce((a, b) => a + b);
-                                  eleGainSum = eleGainList.reduce((a, b) => a + b);
-                                  eleLossSum = eleLossList.reduce((a, b) => a + b);
-                                  eleMin = eleMinList.reduce(min);
-                                  eleMax = eleMaxList.reduce(max);
-                                }
-                                double totalDistance = value.allDistances.isNotEmpty ? value.allDistances.reduce((a, b) => a + b) : 0;
+                                        distSum = distanceList.reduce((a, b) => a + b);
+                                        eleGainSum = eleGainList.reduce((a, b) => a + b);
+                                        eleLossSum = eleLossList.reduce((a, b) => a + b);
+                                        eleMin = eleMinList.reduce(min);
+                                        eleMax = eleMaxList.reduce(max);
+                                      }
+                                      // double totalDistance = value.allDistances.isNotEmpty ? value.allDistances.reduce((a, b) => a + b) : 0;
 
-                                return Column(children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [const Text('Todays Distance:'), Text('${distSum?.toStringAsFixed(2) ?? '?'} km')],
+                                      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [const Text('Todays Distance:'), Text('${distSum?.toStringAsFixed(2) ?? '?'} km')],
+                                        ),
+                                        // Row(
+                                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        //   children: [const Text('Total Distance:'), Text('${totalDistance.toStringAsFixed(2)} km')],
+                                        // ),
+                                        const Divider(color: Colors.transparent),
+                                        const Text(
+                                          'Elevation',
+                                          style: TextStyle(decoration: TextDecoration.underline, color: Colors.white70),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text('Min / Max:'),
+                                            Text('${eleMin?.toStringAsFixed(0) ?? '?'} m / ${eleMax?.toStringAsFixed(0) ?? '?'} m')
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text('Gain / Loss:'),
+                                            Text('${eleGainSum?.toStringAsFixed(0) ?? '?'} m / -${eleLossSum?.toStringAsFixed(0) ?? '?'} m')
+                                          ],
+                                        ),
+                                      ]);
+                                    }),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [const Text('Total Distance:'), Text('${totalDistance.toStringAsFixed(2)} km')],
-                                  ),
-                                  const Divider(color: Colors.transparent),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text('Elevation min/max:'),
-                                      Text('${eleMin?.toStringAsFixed(0) ?? '?'} m / ${eleMax?.toStringAsFixed(0) ?? '?'} m')
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text('Elevation gain/loss:'),
-                                      Text('${eleGainSum?.toStringAsFixed(0) ?? '?'} m / -${eleLossSum?.toStringAsFixed(0) ?? '?'} m')
-                                    ],
-                                  ),
-                                ]);
-                              }),
+                                ),
+                              ),
                             ),
-                          ),
+                            const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                            const SizedBox(width: 10),
+                          ],
                         ),
                       ),
                     ),
@@ -209,10 +224,10 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
             return SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  int cityIndex = index + value.appDataSettings.startIndex;
+                  int cityIndex = index + (value.appDataSettings.startIndex ?? 0);
                   double totalDistance = 0;
                   for (var i = 1; i <= index; i++) {
-                    totalDistance += value.allDistances[i + (value.appDataSettings.startIndex)];
+                    totalDistance += value.allDistances[i + (value.appDataSettings.startIndex ?? 0)];
                   }
                   return CityListTile(
                       showBetweenDistance: index != 0,
@@ -220,7 +235,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                       totalDistance: totalDistance,
                       distanceBetween: value.allDistances[cityIndex]);
                 },
-                childCount: ((value.appDataSettings.endIndex ?? -1) - (value.appDataSettings.startIndex) + 1),
+                childCount: ((value.appDataSettings.endIndex ?? -1) - (value.appDataSettings.startIndex ?? 0) + 1),
               ),
             );
           }),

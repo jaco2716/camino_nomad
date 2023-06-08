@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:flutter/material.dart';
+import '../../constants/styles_config.dart' as styles;
 import 'package:provider/provider.dart';
 
 class ElevationChartPage extends StatefulWidget {
@@ -39,10 +40,10 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
 
     // startEleIndex = routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.startIndex]);
     // endEleIndex = routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.endIndex!]);
-    startEleIndex = routeData.routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.startIndex]);
+    startEleIndex = routeData.routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.startIndex ?? 0]);
     endEleIndex = routeData.routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.endIndex!]);
-    eleMaxList = appDataP.allMaxEle.getRange(appDataP.appDataSettings.startIndex + 1, appDataP.appDataSettings.endIndex! + 1);
-    eleMinList = appDataP.allMinEle.getRange(appDataP.appDataSettings.startIndex + 1, appDataP.appDataSettings.endIndex! + 1);
+    eleMaxList = appDataP.allMaxEle.getRange((appDataP.appDataSettings.startIndex ?? 0) + 1, appDataP.appDataSettings.endIndex! + 1);
+    eleMinList = appDataP.allMinEle.getRange((appDataP.appDataSettings.startIndex ?? 0) + 1, appDataP.appDataSettings.endIndex! + 1);
     eleMax = eleMaxList?.reduce(max) ?? 0;
     eleMin = eleMinList?.reduce(min) ?? 0;
 
@@ -134,7 +135,7 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
                       // var cityIndex = cityRPIds.indexOf(routePoints[rpIndex].cityId ?? -1);
                       double totalDistance = 0;
 
-                      for (var i = appDataP.appDataSettings.startIndex + 1; i <= cityIndex; i++) {
+                      for (var i = (appDataP.appDataSettings.startIndex ?? 0) + 1; i <= cityIndex; i++) {
                         totalDistance += appDataP.allDistances[i];
                       }
 
@@ -169,7 +170,7 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
                       child: Container(
                         width: isPortraitMode ? 2 : 1,
                         height: chartHeight,
-                        color: Colors.blue,
+                        color: styles.secoundaryColor,
                       ),
                     );
                   },

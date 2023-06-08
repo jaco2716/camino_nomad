@@ -88,7 +88,7 @@ class _ChooseRoutePageState extends State<ChooseRoutePage> {
                             //     // Spacer(),
                             //     CircleAvatar(
                             //       radius: 8,
-                            //       backgroundColor: Colors.blue,
+                            //       backgroundColor: styles.secoundaryColor,
                             //       child: Icon(
                             //         Icons.download,
                             //         color: Colors.white,

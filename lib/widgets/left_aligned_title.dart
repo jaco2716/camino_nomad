@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../constants/styles_config.dart' as styles;
 
 class LeftAlignedTitle extends StatelessWidget {
   const LeftAlignedTitle(
     this.title, {
     super.key,
-    this.color = Colors.blue,
+    this.color = styles.secoundaryColor,
     this.size = 14,
     this.fontWeight = FontWeight.bold,
     this.leftPadding = 20,

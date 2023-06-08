@@ -107,7 +107,7 @@ class _HotelPageState extends State<HotelPage> {
                           children: [
                             const Icon(
                               Icons.location_on,
-                              color: Colors.blue,
+                              color: styles.secoundaryColor,
                               size: 20,
                             ),
                             const SizedBox(width: 4),
@@ -214,7 +214,7 @@ class _HotelPageState extends State<HotelPage> {
                                     onPressed: () => UrlLogic.launchUrlFunc(hotel.website),
                                     child: const Text('Visit Website →',
                                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: styles.primaryColor
-                                            // color: Colors.blue,
+                                            // color: styles.secoundaryColor,
                                             ))),
                               )
                             : const SizedBox.shrink(),
@@ -356,7 +356,7 @@ class ContactTextButton extends StatelessWidget {
                       //                               padding: const EdgeInsets.all(6.0),
                       //                               child: Image.asset(
                       //                                 e['image'],
-                      //                                 color: e['image'].contains('bookinglogo') ? null : Colors.blue,
+                      //                                 color: e['image'].contains('bookinglogo') ? null : styles.secoundaryColor,
                       //                               ),
                       //                             ),
                       //                             Text(e['title']),
@@ -380,7 +380,7 @@ class ContactTextButton extends StatelessWidget {
                       //                       padding: const EdgeInsets.only(right: 8.0),
                       //                       child: Image.asset(
                       //                         e['image'],
-                      //                         color: e['image'].contains('bookinglogo') ? null : Colors.blue,
+                      //                         color: e['image'].contains('bookinglogo') ? null : styles.secoundaryColor,
                       //                       ),
                       //                     )))
                       //             .toList()),

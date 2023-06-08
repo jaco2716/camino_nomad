@@ -67,12 +67,14 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                           return Card(
                               child: InkWell(
                             onTap: () {
-                              if (widget.isStart) {
-                                appDataP.setStartIndex(cityIndex);
-                                appDataP.setEndIndex(null);
-                              } else {
-                                appDataP.setEndIndex(cityIndex);
+                              appDataP.setStartIndex(cityIndex);
+                              // appDataP.setStartIndex(null);
+                              if (appDataP.appDataSettings.endIndex != null) {
+                                if (appDataP.appDataSettings.endIndex! <= cityIndex) {
+                                  appDataP.setEndIndex(null);
+                                }
                               }
+
                               Navigator.pop(context);
                             },
                             child: Padding(
@@ -85,7 +87,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                         } else {
                           double totalDistance = 0;
                           for (var i = 1; i <= index + 1; i++) {
-                            totalDistance += appDataP.allDistances[i + (appDataP.appDataSettings.startIndex)];
+                            totalDistance += appDataP.allDistances[i + (appDataP.appDataSettings.startIndex ?? 0)];
                           }
                           return Stack(
                             alignment: Alignment.center,

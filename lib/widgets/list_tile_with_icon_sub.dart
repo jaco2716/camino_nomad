@@ -20,6 +20,7 @@ class ListTileWithIconSub extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.hardEdge,
       color: backgroundColor,
       child: ListTile(
         onTap: onTap,

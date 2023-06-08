@@ -34,7 +34,7 @@ class HotelListTile extends StatelessWidget {
               child: Icon(
                 Icons.location_on,
                 size: 12,
-                color: Colors.blue,
+                color: styles.secoundaryColor,
               ),
             ),
             Text(hotelDist, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blue)),
@@ -75,7 +75,7 @@ class HotelListTile extends StatelessWidget {
                     }).toList(),
                     // Text(
                     //   'B',
-                    //   style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w900),
+                    //   style: TextStyle(color: styles.secoundaryColor, fontWeight: FontWeight.w900),
                     // ),
                     hotel.bookingComUrl.isNotEmpty
                         ? SizedBox(width: 12, child: Image.asset('assets/images/custom_icons/bookinglogo.png'))
@@ -92,7 +92,7 @@ class HotelListTile extends StatelessWidget {
               //               padding: const EdgeInsets.only(right: 8.0),
               //               child: Image.asset(
               //                 e,
-              //                 color: e.contains('bookinglogo') ? null : Colors.blue,
+              //                 color: e.contains('bookinglogo') ? null : styles.secoundaryColor,
               //               ),
               //             )))
               //         .toList()),

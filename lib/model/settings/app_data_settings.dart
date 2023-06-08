@@ -6,7 +6,7 @@ part 'app_data_settings.g.dart';
 class AppDataSettings {
   bool lowDataMode;
   int routeId;
-  int startIndex;
+  int? startIndex;
   int? endIndex;
   bool showAdvancedSettings;
 

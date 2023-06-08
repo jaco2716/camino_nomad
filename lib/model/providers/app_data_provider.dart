@@ -161,7 +161,7 @@ class AppDataProvider with ChangeNotifier {
     // return newCities;
   }
 
-  void setStartIndex(int value) async {
+  void setStartIndex(int? value) async {
     // startCityIndex = value;
     appDataSettings.startIndex = value;
     await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
@@ -184,7 +184,7 @@ class AppDataProvider with ChangeNotifier {
   void setRouteId(int id) async {
     appDataSettings.routeId = id;
     routeIndex = routeData.indexWhere((element) => element.id == id);
-    appDataSettings.startIndex = 0;
+    appDataSettings.startIndex = null;
     appDataSettings.endIndex = null;
     sortCities(allCities);
     await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));

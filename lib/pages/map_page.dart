@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:camino_nomad/constants/env_config.dart' as config;
+import 'package:camino_nomad/extensions/string_extensions.dart';
 import 'package:camino_nomad/model/route_info/route_city.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:camino_nomad/model/route_info/route_point.dart';
@@ -44,12 +45,10 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
   Future<void> dataSetup(AppDataProvider appDataP) async {
     _controller = Completer<GoogleMapController>();
     status = await Permission.locationWhenInUse.status;
-    print('getting status');
-    print(status);
+
     if (!status.isGranted) {
       status = await Permission.location.request();
     }
-    print(status);
 
     currentRouteIndex = appDataP.routeIndex;
     routeData = appDataP.routeData[appDataP.routeIndex];
@@ -114,7 +113,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                           Polyline(
                             polylineId: const PolylineId('route'),
                             points: polylineCoordinates,
-                            color: Colors.blue,
+                            color: styles.secoundaryColor,
                             width: 3,
                             zIndex: 1,
                           ),
@@ -173,51 +172,68 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                             ),
                           ),
                         ),
-                        status.isGranted
-                            ? const SizedBox.shrink()
-                            : Material(
-                                clipBehavior: Clip.hardEdge,
-                                shape: const CircleBorder(),
-                                color: Colors.white,
-                                child: InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return MyInfoDialog(
-                                            child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text('Location is denied.'),
-                                            TextButton(
-                                                onPressed: () async {
-                                                  await Permission.location.request();
-                                                  if (mounted) {
-                                                    Navigator.pop(context);
-                                                    setState(() {});
-                                                  }
-                                                },
-                                                child: const Text('Try again'))
-                                          ],
-                                        ));
-                                      },
-                                    );
-                                  },
-                                  child: Ink(
-                                    width: 40,
-                                    height: 40,
-                                    padding: const EdgeInsets.only(bottom: 4),
-                                    child: const Icon(
-                                      Icons.warning_rounded,
-                                      color: Colors.orange,
-                                      size: 25,
-                                    ),
-                                  ),
-                                ),
-                              ),
                       ],
                     ),
                   ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: status.isGranted
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Material(
+                              elevation: 2,
+                              clipBehavior: Clip.hardEdge,
+                              shape: const CircleBorder(),
+                              color: Colors.white,
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return MyInfoDialog(
+                                          child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text('Location is denied.'),
+                                          TextButton(
+                                              onPressed: () async {
+                                                PermissionStatus newStatus = await Permission.location.request();
+                                                if (mounted) {
+                                                  Navigator.pop(context);
+                                                  if (!newStatus.isGranted) {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return MyInfoDialog(
+                                                            child: Text(
+                                                                "Can't get precise location.\nPermission is set to: ${newStatus.name.camelToSentence()}"));
+                                                      },
+                                                    );
+                                                  }
+                                                  setState(() {});
+                                                }
+                                              },
+                                              child: const Text('Try again'))
+                                        ],
+                                      ));
+                                    },
+                                  );
+                                },
+                                child: Ink(
+                                  width: 40,
+                                  height: 40,
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: const Icon(
+                                    Icons.warning_rounded,
+                                    color: Colors.orange,
+                                    size: 25,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                  )
                   // Center(
                   //     child: Card(
                   //   child: Icon(

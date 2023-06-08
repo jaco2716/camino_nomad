@@ -19,7 +19,7 @@ class ButtonListTile extends StatelessWidget {
       iconColor: styles.primaryColor,
       title: Text(
         title,
-        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
+        style: const TextStyle(color: styles.secoundaryColor, fontWeight: FontWeight.w600),
       ),
       trailing: const Icon(Icons.arrow_forward_ios),
     ));
