@@ -13,18 +13,15 @@ import '../model/route_info/route_point.dart';
 
 class DataGeneration {
   createAllCities(RouteData data, List<RouteCity> cities) async {
-    final String response = await rootBundle.loadString('assets/route_database/rawdata.json');
-    final List<dynamic> routeData = await json.decode(response);
-    List<dynamic> citiesFile = routeData[0]['cities'] as List<dynamic>;
+    var routeData = await loadRawData(0);
+    List<dynamic> citiesFile = routeData['cities'];
 
     int startID = cities.last.id + 1;
 
     List<RouteCity> newCities = [];
     for (var i = 0; i < citiesFile.length; i++) {
       if (cities.indexWhere((element) => removeDiacritics(element.name) == removeDiacritics(citiesFile[i]['name'])) != -1) {
-        if (kDebugMode) {
-          print('Skipped: ${citiesFile[i]['name']}');
-        }
+        debugPrint('Skipped: ${citiesFile[i]['name']}');
         break;
       }
       // for (var i = 0; i < 2; i++) {
@@ -89,15 +86,32 @@ class DataGeneration {
     printMore(jsonEncode(points));
   }
 
-  generateHotels(int startID) async {
+  generateHotels(List<Hotel> hotels) async {
     List<Hotel> newHotels = [];
-    List<dynamic> citiesFile = await loadCitiesFromFile();
+    var routeData = await loadRawData(0);
+    List<dynamic> citiesFile = routeData['cities'];
+    debugPrint(citiesFile.length.toString());
     List<dynamic> hotelsF = [];
+    int i = 0;
     for (var city in citiesFile) {
       hotelsF.addAll(city['albergues']);
+      i += (city['albergues'] as List<dynamic>).length;
     }
 
-    for (var i = startID; i < hotelsF.length; i++) {
+    debugPrint(i.toString());
+    debugPrint(hotelsF.length.toString());
+    int startID = hotels.last.id + 1;
+
+    for (var i = 0; i < hotelsF.length; i++) {
+      int matchIndex = hotels.indexWhere((element) => removeDiacritics(element.name) == removeDiacritics(hotelsF[i]['name']));
+      if (matchIndex != -1) {
+        if (removeDiacritics(hotels[matchIndex].cityName) == removeDiacritics(hotelsF[i]['city_name'])) {
+          debugPrint('Skipped: $matchIndex - ${hotelsF[i]['city_name']} | ${hotels[matchIndex].cityName} : ${hotelsF[i]['name']}');
+          continue;
+        } else {
+          debugPrint('### NOT SKIP ###: $matchIndex - ${hotelsF[i]['city_name']} | ${hotels[matchIndex].cityName} : ${hotelsF[i]['name']}');
+        }
+      }
       var newItem = Hotel(
         id: i + startID,
         name: hotelsF[i]['name'] ?? 'NULL',
@@ -211,6 +225,12 @@ class DataGeneration {
     printMore(jsonEncode(newHotels));
   }
 
+  Future<dynamic> loadRawData(int routeIndex) async {
+    final String response = await rootBundle.loadString('assets/route_database/rawdata.json');
+    final List<dynamic> routeData = await json.decode(response);
+    return routeData[routeIndex];
+  }
+
   void generateRoutePoints() async {
     final String response = await rootBundle.loadString('assets/route_database/rawdata.json');
     final List<dynamic> routeData = await json.decode(response);
@@ -282,12 +302,6 @@ class DataGeneration {
       // }
     }
     printMore(jsonEncode(data));
-  }
-
-  Future<List<dynamic>> loadCitiesFromFile() async {
-    final String response = await rootBundle.loadString('assets/route_database/test.json');
-    final Map<String, dynamic> routeData = await json.decode(response);
-    return routeData['cities'] as List<dynamic>;
   }
 
   HotelStatus convertStatus(int status) {

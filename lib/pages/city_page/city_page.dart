@@ -92,13 +92,6 @@ class _CityPageState extends State<CityPage> {
     return filterHotels;
   }
 
-  // generateHotels() async {
-  //   final rl = RouteLogic();
-  //   int startID = hotels.length;
-
-  //   rl.generateHotels(startID, widget.city);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,15 +106,6 @@ class _CityPageState extends State<CityPage> {
             return Padding(
               padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                //   child: Row(
-                //     children: [
-                //       const Icon(Icons.location_on, size: 18, color: Colors.blue),
-                //       Text('${widget.totalDistance.toStringAsFixed(1)} km', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                //     ],
-                //   ),
-                // ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                   child: InkWell(
@@ -179,21 +163,6 @@ class _CityPageState extends State<CityPage> {
                         child: ListView.builder(
                           itemCount: hotels.length,
                           itemBuilder: (BuildContext context, int index) {
-                            // List<String> highlightedFacilityImagePaths = [];
-                            // if (hotels[index].bookingComUrl.isNotEmpty) {
-                            //   highlightedFacilityImagePaths.add('assets/images/custom_icons/bookinglogo.png');
-                            // }
-                            // if (hotels[index].hotelFacilities.contains(HotelFacility.kitchen)) {
-                            //   highlightedFacilityImagePaths.add('assets/images/custom_icons/kitchen.png');
-                            // }
-                            // if (hotels[index].hotelFacilities.contains(HotelFacility.vegan) ||
-                            //     hotels[index].hotelFacilities.contains(HotelFacility.vegetarian)) {
-                            //   highlightedFacilityImagePaths.add('assets/images/custom_icons/vegan.png');
-                            // }
-                            // if (hotels[index].hotelFacilities.contains(HotelFacility.communityDinner)) {
-                            //   highlightedFacilityImagePaths.add('assets/images/custom_icons/dinner.png');
-                            // }
-
                             return HotelListTile(hotel: hotels[index]);
                           },
                         ),

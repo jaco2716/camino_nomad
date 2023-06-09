@@ -43,7 +43,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Column(
                 children: [
-                  ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
+                  ElevatedButton(onPressed: () => dg.generateHotels(appDataP.hotels), child: const Text('get hotels')),
                   // ElevatedButton(
                   //     onPressed: () => dg.addCityIdtoRoutePoints(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
                   //     child: const Text('addCityToPR')),
