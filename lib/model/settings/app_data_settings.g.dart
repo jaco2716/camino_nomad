@@ -10,7 +10,7 @@ AppDataSettings _$AppDataSettingsFromJson(Map<String, dynamic> json) =>
     AppDataSettings(
       json['lowDataMode'] as bool,
       json['routeId'] as int,
-      json['startIndex'] as int,
+      json['startIndex'] as int?,
       endIndex: json['endIndex'] as int?,
       showAdvancedSettings: json['showAdvancedSettings'] as bool? ?? false,
     );
