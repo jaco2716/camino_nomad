@@ -43,7 +43,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: Column(
                 children: [
-                  // ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
+                  ElevatedButton(onPressed: () => dg.generateHotels(0), child: const Text('get hotels')),
                   // ElevatedButton(
                   //     onPressed: () => dg.addCityIdtoRoutePoints(appDataP.routeData[appDataP.routeIndex], appDataP.allCities),
                   //     child: const Text('addCityToPR')),
@@ -53,7 +53,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   //     child: const Text('get cities')),
                   const SizedBox(height: 16),
                   // SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
-                  SizedBox(height: 90, child: Image.asset('assets/images/icon-v3.png')),
+                  SizedBox(height: 90, child: Image.asset('assets/icon/icon-circle.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey', color: styles.primaryColor),
                   Consumer<AppDataProvider>(builder: (context, value, _) {

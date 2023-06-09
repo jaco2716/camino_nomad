@@ -156,98 +156,24 @@ class _CityPageState extends State<CityPage> {
                 Row(
                   children: [
                     const Expanded(child: LeftAlignedTitle('Accomodations')),
-                    TextButton.icon(
-                        onPressed: () {
-                          double currentSliderValue = filterDistance;
-
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return MyInfoDialog(
-                                action: TextButton(
-                                  child: const Text('Search'),
-                                  onPressed: () {
-                                    filterDistance = currentSliderValue;
-                                    // hotels = filterHotelsWithDistance();
-
-                                    setState(() {});
-                                    Navigator.maybePop(context);
-                                  },
-                                ),
-                                child: StatefulBuilder(builder: (context, modalState) {
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Filter',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Divider(),
-                                      const SizedBox(height: 20),
-                                      const LeftAlignedTitle('Sort by', leftPadding: 0),
-                                      const SizedBox(height: 10),
-                                      Container(
-                                        // margin: EdgeInsets.zero,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Colors.grey[400]!),
-                                        ),
-                                        // width: double.infinity,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: DropdownButton<String>(
-                                            isExpanded: true,
-                                            value: sortByValue,
-                                            icon: const Icon(Icons.arrow_drop_down_rounded),
-                                            elevation: 16,
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
-                                              modalState(() {
-                                                sortByValue = value!;
-                                              });
-                                            },
-                                            dropdownColor: Colors.white,
-                                            underline: const SizedBox.shrink(),
-                                            items: sortByList.map<DropdownMenuItem<String>>((String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      LeftAlignedTitle('Distance:  ${currentSliderValue.round()} km', leftPadding: 0),
-                                      Slider(
-                                        min: 1,
-                                        value: currentSliderValue,
-                                        max: 30,
-                                        divisions: 30,
-                                        label: currentSliderValue.round().toString(),
-                                        onChanged: (double value) {
-                                          modalState(() => currentSliderValue = value.roundToDouble());
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              );
-                            },
-                          );
-                        },
-                        icon: const Icon(FontAwesomeIcons.arrowDownWideShort),
-                        label: const Text('')),
+                    TextButton.icon(onPressed: changeSearchFilter, icon: const Icon(FontAwesomeIcons.arrowDownWideShort), label: const Text('')),
                   ],
                 ),
                 hotels.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 30.0),
-                        child: Text('No Accomodations'),
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 30.0),
+                          child: Column(
+                            children: [
+                              const Text('No Accomodations found'),
+                              TextButton.icon(
+                                onPressed: changeSearchFilter,
+                                label: const Text('Edit Filter'),
+                                icon: const Icon(FontAwesomeIcons.arrowDownWideShort),
+                              )
+                            ],
+                          ),
+                        ),
                       )
                     : Expanded(
                         child: ListView.builder(
@@ -275,6 +201,90 @@ class _CityPageState extends State<CityPage> {
               ]),
             );
           })),
+    );
+  }
+
+  changeSearchFilter() {
+    double currentSliderValue = filterDistance;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyInfoDialog(
+          action: TextButton(
+            child: const Text('Search'),
+            onPressed: () {
+              filterDistance = currentSliderValue;
+              // hotels = filterHotelsWithDistance();
+
+              setState(() {});
+              Navigator.maybePop(context);
+            },
+          ),
+          child: StatefulBuilder(builder: (context, modalState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Filter',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
+                const LeftAlignedTitle('Sort by', leftPadding: 0),
+                const SizedBox(height: 10),
+                Container(
+                  // margin: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey[400]!),
+                  ),
+                  // width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: sortByValue,
+                      icon: const Icon(Icons.arrow_drop_down_rounded),
+                      elevation: 16,
+                      onChanged: (String? value) {
+                        // This is called when the user selects an item.
+                        modalState(() {
+                          sortByValue = value!;
+                        });
+                      },
+                      dropdownColor: Colors.white,
+                      underline: const SizedBox.shrink(),
+                      items: sortByList.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                LeftAlignedTitle('Distance:  ${currentSliderValue.round()} km', leftPadding: 0),
+                Slider(
+                  min: 1,
+                  value: currentSliderValue,
+                  max: 30,
+                  divisions: 30,
+                  label: currentSliderValue.round().toString(),
+                  onChanged: (double value) {
+                    modalState(() => currentSliderValue = value.roundToDouble());
+                  },
+                ),
+              ],
+            );
+          }),
+        );
+      },
     );
   }
 

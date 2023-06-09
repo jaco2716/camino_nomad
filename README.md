@@ -37,6 +37,10 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon/icon.png"
+  #Optional for adaptive icons
+  image_path_ios: "assets/icon/icon.png"
+  adaptive_icon_foreground: "assets/icon/icon-android.png"
+  adaptive_icon_background: "#ffffff"
 ```
 * flutter pub run flutter_launcher_icons
 ### Build iOS/Android Archive: 
