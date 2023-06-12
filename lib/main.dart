@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'model/providers/app_data_provider.dart';
 import 'pages/my_home_page.dart';
 import '../../constants/styles_config.dart' as styles;
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<AppDataProvider>(
@@ -80,6 +83,7 @@ class _MyAppState extends State<MyApp> {
           future: getData,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
+              FlutterNativeSplash.remove();
               return const MyHomePage();
             }
             return const Scaffold(body: Center(child: CircularProgressIndicator()));

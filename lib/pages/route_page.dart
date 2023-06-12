@@ -53,7 +53,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                   //     child: const Text('get cities')),
                   const SizedBox(height: 16),
                   // SizedBox(height: 90, child: Image.asset('assets/images/nomad-transparent.png')),
-                  SizedBox(height: 90, child: Image.asset('assets/icon/icon-circle.png')),
+                  SizedBox(height: 90, child: Image.asset('assets/images/icon-circle.png')),
                   const SizedBox(height: 16),
                   const LeftAlignedTitle('Start Your Journey', color: styles.primaryColor),
                   Consumer<AppDataProvider>(builder: (context, value, _) {
@@ -114,7 +114,7 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                             showDialog(
                               context: context,
                               builder: (context) {
-                                return const MyInfoDialog(child: Text('Choose start and end point to view Elevation Map'));
+                                return const MyInfoDialog(child: Text('Choose start and end city to view Elevation Map'));
                               },
                             );
                           }

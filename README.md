@@ -39,10 +39,12 @@ flutter_launcher_icons:
   image_path: "assets/icon/icon.png"
   #Optional for adaptive icons
   image_path_ios: "assets/icon/icon.png"
+  #Forground image needs to be max 682px icon inside 1024px image with transparent border
   adaptive_icon_foreground: "assets/icon/icon-android.png"
   adaptive_icon_background: "#ffffff"
 ```
 * flutter pub run flutter_launcher_icons
+---
 ### Build iOS/Android Archive: 
 Remember to change version! (version: 1.0.0+1 -> 1.0.1+2)
 * flutter build ipa
