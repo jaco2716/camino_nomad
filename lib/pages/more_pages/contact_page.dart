@@ -103,6 +103,7 @@ class _ContactPageState extends State<ContactPage> {
                   title: 'Instagram',
                   subtitle: '@caminonomad',
                   icon: const FaIcon(FontAwesomeIcons.instagram),
+                  //TODO change instagramhandle
                   onTap: () => UrlLogic.launchUrlFunc('https://www.instagram.com/caminonomad/')),
               ListTileWithIconSub(
                   title: 'Facebook',

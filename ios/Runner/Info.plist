@@ -47,10 +47,17 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+		<!-- Does not use encryption -->
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app needs your location to use the features of the map.</string>
+
+		<!-- Permission options for the `location` group -->
+    	<key>NSLocationWhenInUseUsageDescription</key>
+    	<string>This app needs your location to use some features.</string>
+    	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    	<string>This app needs your location to use some features.</string>
+
+		<!-- Launch external apps -->
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>googlechromes</string>
