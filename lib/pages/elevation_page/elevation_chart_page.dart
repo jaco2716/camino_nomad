@@ -3,10 +3,11 @@ import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../constants/styles_config.dart' as styles;
+import '../../../constants/styles_config.dart' as styles;
 import 'package:provider/provider.dart';
 
-import '../logic/route_logic.dart';
+import '../../logic/route_logic.dart';
+import '../../model/route_info/route_point.dart';
 
 class ElevationChartPage extends StatefulWidget {
   const ElevationChartPage({super.key});
@@ -20,7 +21,7 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
   bool isPortraitMode = true;
   late AppDataProvider appDataP;
   late RouteData routeData;
-  // List<RoutePoint> routePoints = [];
+  List<RoutePoint> routePoints = [];
   List<int> cityRPIds = [];
   int startEleIndex = 0;
   int endEleIndex = 0;
@@ -63,16 +64,15 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
 
   // List<RoutePoint> reduceRoutePointsToAverage(List<RoutePoint> rps) {
   //   List<RoutePoint> newRoutePoints = [];
-  //   for (var i = 0; i < rps.length - 3; i += 3) {
-  //     newRoutePoints.add(
-  //       RoutePoint(
-  //         i,
-  //         0,
-  //         0,
-  //         (rps[i].ele + rps[i + 1].ele + rps[i + 2].ele) / 3,
-  //         cityId: rps[i].cityId ?? rps[i + 1].cityId ?? rps[i + 2].cityId,
-  //       ),
-  //     );
+  //   int j = 0;
+  //   for (var i = 0; i < rps.length; i++) {
+  //     if (rps[i].cityId != null) {
+  //       newRoutePoints.add(RoutePoint(i, rps[i].lat, rps[i].lon, rps[i].ele, cityId: rps[i].cityId));
+  //     } else if (j >= 5) {
+  //       double avgEle = (rps[i].ele + rps[i - 1].ele + rps[i - 2].ele + rps[i - 3].ele + rps[i - 4].ele) / 5;
+  //       newRoutePoints.add(RoutePoint(i, rps[i].lat, rps[i].lon, avgEle, cityId: null));
+  //       j++;
+  //     }
   //   }
   //   print('after: ${newRoutePoints.first.cityId}');
   //   return newRoutePoints;
@@ -80,20 +80,6 @@ class _ElevationChartPageState extends State<ElevationChartPage> {
 
   @override
   Widget build(BuildContext context) {
-    // var appDataP = context.read<AppDataProvider>();
-    // var routeData = appDataP.currentRouteData!;
-    // var cityRPIds = routeData.cities.map((e) => e.routePointId).toList();
-    // int startEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.startCityIndex]);
-    // int endEleIndex = routeData.routePoints.indexWhere((element) => element.id == cityRPIds[appDataP.endCityIndex!]);
-    // var eleMaxList = appDataP.allMaxEle?.getRange(appDataP.startCityIndex + 1, appDataP.endCityIndex! + 1);
-    // double eleMax = eleMaxList?.reduce(max) ?? 0;
-    // if (eleMax < 1500) eleMax = 1500;
-
-    // appDataP.allDistances?.forEach((element) {
-    //   print(element);
-    // });
-    // var distSum = appDataP.allDistances?.reduce((a, b) => a + b);
-    // print(distSum);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Elevation'),

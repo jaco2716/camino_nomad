@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        showUnselectedLabels: false,
+        // showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.route),

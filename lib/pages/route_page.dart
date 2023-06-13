@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:camino_nomad/logic/data_generation.dart';
-import 'package:camino_nomad/pages/elevation_chart_page.dart';
+import 'package:camino_nomad/pages/elevation_page/elevation_chart_page.dart';
 import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,6 +12,7 @@ import '../widgets/list_tile_with_icon_sub.dart';
 import 'choose_route_page.dart';
 import 'choose_start_end_page.dart';
 import '../../constants/styles_config.dart' as styles;
+import 'elevation_page/elevation_page.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({super.key});
@@ -110,6 +111,122 @@ class _RoutePageState extends State<RoutePage> with AutomaticKeepAliveClientMixi
                         onTap: () {
                           if (appDataP.appDataSettings.endIndex != null) {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationChartPage()));
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const MyInfoDialog(child: Text('Choose start and end city to view Elevation Map'));
+                              },
+                            );
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                                // padding: const EdgeInsets.all(0),
+                                child: Ink(
+                                  // margin: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
+                                  decoration: BoxDecoration(
+                                    // color: Colors.blue[600],
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(255, 0, 140, 255),
+                                          Color.fromARGB(255, 51, 163, 255),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        stops: [0.35, 0.35]),
+                                  ),
+                                  // clipBehavior: Clip.hardEdge,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Consumer<AppDataProvider>(builder: (context, value, _) {
+                                      double? distSum;
+                                      double? eleGainSum;
+                                      double? eleLossSum;
+                                      double? eleMin;
+                                      double? eleMax;
+                                      if (value.appDataSettings.endIndex != null && value.cities.isNotEmpty) {
+                                        var distanceList = value.allDistances
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleGainList = value.allEleGain
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleLossList = value.allEleLoss
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleMinList = value.allMinEle
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+                                        var eleMaxList = value.allMaxEle
+                                            .getRange((value.appDataSettings.startIndex ?? 0) + 1, value.appDataSettings.endIndex! + 1);
+
+                                        distSum = distanceList.reduce((a, b) => a + b);
+                                        eleGainSum = eleGainList.reduce((a, b) => a + b);
+                                        eleLossSum = eleLossList.reduce((a, b) => a + b);
+                                        eleMin = eleMinList.reduce(min);
+                                        eleMax = eleMaxList.reduce(max);
+                                      }
+                                      // double totalDistance = value.allDistances.isNotEmpty ? value.allDistances.reduce((a, b) => a + b) : 0;
+
+                                      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [const Text('Todays Distance:'), Text('${distSum?.toStringAsFixed(2) ?? '?'} km')],
+                                        ),
+                                        // Row(
+                                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        //   children: [const Text('Total Distance:'), Text('${totalDistance.toStringAsFixed(2)} km')],
+                                        // ),
+                                        const Divider(color: Colors.transparent),
+                                        const Text(
+                                          'Elevation',
+                                          style: TextStyle(decoration: TextDecoration.underline, color: Colors.white70),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text('Min / Max:'),
+                                            Text('${eleMin?.toStringAsFixed(0) ?? '?'} m / ${eleMax?.toStringAsFixed(0) ?? '?'} m')
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text('Gain / Loss:'),
+                                            Text('${eleGainSum?.toStringAsFixed(0) ?? '?'} m / -${eleLossSum?.toStringAsFixed(0) ?? '?'} m')
+                                          ],
+                                        ),
+                                      ]);
+                                    }),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                        textTheme: const TextTheme(
+                      bodyMedium: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+                    child: Card(
+                      // color: Colors.transparent,
+                      clipBehavior: Clip.hardEdge,
+                      color: styles.secoundaryColor,
+                      child: InkWell(
+                        onTap: () {
+                          if (appDataP.appDataSettings.endIndex != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ElevationPage()));
                           } else {
                             showDialog(
                               context: context,

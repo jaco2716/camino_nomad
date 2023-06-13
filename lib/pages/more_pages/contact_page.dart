@@ -101,10 +101,10 @@ class _ContactPageState extends State<ContactPage> {
                   onTap: () => UrlLogic.launchUrlFunc('https://www.caminonomad.com')),
               ListTileWithIconSub(
                   title: 'Instagram',
-                  subtitle: '@caminonomad',
+                  subtitle: '@caminonomad.app',
                   icon: const FaIcon(FontAwesomeIcons.instagram),
                   //TODO change instagramhandle
-                  onTap: () => UrlLogic.launchUrlFunc('https://www.instagram.com/caminonomad/')),
+                  onTap: () => UrlLogic.launchUrlFunc('https://www.instagram.com/caminonomad.app/')),
               ListTileWithIconSub(
                   title: 'Facebook',
                   subtitle: '@caminonomad',
@@ -112,9 +112,9 @@ class _ContactPageState extends State<ContactPage> {
                   onTap: () => UrlLogic.launchUrlFunc('https://www.facebook.com/caminonomad')),
               ListTileWithIconSub(
                   title: 'E-mail',
-                  subtitle: 'jonas@caminonomad.com',
+                  subtitle: 'contact@caminonomad.com',
                   icon: const Icon(Icons.email),
-                  onTap: () => UrlLogic.launchUrlFunc('mailto:jonas@caminonomad.com')),
+                  onTap: () => UrlLogic.launchUrlFunc('mailto:contact@caminonomad.com')),
             ],
           ),
         ),
