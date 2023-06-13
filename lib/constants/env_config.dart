@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import '../model/settings/route_config.dart';
 
 const List<RouteConfig> allRoutes = [
-  RouteConfig(0, 'Camino Frances', distance: 779.59, eleMin: 171, eleMax: 1512, eleGain: 13833, eleLoss: 13632),
-  RouteConfig(1, 'Caminho Português Central', distance: 622.91, eleMin: -10, eleMax: 475, eleGain: 12269, eleLoss: 12056),
+  RouteConfig(0, 'Camino Frances', distance: 779.31, eleMin: 171, eleMax: 1512, eleGain: 13876, eleLoss: 13796),
+  RouteConfig(1, 'Caminho Português Central', distance: 607.76, eleMin: -10, eleMax: 475, eleGain: 11967, eleLoss: 11747),
 ];
 
 const String routeFilePrefix = 'route_file_';

@@ -128,7 +128,13 @@ class AppDataProvider with ChangeNotifier {
     double tempEleLoss = 0;
     double tempMin = routePoints.first.ele;
     double tempMax = routePoints.first.ele;
-    if (routePoints[0].cityId != null) tempCityDistances.add(0);
+    if (routePoints[0].cityId != null) {
+      tempCityDistances.add(0);
+      tempCityEleGain.add(tempEleGain);
+      tempCityEleLoss.add(tempEleLoss);
+      tempCityEleMin.add(tempMin);
+      tempCityEleMax.add(tempMax);
+    }
     for (var routei = 1; routei < routePoints.length; routei++) {
       //Distance
       tempDistance +=
