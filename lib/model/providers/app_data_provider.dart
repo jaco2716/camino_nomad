@@ -46,6 +46,71 @@ class AppDataProvider with ChangeNotifier {
     }
   }
 
+  // void setAllDistances() {
+  //   final RouteLogic rl = RouteLogic();
+  //   var routePoints = routeData[routeIndex].routePoints;
+
+  //   //Distance
+  //   List<double> tempCityDistances = [];
+  //   double tempDistance = 0;
+
+  //   //Elevation
+  //   List<double> tempCityEleGain = [];
+  //   List<double> tempCityEleLoss = [];
+  //   List<double> tempCityEleMin = [];
+  //   List<double> tempCityEleMax = [];
+  //   double tempEleGain = 0;
+  //   double tempEleLoss = 0;
+  //   double tempMin = routePoints.first.ele;
+  //   double tempMax = routePoints.first.ele;
+
+  //   int startIndex = 0;
+  //   for (var cityi = 0; cityi <= cities.length - 1; cityi++) {
+  //     for (var routei = startIndex; routei < routePoints.length - 1; routei++) {
+  //       //Distance
+  //       tempDistance +=
+  //           rl.calculateDistance(routePoints[routei].lat, routePoints[routei].lon, routePoints[routei + 1].lat, routePoints[routei + 1].lon);
+
+  //       //Elevation
+  //       if (routePoints[routei + 1].ele > routePoints[routei].ele) {
+  //         tempEleGain += (routePoints[routei + 1].ele - routePoints[routei].ele);
+  //       } else {
+  //         tempEleLoss += (routePoints[routei].ele - routePoints[routei + 1].ele);
+  //       }
+  //       if (routePoints[routei + 1].ele > tempMax) {
+  //         tempMax = routePoints[routei + 1].ele;
+  //       } else if (routePoints[routei + 1].ele < tempMin) {
+  //         tempMin = routePoints[routei + 1].ele;
+  //       }
+
+  //       // if (routePoints[routei + 1].id == cities[cityi].routePointId) {
+  //       if (routePoints[routei + 1].cityId == cities[cityi].id || (routei == 0 && routePoints[routei].cityId == cities[cityi].id)) {
+  //         startIndex = routei;
+
+  //         //Distance
+  //         tempCityDistances.add(tempDistance);
+  //         tempDistance = 0;
+
+  //         //Elevation
+  //         tempCityEleGain.add(tempEleGain);
+  //         tempCityEleLoss.add(tempEleLoss);
+  //         tempCityEleMin.add(tempMin);
+  //         tempCityEleMax.add(tempMax);
+
+  //         tempEleGain = 0;
+  //         tempEleLoss = 0;
+  //         tempMin = routePoints[routei + 1].ele;
+  //         tempMax = 0;
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   allDistances = tempCityDistances;
+  //   allEleGain = tempCityEleGain;
+  //   allEleLoss = tempCityEleLoss;
+  //   allMinEle = tempCityEleMin;
+  //   allMaxEle = tempCityEleMax;
+  // }
   void setAllDistances() {
     final RouteLogic rl = RouteLogic();
     var routePoints = routeData[routeIndex].routePoints;
@@ -63,46 +128,38 @@ class AppDataProvider with ChangeNotifier {
     double tempEleLoss = 0;
     double tempMin = routePoints.first.ele;
     double tempMax = routePoints.first.ele;
+    if (routePoints[0].cityId != null) tempCityDistances.add(0);
+    for (var routei = 1; routei < routePoints.length; routei++) {
+      //Distance
+      tempDistance +=
+          rl.calculateDistance(routePoints[routei - 1].lat, routePoints[routei - 1].lon, routePoints[routei].lat, routePoints[routei].lon);
 
-    int startIndex = 0;
-    for (var cityi = 0; cityi <= cities.length - 1; cityi++) {
-      for (var routei = startIndex; routei < routePoints.length - 1; routei++) {
-        //Distance
-        tempDistance +=
-            rl.calculateDistance(routePoints[routei].lat, routePoints[routei].lon, routePoints[routei + 1].lat, routePoints[routei + 1].lon);
+      //Elevation
+      if (routePoints[routei].ele > routePoints[routei - 1].ele) {
+        tempEleGain += (routePoints[routei].ele - routePoints[routei - 1].ele);
+      } else {
+        tempEleLoss += (routePoints[routei - 1].ele - routePoints[routei].ele);
+      }
+      if (routePoints[routei].ele > tempMax) {
+        tempMax = routePoints[routei].ele;
+      } else if (routePoints[routei].ele < tempMin) {
+        tempMin = routePoints[routei].ele;
+      }
+
+      if (routePoints[routei].cityId != null) {
+        tempCityDistances.add(tempDistance);
+        tempDistance = 0;
 
         //Elevation
-        if (routePoints[routei + 1].ele > routePoints[routei].ele) {
-          tempEleGain += (routePoints[routei + 1].ele - routePoints[routei].ele);
-        } else {
-          tempEleLoss += (routePoints[routei].ele - routePoints[routei + 1].ele);
-        }
-        if (routePoints[routei + 1].ele > tempMax) {
-          tempMax = routePoints[routei + 1].ele;
-        } else if (routePoints[routei + 1].ele < tempMin) {
-          tempMin = routePoints[routei + 1].ele;
-        }
+        tempCityEleGain.add(tempEleGain);
+        tempCityEleLoss.add(tempEleLoss);
+        tempCityEleMin.add(tempMin);
+        tempCityEleMax.add(tempMax);
 
-        // if (routePoints[routei + 1].id == cities[cityi].routePointId) {
-        if (routePoints[routei + 1].cityId == cities[cityi].id || (routei == 0 && routePoints[routei].cityId == cities[cityi].id)) {
-          startIndex = routei;
-
-          //Distance
-          tempCityDistances.add(tempDistance);
-          tempDistance = 0;
-
-          //Elevation
-          tempCityEleGain.add(tempEleGain);
-          tempCityEleLoss.add(tempEleLoss);
-          tempCityEleMin.add(tempMin);
-          tempCityEleMax.add(tempMax);
-
-          tempEleGain = 0;
-          tempEleLoss = 0;
-          tempMin = routePoints[routei + 1].ele;
-          tempMax = 0;
-          break;
-        }
+        tempEleGain = 0;
+        tempEleLoss = 0;
+        tempMin = routePoints[routei].ele;
+        tempMax = 0;
       }
     }
     allDistances = tempCityDistances;
