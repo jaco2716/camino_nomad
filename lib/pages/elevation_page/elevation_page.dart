@@ -1,7 +1,8 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/model/route_info/route_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../constants/styles_config.dart' as styles;
@@ -20,27 +21,28 @@ class ElevationPage extends StatefulWidget {
 
 class _ElevationPageState extends State<ElevationPage> {
   final rl = RouteLogic();
-  final double padding = 40.0;
-  // final double xAxisMultiplier = 10;
-  final double xAxisMultiplier = 70;
+  double chartPadding = 40.0;
+  // final double xAxisMultiplier = 20;
+  final double xAxisMultiplier = 70.0;
   late double chartHeight;
   List<ChartDataPoint> chartData = [];
   List<Map<String, dynamic>> cityList = [];
   int? currentDistanceIndex;
 
-  bool isPortraitMode = true;
   late AppDataProvider appDataP;
   late RouteData routeData;
   List<int> cityRPIds = [];
   int startEleIndex = 0;
   int endEleIndex = 0;
-  double eleMax = 0;
-  double eleMin = 0;
-  double chartMax = 0;
+  double eleMax = 0.0;
+  double eleMin = 0.0;
+  double chartMax = 0.0;
 
   @override
   void initState() {
     super.initState();
+    changeOrientation(Orientation.landscape);
+
     appDataP = context.read<AppDataProvider>();
     routeData = appDataP.routeData[appDataP.routeIndex];
     cityRPIds = appDataP.cities.map((e) => e.id).toList();
@@ -48,63 +50,76 @@ class _ElevationPageState extends State<ElevationPage> {
     endEleIndex = routeData.routePoints.indexWhere((element) => element.cityId == cityRPIds[appDataP.appDataSettings.endIndex!]);
     Iterable<double> eleMaxList = appDataP.allMaxEle.getRange((appDataP.appDataSettings.startIndex ?? 0) + 1, appDataP.appDataSettings.endIndex! + 1);
     Iterable<double> eleMinList = appDataP.allMinEle.getRange((appDataP.appDataSettings.startIndex ?? 0) + 1, appDataP.appDataSettings.endIndex! + 1);
-    eleMax = eleMaxList.reduce(max);
-    eleMin = eleMinList.reduce(min);
+    eleMax = eleMaxList.reduce(math.max);
+    eleMin = eleMinList.reduce(math.min);
 
-    if (eleMax < 1400) eleMax = 1400;
-    if (eleMin > 0) eleMin = 0;
+    if (eleMax < 1300) eleMax = 1300;
+    if (eleMin > 200) eleMin = 200;
     eleMax += 100;
     eleMin -= 100;
     chartMax = eleMax - eleMin;
-    print(eleMin);
+  }
+
+  @override
+  void dispose() {
+    changeOrientation(Orientation.portrait);
+    super.dispose();
+  }
+
+  void changeOrientation(Orientation orientation) {
+    if (orientation == Orientation.portrait) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    EdgeInsets padding = MediaQuery.paddingOf(context);
+    chartPadding = (math.max(padding.left, padding.right) + 20) * 2;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('Elevation'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isPortraitMode = !isPortraitMode;
-              });
-            },
-            icon: const Icon(Icons.screen_rotation_rounded),
-          )
-        ],
       ),
-      body: FutureBuilder<Position>(
+      body: Padding(
+        padding: EdgeInsets.only(top: padding.top),
+        child: FutureBuilder<Position>(
           future: _determinePosition(),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
-            // int? currentPosIndex = snapshot.data;
-            // int? currentPosIndex = null;
             Position? currentPos = snapshot.data;
-            // print(chartData[currentDistanceIndex].x * xAxisMultiplier);
-            return SafeArea(
-              child: LayoutBuilder(builder: (context, constraints) {
+            bool locationEnabled = snapshot.hasError ? false : true;
+
+            return LayoutBuilder(
+              builder: (context, constraints) {
                 chartHeight = constraints.maxHeight;
-                if (!isPortraitMode) {
-                  chartHeight = constraints.maxWidth;
-                }
+
                 chartData = createChartData(routeData.routePoints.getRange(startEleIndex, endEleIndex + 1).toList(), chartMax, eleMin, currentPos);
-                return RotatedBox(
-                  quarterTurns: isPortraitMode ? 0 : 1,
-                  child: SizedBox(
-                    child: SingleChildScrollView(
+                Alignment currentLocationAlignment = currentLocationBoxAlignment();
+                print(currentLocationAlignment);
+                return Stack(
+                  children: [
+                    SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: chartData[chartData.length - 1].x * xAxisMultiplier + padding,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width + (chartPadding / 2)),
                         child: Stack(
-                          alignment: Alignment.bottomCenter,
                           children: [
                             CustomPaint(
-                                size: Size((chartData[chartData.length - 1].x * xAxisMultiplier) + padding, chartHeight),
+                                size: Size((chartData[chartData.length - 1].x * xAxisMultiplier) + chartPadding, chartHeight),
                                 painter: PathPainter(
-                                  path: drawPath(false, padding),
-                                  fillPath: drawPath(true, padding),
+                                  path: drawPath(false, chartPadding),
+                                  fillPath: drawPath(true, chartPadding),
                                 )),
                             ...cityList.map((e) {
                               int cityIndex = appDataP.cities.indexWhere((element) => element.id == e['id']);
@@ -113,7 +128,7 @@ class _ElevationPageState extends State<ElevationPage> {
                                 cityTitle = '${appDataP.cities[cityIndex].name} - ${(e['x'] as double).toStringAsFixed(2)} km';
                               }
                               return Positioned(
-                                  left: e['x'] * xAxisMultiplier + padding / 2,
+                                  left: e['x'] * xAxisMultiplier + chartPadding / 2,
                                   bottom: 0,
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,26 +154,18 @@ class _ElevationPageState extends State<ElevationPage> {
                             }).toList(),
                             currentDistanceIndex != null
                                 ? Positioned(
-                                    left: chartData[currentDistanceIndex!].x * xAxisMultiplier + padding / 2,
-                                    bottom: (chartData[currentDistanceIndex!].y * chartHeight),
+                                    left: chartData[currentDistanceIndex!].x * xAxisMultiplier + chartPadding / 2,
+                                    bottom: (chartData[currentDistanceIndex!].y * chartHeight) - 10,
                                     child: SizedBox(
                                       width: 1,
-                                      height: 200,
+                                      height: 50,
                                       child: OverflowBox(
-                                        maxWidth: 400,
-                                        maxHeight: 500,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          mainAxisSize: MainAxisSize.min,
+                                        maxWidth: 250,
+                                        maxHeight: 150,
+                                        child: Stack(
                                           children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: (chartData[currentDistanceIndex!].x * xAxisMultiplier) < 60 ? 100.0 : 0,
-                                                  right:
-                                                      ((chartData[chartData.length - 1].x - chartData[currentDistanceIndex!].x) * xAxisMultiplier) <
-                                                              60
-                                                          ? 100.0
-                                                          : 0),
+                                            Align(
+                                              alignment: currentLocationAlignment,
                                               child: Container(
                                                   decoration: BoxDecoration(
                                                       color: Colors.white,
@@ -169,11 +176,11 @@ class _ElevationPageState extends State<ElevationPage> {
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
                                                     child: Text(
-                                                        'Your Location:\nDistance: ${(chartData[currentDistanceIndex!].x).toStringAsFixed(2)} km\nAltitude: ${(chartData[currentDistanceIndex!].y * (eleMax - eleMin) + eleMin).toStringAsFixed(0)} m'),
+                                                        'Distance: ${(chartData[currentDistanceIndex!].x).toStringAsFixed(2)} km\nAltitude: ${(chartData[currentDistanceIndex!].y * (eleMax - eleMin) + eleMin).toStringAsFixed(0)} m'),
                                                   )),
                                             ),
-                                            const SizedBox(height: 10),
-                                            const Icon(FontAwesomeIcons.personHiking, color: styles.primaryColor),
+                                            const Align(
+                                                alignment: Alignment.center, child: Icon(FontAwesomeIcons.personHiking, color: styles.primaryColor)),
                                           ],
                                         ),
                                       ),
@@ -184,11 +191,30 @@ class _ElevationPageState extends State<ElevationPage> {
                         ),
                       ),
                     ),
-                  ),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 35.0),
+                        child: locationEnabled
+                            ? currentDistanceIndex == null
+                                ? const Text(
+                                    'Your location not found on route',
+                                    style: TextStyle(color: Colors.grey),
+                                  )
+                                : const SizedBox.shrink()
+                            : const Text(
+                                ' Location Disabled ',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                      ),
+                    ),
+                  ],
                 );
-              }),
+              },
             );
-          }),
+          },
+        ),
+      ),
     );
   }
 
@@ -200,18 +226,22 @@ class _ElevationPageState extends State<ElevationPage> {
     double minDistance = 9999;
     int? myDinstanceIndex;
     double prevDistance = 0;
-    int firstId = appDataP.cities[appDataP.appDataSettings.startIndex ?? 0].id;
-    normalizedList.add(ChartDataPoint(x: 0, y: (routePoints[0].ele - chartMin) / chartMax));
-    cityList.add({'x': 0.0, 'y': (routePoints[0].ele - chartMin) / chartMax, 'id': firstId});
-    for (var i = 1; i < routePoints.length; i++) {
+    // int firstId = appDataP.cities[appDataP.appDataSettings.startIndex ?? 0].id;
+    // normalizedList.add(ChartDataPoint(x: 0, y: (routePoints[0].ele - chartMin) / chartMax));
+    // cityList.add({'x': 0.0, 'y': (routePoints[0].ele - chartMin) / chartMax, 'id': firstId});
+    for (var i = 0; i < routePoints.length; i++) {
       if (myLat != null && myLon != null) {
         final myDistance = rl.calculateDistance(myLat, myLon, routePoints[i].lat, routePoints[i].lon);
-        if (minDistance > myDistance && myDistance < 10) {
+        //Finding closest point if distnace is below 2 km.
+        if (minDistance > myDistance && myDistance < 2) {
           minDistance = myDistance;
           myDinstanceIndex = i;
         }
       }
-      final xdistance = rl.calculateDistance(routePoints[i - 1].lat, routePoints[i - 1].lon, routePoints[i].lat, routePoints[i].lon) + prevDistance;
+
+      final double xdistance =
+          i != 0 ? rl.calculateDistance(routePoints[i - 1].lat, routePoints[i - 1].lon, routePoints[i].lat, routePoints[i].lon) + prevDistance : 0.0;
+
       if (routePoints[i].cityId != null) {
         cityList.add({'x': xdistance, 'y': (routePoints[i].ele - chartMin) / chartMax, 'id': routePoints[i].cityId});
       }
@@ -220,14 +250,11 @@ class _ElevationPageState extends State<ElevationPage> {
     }
     currentDistanceIndex = myDinstanceIndex;
     // currentDistanceIndex = 258;
-    print(minDistance);
     return normalizedList;
   }
 
   Path drawPath(bool closePath, double padding) {
-    // final width = MediaQuery.of(context).size.width;
     final height = chartHeight;
-    // final segmentWidth = width / (chartData.length - 1);
     final path = Path();
 
     path.moveTo(0, height - chartData[0].y * height);
@@ -245,6 +272,26 @@ class _ElevationPageState extends State<ElevationPage> {
     }
 
     return path;
+  }
+
+  Alignment currentLocationBoxAlignment() {
+    if (currentDistanceIndex == null) return Alignment.topCenter;
+    if ((chartData[currentDistanceIndex!].x * xAxisMultiplier) < 60) {
+      if (chartData[currentDistanceIndex!].y > 0.8) {
+        return Alignment.bottomRight;
+      } else {
+        return Alignment.topRight;
+      }
+    } else if (((chartData[chartData.length - 1].x - chartData[currentDistanceIndex!].x) * xAxisMultiplier) < 60) {
+      if (chartData[currentDistanceIndex!].y > 0.8) {
+        return Alignment.bottomLeft;
+      } else {
+        return Alignment.topLeft;
+      }
+    } else if (chartData[currentDistanceIndex!].y > 0.8) {
+      return Alignment.bottomCenter;
+    }
+    return Alignment.topCenter;
   }
 
   /// Determine the current position of the device.

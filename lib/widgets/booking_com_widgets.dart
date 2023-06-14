@@ -15,11 +15,15 @@ class BookingComLink extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 4),
       child: TextButton(
-        onPressed: () => UrlLogic.launchUrlFunc(url),
+        onPressed: () => UrlLogic.launchUrlFunc(convertUrlToAfilliate(url)),
         child: const Text('Booking.com →',
             style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19, color: styles.secoundaryColor, letterSpacing: -1)),
       ),
     );
+  }
+
+  String convertUrlToAfilliate(String value) {
+    return '${value.split('.html')[0]}.html?aid=8029725';
   }
 }
 
@@ -48,19 +52,5 @@ class BookingComScore extends StatelessWidget {
         ),
       ],
     );
-    // return Container(
-    //   alignment: Alignment.center,
-    //   width: size,
-    //   height: size,
-    //   decoration: BoxDecoration(
-    //     borderRadius:
-    //         BorderRadius.only(topLeft: Radius.circular(size / 5), topRight: Radius.circular(size / 5), bottomRight: Radius.circular(size / 5)),
-    //     color: Colors.blue[800],
-    //   ),
-    //   child: Text(
-    //     '$bookingComScore',
-    //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: size / 2.2, color: Colors.white),
-    //   ),
-    // );
   }
 }
