@@ -5,7 +5,6 @@ import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '../../logic/url_logic.dart';
 
 class ContactPage extends StatefulWidget {
@@ -103,7 +102,6 @@ class _ContactPageState extends State<ContactPage> {
                   title: 'Instagram',
                   subtitle: '@caminonomad.app',
                   icon: const FaIcon(FontAwesomeIcons.instagram),
-                  //TODO change instagramhandle
                   onTap: () => UrlLogic.launchUrlFunc('https://www.instagram.com/caminonomad.app/')),
               ListTileWithIconSub(
                   title: 'Facebook',

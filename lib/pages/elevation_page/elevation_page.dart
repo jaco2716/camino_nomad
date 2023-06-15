@@ -22,7 +22,7 @@ class ElevationPage extends StatefulWidget {
 class _ElevationPageState extends State<ElevationPage> {
   final rl = RouteLogic();
   double chartPadding = 40.0;
-  // final double xAxisMultiplier = 20;
+  // final double xAxisMultiplier = 20.0;
   final double xAxisMultiplier = 70.0;
   late double chartHeight;
   List<ChartDataPoint> chartData = [];
@@ -83,7 +83,7 @@ class _ElevationPageState extends State<ElevationPage> {
   @override
   Widget build(BuildContext context) {
     EdgeInsets padding = MediaQuery.paddingOf(context);
-    chartPadding = (math.max(padding.left, padding.right) + 20) * 2;
+    chartPadding = (math.max(padding.left, padding.right) + 40) * 2;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -103,10 +103,9 @@ class _ElevationPageState extends State<ElevationPage> {
             return LayoutBuilder(
               builder: (context, constraints) {
                 chartHeight = constraints.maxHeight;
-
                 chartData = createChartData(routeData.routePoints.getRange(startEleIndex, endEleIndex + 1).toList(), chartMax, eleMin, currentPos);
                 Alignment currentLocationAlignment = currentLocationBoxAlignment();
-                print(currentLocationAlignment);
+
                 return Stack(
                   children: [
                     SingleChildScrollView(
@@ -198,7 +197,7 @@ class _ElevationPageState extends State<ElevationPage> {
                         child: locationEnabled
                             ? currentDistanceIndex == null
                                 ? const Text(
-                                    'Your location not found on route',
+                                    'Your location was not found on route',
                                     style: TextStyle(color: Colors.grey),
                                   )
                                 : const SizedBox.shrink()
@@ -208,6 +207,8 @@ class _ElevationPageState extends State<ElevationPage> {
                               ),
                       ),
                     ),
+                    //Chart Y-axis Labels
+                    // Align(alignment: Alignment.topRight, child: YaxisLabels(chartHeight: chartHeight, minY: eleMin, maxY: eleMax)),
                   ],
                 );
               },
@@ -219,16 +220,13 @@ class _ElevationPageState extends State<ElevationPage> {
   }
 
   List<ChartDataPoint> createChartData(List<RoutePoint> routePoints, double chartMax, double chartMin, Position? currentPos) {
-    // final minEle = -100;
     final normalizedList = <ChartDataPoint>[];
     double? myLat = currentPos?.latitude;
     double? myLon = currentPos?.longitude; //"lat":42.748311,"lon":-1.722681
     double minDistance = 9999;
     int? myDinstanceIndex;
     double prevDistance = 0;
-    // int firstId = appDataP.cities[appDataP.appDataSettings.startIndex ?? 0].id;
-    // normalizedList.add(ChartDataPoint(x: 0, y: (routePoints[0].ele - chartMin) / chartMax));
-    // cityList.add({'x': 0.0, 'y': (routePoints[0].ele - chartMin) / chartMax, 'id': firstId});
+
     for (var i = 0; i < routePoints.length; i++) {
       if (myLat != null && myLon != null) {
         final myDistance = rl.calculateDistance(myLat, myLon, routePoints[i].lat, routePoints[i].lon);
@@ -249,7 +247,6 @@ class _ElevationPageState extends State<ElevationPage> {
       prevDistance = xdistance;
     }
     currentDistanceIndex = myDinstanceIndex;
-    // currentDistanceIndex = 258;
     return normalizedList;
   }
 
@@ -331,7 +328,7 @@ class _ElevationPageState extends State<ElevationPage> {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(timeLimit: const Duration(seconds: 5));
   }
 }
 
@@ -355,5 +352,97 @@ class CurrentLocationIcon extends StatelessWidget {
             ),
           )
         : const SizedBox.shrink();
+  }
+}
+
+class YaxisLabels extends StatelessWidget {
+  const YaxisLabels({super.key, required this.maxY, required this.minY, required this.chartHeight});
+  final double maxY;
+  final double minY;
+  final double chartHeight;
+
+  // (routePoints[i].ele - chartMin) / chartMax
+  // chartData[currentDistanceIndex!].y * chartHeight
+
+  // List<double> createLabels(int count, double padding, double chartMax) {
+  //   List<double> labels = [];
+  //   for (var i = 0; i < count; i++) {
+  //     print(i * maxY / (count - 1));
+  //     // labels.add(maxY + minY + padding - (i * maxY / (count - 1)));
+  //     labels.add((i * (chartMax) / (count - 1)) / chartMax);
+  //     // labels.add((i * (chartMax) / (count - 1)) / chartMax + padding);
+  //   }
+  //   print(labels);
+  //   return labels;
+  // }
+
+  List<double> createLabels(bool isBig) {
+    List<double> labels = [];
+    double value = ((minY / 100).floor() * 100);
+    if (!isBig) value += 50;
+    while (value < maxY - 100) {
+      value += 100;
+      labels.add(value);
+    }
+    return labels;
+  }
+
+  // Offset labelOffset(int length, double i) {
+  //   final segment = 1 / (length - 1);
+  //   final offsetValue = (i - ((length - 1) / 2)) * segment;
+  //   return Offset(0, offsetValue);
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    double chartMax = maxY - minY;
+    List<double> labels = createLabels(true);
+    List<double> smallLabels = createLabels(false);
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: SizedBox(
+        height: chartHeight,
+        child: Stack(children: [
+          ...labels.map((e) => YaxisLabelWidget(bottom: (e - minY) / chartMax * chartHeight, value: e)).toList(),
+          ...smallLabels.map((e) => YaxisLabelWidget(bottom: (e - minY) / chartMax * chartHeight, value: e, isBig: false)).toList(),
+        ]),
+      ),
+    );
+  }
+}
+
+class YaxisLabelWidget extends StatelessWidget {
+  const YaxisLabelWidget({super.key, required this.bottom, required this.value, this.isBig = true});
+
+  final double bottom;
+  final double value;
+  final bool isBig;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: bottom,
+      height: 1,
+      width: MediaQuery.of(context).size.width,
+      child: OverflowBox(
+        maxHeight: 20,
+        child: Row(
+          children: [
+            SizedBox(
+                child: Text(
+              isBig ? ' ${value.toInt()}' : '',
+              style: TextStyle(color: const Color(0xEECCCCCC), fontSize: isBig ? 10 : 8),
+            )),
+            Expanded(
+              child: Container(
+                height: 1,
+                color: isBig ? const Color(0x4ECCCCCC) : const Color(0x20CCCCCC),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
