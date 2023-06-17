@@ -109,6 +109,11 @@ class _ContactPageState extends State<ContactPage> {
                   icon: const Icon(Icons.facebook),
                   onTap: () => UrlLogic.launchUrlFunc('https://www.facebook.com/caminonomad')),
               ListTileWithIconSub(
+                  title: 'Youtube',
+                  subtitle: '@caminonomad',
+                  icon: const Icon(FontAwesomeIcons.youtube),
+                  onTap: () => UrlLogic.launchUrlFunc('https://www.youtube.com/@caminonomad')),
+              ListTileWithIconSub(
                   title: 'E-mail',
                   subtitle: 'contact@caminonomad.com',
                   icon: const Icon(Icons.email),
