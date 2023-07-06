@@ -38,9 +38,20 @@ class _ElevationPageState extends State<ElevationPage> {
   double eleMin = 0.0;
   double chartMax = 0.0;
 
+  Stream<Position> checkPositionStream() async* {
+    yield await _determinePosition();
+
+    yield* Stream.periodic(const Duration(seconds: 4), (_) {
+      return _determinePosition();
+    }).asyncMap((event) async {
+      return await event;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+
     changeOrientation(Orientation.landscape);
 
     appDataP = context.read<AppDataProvider>();
@@ -93,126 +104,133 @@ class _ElevationPageState extends State<ElevationPage> {
       ),
       body: Padding(
         padding: EdgeInsets.only(top: padding.top),
-        child: FutureBuilder<Position>(
-          future: _determinePosition(),
+        child: StreamBuilder<Position>(
+          stream: checkPositionStream(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
-            Position? currentPos = snapshot.data;
-            bool locationEnabled = snapshot.hasError ? false : true;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.connectionState == ConnectionState.done || snapshot.connectionState == ConnectionState.active) {
+              Position? currentPos = snapshot.data;
+              bool locationEnabled = snapshot.hasError ? false : true;
 
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                chartHeight = constraints.maxHeight;
-                chartData = createChartData(routeData.routePoints.getRange(startEleIndex, endEleIndex + 1).toList(), chartMax, eleMin, currentPos);
-                Alignment currentLocationAlignment = currentLocationBoxAlignment();
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  chartHeight = constraints.maxHeight;
+                  chartData = createChartData(routeData.routePoints.getRange(startEleIndex, endEleIndex + 1).toList(), chartMax, eleMin, currentPos);
+                  Alignment currentLocationAlignment = currentLocationBoxAlignment();
 
-                return Stack(
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width + (chartPadding / 2)),
-                        child: Stack(
-                          children: [
-                            CustomPaint(
-                                size: Size((chartData[chartData.length - 1].x * xAxisMultiplier) + chartPadding, chartHeight),
-                                painter: PathPainter(
-                                  path: drawPath(false, chartPadding),
-                                  fillPath: drawPath(true, chartPadding),
-                                )),
-                            ...cityList.map((e) {
-                              int cityIndex = appDataP.cities.indexWhere((element) => element.id == e['id']);
-                              String cityTitle = '';
-                              if (cityIndex != -1) {
-                                cityTitle = '${appDataP.cities[cityIndex].name} - ${(e['x'] as double).toStringAsFixed(2)} km';
-                              }
-                              return Positioned(
-                                  left: e['x'] * xAxisMultiplier + chartPadding / 2,
-                                  bottom: 0,
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: chartHeight,
-                                        width: 1,
-                                        color: styles.primaryColor,
-                                      ),
-                                      Container(
+                  return Stack(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width + (chartPadding / 2)),
+                          child: Stack(
+                            children: [
+                              CustomPaint(
+                                  size: Size((chartData[chartData.length - 1].x * xAxisMultiplier) + chartPadding, chartHeight),
+                                  painter: PathPainter(
+                                    path: drawPath(false, chartPadding),
+                                    fillPath: drawPath(true, chartPadding),
+                                  )),
+                              ...cityList.map((e) {
+                                int cityIndex = appDataP.cities.indexWhere((element) => element.id == e['id']);
+                                String cityTitle = '';
+                                if (cityIndex != -1) {
+                                  cityTitle = '${appDataP.cities[cityIndex].name} - ${(e['x'] as double).toStringAsFixed(2)} km';
+                                }
+                                return Positioned(
+                                    left: e['x'] * xAxisMultiplier + chartPadding / 2,
+                                    bottom: 0,
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: chartHeight,
+                                          width: 1,
                                           color: styles.primaryColor,
-                                          child: RotatedBox(
-                                              quarterTurns: -1,
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                                                child: Text(
-                                                  cityTitle,
-                                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: -1),
-                                                ),
-                                              ))),
-                                    ],
-                                  ));
-                            }).toList(),
-                            currentDistanceIndex != null
-                                ? Positioned(
-                                    left: chartData[currentDistanceIndex!].x * xAxisMultiplier + chartPadding / 2,
-                                    bottom: (chartData[currentDistanceIndex!].y * chartHeight) - 10,
-                                    child: SizedBox(
-                                      width: 1,
-                                      height: 50,
-                                      child: OverflowBox(
-                                        maxWidth: 250,
-                                        maxHeight: 150,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: currentLocationAlignment,
-                                              child: Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(5),
-                                                      border: Border.all(
-                                                        color: Colors.grey[300]!,
-                                                      )),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Text(
-                                                        'Distance: ${(chartData[currentDistanceIndex!].x).toStringAsFixed(2)} km\nAltitude: ${(chartData[currentDistanceIndex!].y * (eleMax - eleMin) + eleMin).toStringAsFixed(0)} m'),
-                                                  )),
-                                            ),
-                                            const Align(
-                                                alignment: Alignment.center, child: Icon(FontAwesomeIcons.personHiking, color: styles.primaryColor)),
-                                          ],
+                                        ),
+                                        Container(
+                                            color: styles.primaryColor,
+                                            child: RotatedBox(
+                                                quarterTurns: -1,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                                                  child: Text(
+                                                    cityTitle,
+                                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: -1),
+                                                  ),
+                                                ))),
+                                      ],
+                                    ));
+                              }).toList(),
+                              currentDistanceIndex != null
+                                  ? AnimatedPositioned(
+                                      duration: const Duration(milliseconds: 200),
+                                      left: chartData[currentDistanceIndex!].x * xAxisMultiplier + chartPadding / 2,
+                                      bottom: (chartData[currentDistanceIndex!].y * chartHeight) - 10,
+                                      child: SizedBox(
+                                        width: 1,
+                                        height: 50,
+                                        child: OverflowBox(
+                                          maxWidth: 250,
+                                          maxHeight: 150,
+                                          child: Stack(
+                                            children: [
+                                              Align(
+                                                alignment: currentLocationAlignment,
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(5),
+                                                        border: Border.all(
+                                                          color: Colors.grey[300]!,
+                                                        )),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          'Distance: ${(chartData[currentDistanceIndex!].x).toStringAsFixed(2)} km\nAltitude: ${(chartData[currentDistanceIndex!].y * (eleMax - eleMin) + eleMin).toStringAsFixed(0)} m'),
+                                                    )),
+                                              ),
+                                              const Align(
+                                                  alignment: Alignment.center,
+                                                  child: Icon(FontAwesomeIcons.personHiking, color: styles.primaryColor)),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                          ],
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 35.0),
-                        child: locationEnabled
-                            ? currentDistanceIndex == null
-                                ? const Text(
-                                    'Your location was not found on route',
-                                    style: TextStyle(color: Colors.grey),
-                                  )
-                                : const SizedBox.shrink()
-                            : const Text(
-                                ' Location Disabled ',
-                                style: TextStyle(color: Colors.red),
-                              ),
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 35.0),
+                          child: locationEnabled
+                              ? currentDistanceIndex == null
+                                  ? const Text(
+                                      'Your location was not found on route',
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  : const SizedBox.shrink()
+                              : const Text(
+                                  ' Location Disabled ',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                        ),
                       ),
-                    ),
-                    //Chart Y-axis Labels
-                    // Align(alignment: Alignment.topRight, child: YaxisLabels(chartHeight: chartHeight, minY: eleMin, maxY: eleMax)),
-                  ],
-                );
-              },
-            );
+                      //Chart Y-axis Labels
+                      // Align(alignment: Alignment.topRight, child: YaxisLabels(chartHeight: chartHeight, minY: eleMin, maxY: eleMax)),
+                    ],
+                  );
+                },
+              );
+            } else {
+              return const Center(child: Text('Something went wrong, please reload page'));
+            }
           },
         ),
       ),
