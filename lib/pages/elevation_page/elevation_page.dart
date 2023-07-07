@@ -217,7 +217,7 @@ class _ElevationPageState extends State<ElevationPage> {
                                     )
                                   : const SizedBox.shrink()
                               : const Text(
-                                  ' Location Disabled ',
+                                  ' Location Not Avaliable ',
                                   style: TextStyle(color: Colors.red),
                                 ),
                         ),

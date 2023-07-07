@@ -1,10 +1,10 @@
 name: camino_nomad
 description: Camino app.
-publish_to: 'none'
-version: 1.1.0+11
+publish_to: "none"
+version: 1.1.2+12
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: ">=2.19.6 <3.0.0"
 
 dependencies:
   flutter:
@@ -46,8 +46,6 @@ flutter_launcher_icons:
   image_path_ios: "assets/icon/icon.png"
   adaptive_icon_foreground: "assets/icon/icon-android.png"
   adaptive_icon_background: "assets/icon/icon-android-bg.png"
-  
-
 
 flutter_native_splash:
   color: "#ffffff"
@@ -56,10 +54,9 @@ flutter_native_splash:
     color: "#ffffff"
     icon_background_color: "#ffffff"
 
-
 flutter:
   uses-material-design: true
-  
+
   assets:
     - assets/images/
     - assets/images/hotel/
@@ -68,6 +65,5 @@ flutter:
     - assets/route_database/route_data/
     - assets/route_database/cities/
     - assets/route_database/hotels/
-    
+
     - assets/route_database/
-    
