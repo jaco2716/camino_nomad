@@ -223,7 +223,7 @@ class _ElevationPageState extends State<ElevationPage> {
                         ),
                       ),
                       //Chart Y-axis Labels
-                      // Align(alignment: Alignment.topRight, child: YaxisLabels(chartHeight: chartHeight, minY: eleMin, maxY: eleMax)),
+                      Align(alignment: Alignment.topRight, child: YaxisLabels(chartHeight: chartHeight, minY: eleMin, maxY: eleMax)),
                     ],
                   );
                 },
@@ -450,7 +450,7 @@ class YaxisLabelWidget extends StatelessWidget {
             SizedBox(
                 child: Text(
               isBig ? ' ${value.toInt()}' : '',
-              style: TextStyle(color: const Color(0xEECCCCCC), fontSize: isBig ? 10 : 8),
+              style: TextStyle(color: const Color(0xFFCCCCCC), fontSize: isBig ? 10 : 8),
             )),
             Expanded(
               child: Container(
