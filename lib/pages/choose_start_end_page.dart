@@ -37,7 +37,6 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   }
 
   _initScrollController(int? index, int? minusIndex, double offsetMultiplier) {
-    print(minusIndex);
     if (index != null) {
       if (minusIndex != null) index = index - (minusIndex + 1);
       _scrollController = ScrollController(initialScrollOffset: offsetMultiplier * index);

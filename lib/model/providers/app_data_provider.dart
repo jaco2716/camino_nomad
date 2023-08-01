@@ -269,7 +269,6 @@ class AppDataProvider with ChangeNotifier {
     if (hotelIndex == -1 || hotel.id == -1) {
       int newId = _findUniqueHotelId(hotels.last.id + 1);
       hotel.id = newId;
-      print('hotel id: ${hotel.id}');
       hotels.add(hotel);
     } else {
       hotels[hotelIndex] = hotel;

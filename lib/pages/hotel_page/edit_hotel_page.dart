@@ -64,7 +64,6 @@ class _EditHotelPageState extends State<EditHotelPage> {
     } else {
       hotel = Hotel(id: -1, name: '', lat: 0, lon: 0, status: HotelStatus.open);
     }
-    print(hotel.id);
     facilityValues = HotelFacility.values.map((e) => hotel.hotelFacilities.contains(e)).toList();
   }
 

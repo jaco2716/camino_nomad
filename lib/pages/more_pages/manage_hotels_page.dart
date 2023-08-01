@@ -30,8 +30,6 @@ class _ManageHotelsPageState extends State<ManageHotelsPage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  print('${value.hotels.last.facebook}');
-
                   showDialog(
                     context: context,
                     builder: (context) {
