@@ -34,7 +34,7 @@ class AppDataProvider with ChangeNotifier {
 
   AppDataProvider();
 
-  Future<void> initValues() async {
+  Future<void> _initValues() async {
     prefs = await SharedPreferences.getInstance();
     fm = FileManagement();
     String appDataString = prefs.getString(SharedPrefNames.appDataSettings.name) ?? '';
@@ -111,7 +111,7 @@ class AppDataProvider with ChangeNotifier {
   //   allMinEle = tempCityEleMin;
   //   allMaxEle = tempCityEleMax;
   // }
-  void setAllDistances() {
+  void _setAllDistances() {
     final RouteLogic rl = RouteLogic();
     var routePoints = routeData[routeIndex].routePoints;
 
@@ -176,28 +176,28 @@ class AppDataProvider with ChangeNotifier {
   }
 
   Future<void> getRouteData() async {
-    await initValues();
+    await _initValues();
     // response = await rootBundle.loadString('assets/route_database/route_data/route_file_${appDataSettings.routeId}.json');
     // String response = await rootBundle.loadString('assets/route_database/route_data/route_data.json');
     // List<Map<String, dynamic>> jsonData = jsonDecode(response);
     // routeData = jsonData.map((e) => RouteData.fromJson(e)).toList();
     String hotelsResponse = await fm.readFile(config.hotelsFileName);
     if (hotelsResponse == '') {
-      hotels = await getListFromFile<Hotel>('assets/route_database/hotels/route_hotels.json', (p0) => Hotel.fromJson(p0));
+      hotels = await _getListFromFile<Hotel>('assets/route_database/hotels/route_hotels.json', (p0) => Hotel.fromJson(p0));
     } else {
       List<dynamic> hotelJson = jsonDecode(hotelsResponse);
       hotels = hotelJson.map<Hotel>((e) => Hotel.fromJson(e)).toList();
     }
-    routeData = await getListFromFile<RouteData>('assets/route_database/route_data/route_data.json', (p0) => RouteData.fromJson(p0));
+    routeData = await _getListFromFile<RouteData>('assets/route_database/route_data/route_data.json', (p0) => RouteData.fromJson(p0));
     routeIndex = routeData.indexWhere((element) => element.id == appDataSettings.routeId);
-    allCities = await getListFromFile<RouteCity>('assets/route_database/cities/route_cities.json', (p0) => RouteCity.fromJson(p0));
-    sortCities(allCities);
+    allCities = await _getListFromFile<RouteCity>('assets/route_database/cities/route_cities.json', (p0) => RouteCity.fromJson(p0));
+    _sortCities(allCities);
 
     notifyListeners();
     return;
   }
 
-  Future<List<T>> getListFromFile<T>(String path, T Function(Map<String, dynamic>) fromJson) async {
+  Future<List<T>> _getListFromFile<T>(String path, T Function(Map<String, dynamic>) fromJson) async {
     try {
       String response = await rootBundle.loadString(path);
       List<dynamic> json = jsonDecode(response);
@@ -208,7 +208,7 @@ class AppDataProvider with ChangeNotifier {
     }
   }
 
-  void sortCities(List<RouteCity> allCitiesToSort) {
+  void _sortCities(List<RouteCity> allCitiesToSort) {
     var rps = routeData[routeIndex].routePoints;
     List<RouteCity> newCities = [];
     for (var i = 0; i < allCitiesToSort.length - 1; i++) {
@@ -220,8 +220,17 @@ class AppDataProvider with ChangeNotifier {
     newCities.sort((a, b) => rps.indexWhere((element) => element.cityId == a.id).compareTo(rps.indexWhere((element) => element.cityId == b.id)));
     // (a, b) => rps.indexWhere((element) => element.id == a.routePointId).compareTo(rps.indexWhere((element) => element.id == b.routePointId)));
     cities = newCities;
-    setAllDistances();
+    _setAllDistances();
     // return newCities;
+  }
+
+  int _findUniqueHotelId(int initId) {
+    int uniqueIndex = hotels.indexWhere((element) => element.id == initId);
+    if (uniqueIndex == -1) {
+      return initId;
+    } else {
+      return _findUniqueHotelId(initId + 1);
+    }
   }
 
   void setStartIndex(int? value) async {
@@ -249,17 +258,18 @@ class AppDataProvider with ChangeNotifier {
     routeIndex = routeData.indexWhere((element) => element.id == id);
     appDataSettings.startIndex = null;
     appDataSettings.endIndex = null;
-    sortCities(allCities);
+    _sortCities(allCities);
     await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
     notifyListeners();
   }
 
   void saveHotelsLocal(Hotel hotel) async {
     int hotelIndex = hotels.indexWhere((element) => element.id == hotel.id);
-    // await fm.writeFile(config.hotelsFileName, '');
-    // return;
-    if (hotelIndex == -1) {
-      hotel.id = hotels.length;
+
+    if (hotelIndex == -1 || hotel.id == -1) {
+      int newId = _findUniqueHotelId(hotels.last.id + 1);
+      hotel.id = newId;
+      print('hotel id: ${hotel.id}');
       hotels.add(hotel);
     } else {
       hotels[hotelIndex] = hotel;
@@ -284,6 +294,12 @@ class AppDataProvider with ChangeNotifier {
   void setAdvancedSettings(bool value) async {
     appDataSettings.showAdvancedSettings = value;
     await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
+    notifyListeners();
+  }
+
+  void resetHotelsToFile() async {
+    await fm.writeFile(config.hotelsFileName, '');
+    hotels = await _getListFromFile<Hotel>('assets/route_database/hotels/route_hotels.json', (p0) => Hotel.fromJson(p0));
     notifyListeners();
   }
 

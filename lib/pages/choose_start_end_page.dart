@@ -18,6 +18,7 @@ class ChooseStartEndPage extends StatefulWidget {
 
 class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
   final _searchController = TextEditingController();
+  late final ScrollController _scrollController;
 
   late AppDataProvider appDataP;
   late List<bool> showCities;
@@ -28,8 +29,21 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
     super.initState();
     appDataP = Provider.of<AppDataProvider>(context, listen: false);
     showCities = List.generate(appDataP.cities.length, (index) => true);
-    // print(MediaQuery.of(context).size.height);
-    // print(MediaQuery.of(context).padding.top);
+    if (widget.isStart) {
+      _initScrollController(appDataP.appDataSettings.startIndex, null, 66.0);
+    } else {
+      _initScrollController(appDataP.appDataSettings.endIndex, appDataP.appDataSettings.startIndex, 84.0);
+    }
+  }
+
+  _initScrollController(int? index, int? minusIndex, double offsetMultiplier) {
+    print(minusIndex);
+    if (index != null) {
+      if (minusIndex != null) index = index - (minusIndex + 1);
+      _scrollController = ScrollController(initialScrollOffset: offsetMultiplier * index);
+    } else {
+      _scrollController = ScrollController();
+    }
   }
 
   @override
@@ -58,6 +72,7 @@ class _ChooseStartEndPageState extends State<ChooseStartEndPage> {
                 ? const Expanded(child: Center(child: Text('No cities on selected route.')))
                 : Expanded(
                     child: ListView.builder(
+                      controller: _scrollController,
                       padding: const EdgeInsets.only(top: 20),
                       itemCount: appDataP.cities.length - widget.startIndex,
                       itemBuilder: (lwcontext, index) {

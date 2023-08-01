@@ -78,7 +78,7 @@ class HotelListTile extends StatelessWidget {
                     //   style: TextStyle(color: styles.secoundaryColor, fontWeight: FontWeight.w900),
                     // ),
                     hotel.bookingComUrl.isNotEmpty
-                        ? SizedBox(width: 12, child: Image.asset('assets/images/custom_icons/bookinglogo.png'))
+                        ? SizedBox(width: 20, child: Image.asset('assets/images/custom_icons/bookinglogo.png'))
                         : const SizedBox.shrink(),
                   ],
                 ),

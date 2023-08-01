@@ -30,6 +30,8 @@ class _ManageHotelsPageState extends State<ManageHotelsPage> {
           actions: [
             IconButton(
                 onPressed: () {
+                  print('${value.hotels.last.facebook}');
+
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -38,7 +40,11 @@ class _ManageHotelsPageState extends State<ManageHotelsPage> {
                         action: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            TextButton(onPressed: () {}, child: const Text('Cancel')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel')),
                             ElevatedButton(
                                 onPressed: () {
                                   value.setAdvancedSettings(false);
@@ -53,7 +59,47 @@ class _ManageHotelsPageState extends State<ManageHotelsPage> {
                                 child: const Text('Disable'))
                           ],
                         ),
-                        child: const SizedBox.shrink(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return MyInfoDialog(
+                                      title: 'Reset Hotels?',
+                                      action: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Cancel')),
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                              onPressed: () {
+                                                value.resetHotelsToFile();
+                                                Navigator.pop(context);
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return const MyInfoDialog(child: Text('Hotels have been reset'));
+                                                  },
+                                                );
+                                              },
+                                              child: const Text('Reset'))
+                                        ],
+                                      ),
+                                      child: const Text('Are you sure you want to reset?\nThis cannot be undone.'),
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.delete_sweep),
+                              label: const Text('Reset Hotels to Default')),
+                        ),
                       );
                     },
                   );

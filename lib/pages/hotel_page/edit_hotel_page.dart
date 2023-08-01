@@ -62,8 +62,9 @@ class _EditHotelPageState extends State<EditHotelPage> {
       dynamic json = jsonDecode(response);
       hotel = Hotel.fromJson(json);
     } else {
-      hotel = Hotel(id: -1, name: '', lat: 0, lon: 0);
+      hotel = Hotel(id: -1, name: '', lat: 0, lon: 0, status: HotelStatus.open);
     }
+    print(hotel.id);
     facilityValues = HotelFacility.values.map((e) => hotel.hotelFacilities.contains(e)).toList();
   }
 
@@ -458,6 +459,8 @@ class _EditHotelPageState extends State<EditHotelPage> {
 
   String convertStringToLink(String? text) {
     if (text == null) {
+      return '';
+    } else if (text == '') {
       return '';
     } else if (text.contains('www.')) {
       return 'https://${text.split('www.')[1]}';
