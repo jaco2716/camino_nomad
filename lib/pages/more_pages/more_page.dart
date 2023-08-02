@@ -1,7 +1,6 @@
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
 import 'package:camino_nomad/pages/more_pages/update_data_page.dart';
-import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/button_list_tile.dart';
@@ -76,24 +75,6 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
         ),
       ),
     );
-  }
-
-  void _updateHotelData() async {
-    showDialog(
-      context: context,
-      builder: (context) => const Dialog(elevation: 0, backgroundColor: Colors.transparent, child: Center(child: CircularProgressIndicator())),
-    );
-    var result = await context.read<AppDataProvider>().updateHotelsWithHttp();
-    if (mounted) {
-      Navigator.pop(context);
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return MyInfoDialog(child: Text(result ? 'Data has been updated!' : 'Did not update any data.'));
-        },
-      );
-    }
   }
 
   @override

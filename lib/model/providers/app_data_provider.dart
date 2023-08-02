@@ -178,6 +178,10 @@ class AppDataProvider with ChangeNotifier {
 
   Future<void> getRouteData() async {
     await _initValues();
+    if (appDataSettings.appDataVersion == 'v1') {
+      String? dataVersion = await getAppDataVersion();
+      if (dataVersion != null) updateHotelsWithHttp(dataVersion);
+    }
     // response = await rootBundle.loadString('assets/route_database/route_data/route_file_${appDataSettings.routeId}.json');
     // String response = await rootBundle.loadString('assets/route_database/route_data/route_data.json');
     // List<Map<String, dynamic>> jsonData = jsonDecode(response);
@@ -223,6 +227,17 @@ class AppDataProvider with ChangeNotifier {
     cities = newCities;
     _setAllDistances();
     // return newCities;
+  }
+
+  Future<String?> getAppDataVersion() async {
+    var response = await http.get(Uri.parse('https://caminonomad.com/wp-content/uploads/app_data/data_version.txt'));
+    if (response.body.length < 16) return null;
+    if (response.body.substring(0, 16) == 'Appdata Version:') {
+      String version = response.body.substring(16);
+      return version;
+    } else {
+      return null;
+    }
   }
 
   int _findUniqueHotelId(int initId) {
@@ -280,7 +295,7 @@ class AppDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> updateHotelsWithHttp() async {
+  Future<bool> updateHotelsWithHttp(String verison) async {
     var response = await http.get(Uri.parse('https://caminonomad.com/wp-content/uploads/app_data/route_hotels.json'));
     String hotelData = response.body;
     if (response.body.length < 6) return false;
@@ -288,6 +303,8 @@ class AppDataProvider with ChangeNotifier {
       await fm.writeFile(config.hotelsFileName, hotelData);
       List<dynamic> hotelJson = jsonDecode(hotelData);
       hotels = hotelJson.map<Hotel>((e) => Hotel.fromJson(e)).toList();
+      appDataSettings.appDataVersion = verison;
+      await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
       notifyListeners();
       return true;
     } else {
