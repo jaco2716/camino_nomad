@@ -231,9 +231,10 @@ class AppDataProvider with ChangeNotifier {
 
   Future<String?> getAppDataVersion() async {
     var response = await http.get(Uri.parse('https://caminonomad.com/wp-content/uploads/app_data/data_version.txt'));
-    if (response.body.length < 16) return null;
-    if (response.body.substring(0, 16) == 'Appdata Version:') {
-      String version = response.body.substring(16);
+
+    var splitVersion = response.body.split(': ');
+    if (splitVersion[0] == 'Appdata Version' && splitVersion.length > 1) {
+      String version = splitVersion[1];
       return version;
     } else {
       return null;
@@ -332,6 +333,8 @@ class AppDataProvider with ChangeNotifier {
   void resetHotelsToFile() async {
     await fm.writeFile(config.hotelsFileName, '');
     hotels = await _getListFromFile<Hotel>('assets/route_database/hotels/route_hotels.json', (p0) => Hotel.fromJson(p0));
+    appDataSettings.appDataVersion = 'v1';
+    await prefs.setString(SharedPrefNames.appDataSettings.name, jsonEncode(appDataSettings));
     notifyListeners();
   }
 
