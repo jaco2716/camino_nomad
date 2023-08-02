@@ -1,6 +1,7 @@
-import 'package:camino_nomad/logic/file_management.dart';
 import 'package:camino_nomad/model/providers/app_data_provider.dart';
 import 'package:camino_nomad/pages/more_pages/contact_page.dart';
+import 'package:camino_nomad/pages/more_pages/update_data_page.dart';
+import 'package:camino_nomad/widgets/my_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/button_list_tile.dart';
@@ -16,7 +17,6 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin {
-  final fm = FileManagement();
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -56,6 +56,10 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
               title: 'Contact',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactPage())),
             ),
+            ButtonListTile(
+              title: 'Update Data',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const UpdateDataPage())),
+            ),
 
             Consumer<AppDataProvider>(builder: (context, value, _) {
               return value.appDataSettings.showAdvancedSettings
@@ -72,6 +76,24 @@ class _MorePageState extends State<MorePage> with AutomaticKeepAliveClientMixin 
         ),
       ),
     );
+  }
+
+  void _updateHotelData() async {
+    showDialog(
+      context: context,
+      builder: (context) => const Dialog(elevation: 0, backgroundColor: Colors.transparent, child: Center(child: CircularProgressIndicator())),
+    );
+    var result = await context.read<AppDataProvider>().updateHotelsWithHttp();
+    if (mounted) {
+      Navigator.pop(context);
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return MyInfoDialog(child: Text(result ? 'Data has been updated!' : 'Did not update any data.'));
+        },
+      );
+    }
   }
 
   @override

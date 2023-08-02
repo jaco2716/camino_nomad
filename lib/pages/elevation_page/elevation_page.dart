@@ -21,6 +21,7 @@ class ElevationPage extends StatefulWidget {
 
 class _ElevationPageState extends State<ElevationPage> {
   final rl = RouteLogic();
+  ScrollController? _scrollController;
   double chartPadding = 40.0;
   // final double xAxisMultiplier = 20.0;
   final double xAxisMultiplier = 70.0;
@@ -39,8 +40,8 @@ class _ElevationPageState extends State<ElevationPage> {
   double chartMax = 0.0;
 
   Stream<Position> checkPositionStream() async* {
-    yield await _determinePosition();
-
+    Position initialPos = await _determinePosition();
+    yield initialPos;
     yield* Stream.periodic(const Duration(seconds: 4), (_) {
       return _determinePosition();
     }).asyncMap((event) async {
@@ -51,7 +52,7 @@ class _ElevationPageState extends State<ElevationPage> {
   @override
   void initState() {
     super.initState();
-
+    // _scrollController = ScrollController();
     changeOrientation(Orientation.landscape);
 
     appDataP = context.read<AppDataProvider>();
@@ -123,6 +124,7 @@ class _ElevationPageState extends State<ElevationPage> {
                     children: [
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
+                        controller: _scrollController,
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width + (chartPadding / 2)),
                           child: Stack(
@@ -265,6 +267,13 @@ class _ElevationPageState extends State<ElevationPage> {
       prevDistance = xdistance;
     }
     currentDistanceIndex = myDinstanceIndex;
+    if (_scrollController == null) {
+      if (currentDistanceIndex != null) {
+        _scrollController = ScrollController(initialScrollOffset: normalizedList[currentDistanceIndex!].x * xAxisMultiplier + chartPadding / 2 - 150);
+      } else {
+        _scrollController = ScrollController();
+      }
+    }
     return normalizedList;
   }
 

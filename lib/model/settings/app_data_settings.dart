@@ -9,6 +9,7 @@ class AppDataSettings {
   int? startIndex;
   int? endIndex;
   bool showAdvancedSettings;
+  String appDataVersion;
 
   AppDataSettings(
     this.lowDataMode,
@@ -16,6 +17,7 @@ class AppDataSettings {
     this.startIndex, {
     this.endIndex,
     this.showAdvancedSettings = false,
+    this.appDataVersion = 'v1',
   });
 
   factory AppDataSettings.fromJson(Map<String, dynamic> json) => _$AppDataSettingsFromJson(json);

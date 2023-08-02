@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../logic/route_logic.dart';
 import '../route_info/route_data.dart';
 import '../settings/shared_pref_names.dart';
+import 'package:http/http.dart' as http;
 
 class AppDataProvider with ChangeNotifier {
   late List<RouteData> routeData;
@@ -277,6 +278,21 @@ class AppDataProvider with ChangeNotifier {
     String json = jsonEncode(hotels);
     await fm.writeFile(config.hotelsFileName, json);
     notifyListeners();
+  }
+
+  Future<bool> updateHotelsWithHttp() async {
+    var response = await http.get(Uri.parse('https://caminonomad.com/wp-content/uploads/app_data/route_hotels.json'));
+    String hotelData = response.body;
+    if (response.body.length < 6) return false;
+    if (response.body.substring(0, 6) == '[{"id"') {
+      await fm.writeFile(config.hotelsFileName, hotelData);
+      List<dynamic> hotelJson = jsonDecode(hotelData);
+      hotels = hotelJson.map<Hotel>((e) => Hotel.fromJson(e)).toList();
+      notifyListeners();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void deleteHotel(Hotel hotel) async {
